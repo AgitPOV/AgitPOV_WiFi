@@ -1,11 +1,46 @@
 
+/*
+ * AgitPOV
+ * 12-RGB LED POV for Arduino
+ *
+ * (c) 2011-2017
+ * Contributors over the years 
+ 
+        Alan Kwok
+        Alexandre Castonguay
+        Sofian Audry
+        Mariangela Aponte Nuñez
+        Jean-Pascal Bellemare
+        Daniel Felipe Valencia dfvalen0223@gmail.com
+        Andre Girard andre@andre-girard.com 
+        Alex Keeling
+        Thomas Ouellet Fredericks
+ 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
 ///// from https://gist.github.com/bbx10/5a2885a700f30af75fc5
 
+#include "AgitPage.h"
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <DNSServer.h>
 #include "FS.h"     // pour écrire en mémoire avec SPIFFS
+#include <string.h>
+#include <string>
 
 // DOTSTAR ///////////////////////////////////////////////
 #include <Adafruit_DotStar.h>
@@ -14,58 +49,34 @@
 #define DATAPIN    D6 
 #define CLOCKPIN   D5
 Adafruit_DotStar strip = Adafruit_DotStar(NUMPIXELS, DATAPIN, CLOCKPIN, DOTSTAR_BGR);
+/////////////////////////////////////////////// DOTSTAR //
 
 // Pour un mot en entrée
 int povArray[100];
+int indexArr;
 // AGITPOV
 // int povArray[] = { 0 , 0 , 2040 , 2176 , 2176 , 2176 , 2040 , 0 , 2032 , 2056 , 2056 , 2120 , 1136 , 0 , 3064 , 0 , 2048 , 2048 , 4088 , 2048 , 2048 , 0 , 0 , 4088 , 2176 , 2176 , 2176 , 3968 , 0 , 2032 , 2056 , 2056 , 2056 , 2032 , 0 , 4064 , 16 , 8 , 16 , 4064 , 0 , 0 };
 boolean palabra;  // pour la condition d'écriture par la page web ou non
-uint32_t color = 0x121212;  // couleur pour l'affichage d'un mot
-/////////////////////////////////////////////// DOTSTAR //
-
-///////////////// HALL SENSOR //////
-#define HALL_PIN D3               //
-volatile boolean povDoIt = false; //
-////////////////////////////////////
-
-////////////////
 boolean nouveauMot;
-
 //////// Pour la conversion du mot en entrée à son code pour les DELs
 char lettre = 'Z';
-//int povArray[100] = {};
-int arrayOffset = 0; // variable globale??
+int arrayOffset = 0; 
+uint32_t color = 0x121212;  // couleur pour l'affichage d'un mot
+//uint32_t color = 0xCC3300; // naranja
+//uint32_t color = 0x991100; // rouge pas trop clair
+// uint32_t color = 0xFFFFFF; // test blanc
+  
 
 const byte DNS_PORT = 53;
 IPAddress apIP(192, 168, 4, 1);
 DNSServer dnsServer;
 ESP8266WebServer server(80);
 
-const char INDEX_HTML[] =
-"<!DOCTYPE HTML>"
-"<html>"
-"<head>"
-"<meta name = \"viewport\" content = \"width = device-width, initial-scale = 1.0, maximum-scale = 1.0, user-scalable=0\">"
-"<title>AgitPOV</title>"
-"<style>"
-//"\"body { background-color: #FF00FF; font-family: Arial, Helvetica, Sans-Serif;  }\""
+///////////////// HALL SENSOR //////
+#define HALL_PIN D3               //
+volatile boolean povDoIt = false; //
+////////////////////////////////////
 
-"h1 {  font-family: Arial, Helvetica, sans-serif;Color: #030303;}"
-"p {  font-family: Arial, Helvetica, sans-serif;Color: #030303;font-size: 30px;}"
-
-"</style>"
-"</head>"
-"<body bgcolor=\"#EE7700\" >"
-"<h1>AgitPOV</h1>"
-"<FORM action=\"/\" method=\"post\">"
-"<P>"
-"<br>"
-"<INPUT type=\"text\" name=\"AgitPOV\" value=\"mot\" style=\"width:100px; height:40px;\"><BR>"
-"<INPUT type=\"submit\" value=\"Send\"> <INPUT type=\"reset\">"
-"</P>"
-"</FORM>"
-"</body>"
-"</html>";
 
 void handleRoot()
 {
@@ -90,6 +101,7 @@ void handleSubmit()
 
   if (!server.hasArg("AgitPOV")) return returnFail("BAD ARGS");
     mot = server.arg("AgitPOV");
+    Serial.println("mot envoyé : ");
     Serial.println(mot);
     server.send(200, "text/html", INDEX_HTML);
     
@@ -166,9 +178,9 @@ void setup(void)
 
   SPIFFS.begin();
 
- ///// Serial.println("Please wait 30 secs for SPIFFS to be formatted");
+Serial.println("Please wait 30 secs for SPIFFS to be formatted");
 SPIFFS.format(); // Besoin une seule fois ou pour effacer le mot
- //// Serial.println("Spiffs formatted");
+Serial.println("Spiffs formatted");
   
   ///////////////////////////////////////////////////
   // Commence par vérifier si un mot est présent   //
@@ -204,321 +216,11 @@ SPIFFS.format(); // Besoin une seule fois ou pour effacer le mot
         
 } ///// fin du setup
 
-///////////
-
-void nouveauArray(String leMot){
-
- Serial.print("mot  : ");
-  Serial.println(leMot);
- 
-  for(int i =0;i < leMot.length();i++){
-    
-    // Serial.print("leMot longueur : ");
-    // Serial.println(leMot.length());
-    lettre = leMot.charAt(i); // isole les lettres une par une
-    // Serial.println(lettre);
-    // delay(500);
-
-    povArray[arrayOffset]= 0; // ajouter un espace au début, revoir sur la roue
-    arrayOffset++; 
-    
-    switch(lettre){
-
-      case 'A':
-      {
-      int AArray[] = {254 , 272 , 272 , 272 , 272 , 254};
-      for(int j = 0;j<sizeof(AArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=AArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(AArray)/sizeof(int); // ajouter le nombre de colonnes au décalage pour l'écriture dans le tableau
-      break;
-      }
-
-      case 'B': /// à voir la définition de B
-      {
-      int BArray[] = {510 , 290 , 290 , 290 , 290 , 220};
-      for(int j = 0;j<sizeof(BArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=BArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(BArray)/sizeof(int);
-      break;
-      }
-
-      case 'C':
-      {
-      int CArray[] = {510 , 290 , 290 , 290 , 290 , 220};
-      for(int j = 0;j<sizeof(CArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=CArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(CArray)/sizeof(int);
-      break;
-      }
-
-      case 'D':
-      {
-      int DArray[] = {252 , 258 , 258 , 258 , 258 , 132};
-      for(int j = 0;j<sizeof(DArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=DArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(DArray)/sizeof(int);
-      break;
-      }
-
-      case 'E':
-      {
-      int EArray[] = {252 , 258 , 258 , 258 , 258 , 132};
-      for(int j = 0;j<sizeof(EArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=EArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(EArray)/sizeof(int);
-      break;
-      }
-
-      case 'F':
-      {
-      int FArray[] = {510 , 258 , 258 , 258 , 132 , 120};
-      for(int j = 0;j<sizeof(FArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=FArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(FArray)/sizeof(int);
-      break;
-      }
-
-      case 'G':
-      {
-      int GArray[] = {510 , 288 , 288 , 288 , 256 , 120 , 132 , 258 , 274 , 274 , 156};
-      for(int j = 0;j<sizeof(GArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=GArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(GArray)/sizeof(int);
-      break;
-      }
-
-      case 'H':
-      {
-      int HArray[] = {510 , 32 , 32 , 32 , 32 , 510};
-      for(int j = 0;j<sizeof(HArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=HArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(HArray)/sizeof(int);
-      break;
-      }
-
-      case 'I':
-      {
-      int IArray[] = {258 , 510 , 258};
-      for(int j = 0;j<sizeof(IArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=IArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(IArray)/sizeof(int);
-      break;
-      }
-      
-      case 'J':
-      {
-      int JArray[] = {2 , 258 , 258 , 508};
-      for(int j = 0;j<sizeof(JArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=JArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(JArray)/sizeof(int);
-      break;
-      }
-
-      case 'K':
-      {
-      int KArray[] = {510 , 32 , 32 , 80 , 398};
-      for(int j = 0;j<sizeof(KArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=KArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(KArray)/sizeof(int);
-      break;
-      }
-
-      case 'L':
-      {
-      int LArray[] = {510 , 2 , 2 , 2 , 2};
-      for(int j = 0;j<sizeof(LArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=LArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(LArray)/sizeof(int);
-      break;
-      }
-
-      case 'M':
-      {
-      int MArray[] = {510 , 384 , 96 , 24 , 96 , 384 , 510};
-      for(int j = 0;j<sizeof(MArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=MArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(MArray)/sizeof(int);
-      break;
-      }
-
-      case 'N':
-      {
-      int NArray[] = {510 , 384 , 96 , 24 , 6 , 510};
-      for(int j = 0;j<sizeof(NArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=NArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(NArray)/sizeof(int);
-      break;
-      }
-
-      case 'O':
-      {
-      int OArray[] = {120 , 132 , 258 , 258 , 258 , 132 , 120};
-      for(int j = 0;j<sizeof(OArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=OArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(OArray)/sizeof(int);
-      break;
-      }
-
-      case 'P':
-      {
-      int PArray[] = {510 , 272 , 272 , 272 , 224};
-      for(int j = 0;j<sizeof(PArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=PArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(PArray)/sizeof(int);
-      break;
-      }
-
-      case 'Q':
-      {
-      int QArray[] = {120 , 132 , 258 , 258 , 266 , 132 , 122};
-      for(int j = 0;j<sizeof(QArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=QArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(QArray)/sizeof(int);
-      break;
-      }
-
-      case 'R':
-      {
-      int RArray[] = {510 , 272 , 272 , 280 , 228 , 2};
-      for(int j = 0;j<sizeof(RArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=RArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(RArray)/sizeof(int);
-      break;
-      }
-
-      case 'S':
-      {
-      int SArray[] = {196 , 290 , 290 , 274 , 274 , 140};
-      for(int j = 0;j<sizeof(SArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=SArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(SArray)/sizeof(int);
-      break;
-      }
-
-      case 'T':
-      {
-      int TArray[] = {256 , 256 , 510 , 256 , 256};
-      for(int j = 0;j<sizeof(TArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=TArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(TArray)/sizeof(int);
-      break;
-      }
-      
-      case 'U':
-      {
-      int UArray[] = {508 , 2 , 2 , 2 , 2 , 508};
-      for(int j = 0;j<sizeof(UArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=UArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(UArray)/sizeof(int);
-      break;
-      }
-
-      case 'V':
-      {
-      int VArray[] = {448 , 56 , 6 , 6 , 56 , 448};
-      for(int j = 0;j<sizeof(VArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=VArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(VArray)/sizeof(int);
-      break;
-      }
-
-      case 'W':
-      {
-      int WArray[] = {384 , 120 , 6 , 120 , 384 , 120 , 6 , 120 , 384};
-      for(int j = 0;j<sizeof(WArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=WArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(WArray)/sizeof(int);
-      break;
-      }
-
-      case 'X':
-      {
-      int XArray[] = {390 , 72 , 48 , 48 , 72 , 390};
-      for(int j = 0;j<sizeof(XArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=XArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(XArray)/sizeof(int);
-      break;
-      }
-
-      case 'Y':
-      {
-      int YArray[] = {512 , 256 , 128 , 126 , 128 , 256 , 512};
-      for(int j = 0;j<sizeof(YArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=YArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(YArray)/sizeof(int);
-      break;
-      }
-
-      case 'Z':
-      {
-      int ZArray[] = {518 , 522 , 530 , 546 , 578 , 642 , 770};
-      for(int j = 0;j<sizeof(ZArray)/sizeof(int);j++){
-        povArray[j+arrayOffset]=ZArray[j];  
-      }
-      arrayOffset = arrayOffset+sizeof(ZArray)/sizeof(int);
-      break;
-      }
-
-      
-      } /////////////////////////////////// fin du switch lettre
-
-
-  } // fin du for 
-
-// Serial.println("arrayOffset : ");
-// Serial.println(arrayOffset);
-
-/*    for(int k=0;k<sizeof(povArray)/sizeof(int);k++){  // sizeof donne le nombre de valeurs * la taille du type de données contenue
-        Serial.println(k);
-        Serial.print("povArray : ");
-        Serial.println(povArray[k]); 
-        }
-*/
-  
-}  //// fin de la fonction 'nouveauArray()'
-
-
-
-///////////
 
 void loop(void)
-{
-  ////////////// Sin palabra? Abrir servidor, por el momento el se inciendia al reset ///////////
+  {
+  /// Sin palabra? Abrir servidor, por el momento el se inciendio al reset ///
    if(palabra == false){
-
-  //////////  
-
-////vuint32_t color = 0xCC3300; // naranja
-
-uint32_t color = 0x991100; // rouge pas trop clair
-    //////////  
- //////// uint32_t color = 0xFFFFFF; // test blanc
-  
 
   /*for(int i = 0;i<=12;i++){
 
@@ -534,10 +236,7 @@ uint32_t color = 0x991100; // rouge pas trop clair
         strip.show();
         delay(1);
     }
-
-
     */
-
     
  ///////////// a-t-on une requête de connexion ? /////////////
  ///////////// doit être accéléré parce que le serveur n'est pas disponible assez longtemps
@@ -564,10 +263,12 @@ strip.setPixelColor(6, bitRead(povArray[k], 6)*color);
 strip.setPixelColor(7, bitRead(povArray[k], 7)*color); 
 strip.setPixelColor(8, bitRead(povArray[k], 8)*color); 
 strip.setPixelColor(9, bitRead(povArray[k], 9)*color); 
+strip.setPixelColor(10, bitRead(povArray[k], 10)*color); 
+strip.setPixelColor(11, bitRead(povArray[k], 11)*color); 
   // Serial.println(k);
   strip.show();   
   delay(5);// Refresh strip
-  //delayMicroseconds(1300);    // semble ne plus fonctionner
+  //delayMicroseconds(1300);    // Microseconds ne semble plus fonctionner
 
 }                 
  povDoIt = false; // reset 
@@ -593,8 +294,12 @@ strip.setPixelColor(4, bitRead(povArray[k], 4)*color);
 strip.setPixelColor(5, bitRead(povArray[k], 5)*color); 
 strip.setPixelColor(6, bitRead(povArray[k], 6)*color); 
 strip.setPixelColor(7, bitRead(povArray[k], 7)*color); 
-strip.setPixelColor(8, bitRead(povArray[k], 8)*color); 
-  // Serial.println(k);
+strip.setPixelColor(8, bitRead(povArray[k], 8)*color);
+strip.setPixelColor(9, bitRead(povArray[k], 9)*color); 
+strip.setPixelColor(10, bitRead(povArray[k], 10)*color);
+strip.setPixelColor(11, bitRead(povArray[k], 11)*color); 
+
+// Serial.println(k);
   strip.show();   
   delay(5);// Refresh strip
   //delayMicroseconds(1300);    // semble ne plus fonctionner
@@ -603,9 +308,6 @@ strip.setPixelColor(8, bitRead(povArray[k], 8)*color);
 
  /// Serial.println(nouveauMot);
 }
-
-
-
 
 
 } // fin du loop
