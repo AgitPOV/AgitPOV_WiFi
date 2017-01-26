@@ -3512,7 +3512,8 @@ Source: www.mpe-connector.de / garry_shortform_2012.pdf</description>
 <wire x1="35.56" y1="27.94" x2="35.56" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="27.94" y1="27.94" x2="35.56" y2="27.94" width="0.1524" layer="91"/>
 <wire x1="60.96" y1="33.02" x2="60.96" y2="40.64" width="0.1524" layer="91"/>
-<wire x1="78.74" y1="30.48" x2="129.54" y2="30.48" width="0.1524" layer="91"/>
+<wire x1="78.74" y1="30.48" x2="109.22" y2="30.48" width="0.1524" layer="91"/>
+<wire x1="109.22" y1="30.48" x2="129.54" y2="30.48" width="0.1524" layer="91"/>
 <wire x1="60.96" y1="40.64" x2="76.2" y2="40.64" width="0.1524" layer="91"/>
 <wire x1="76.2" y1="40.64" x2="78.74" y2="40.64" width="0.1524" layer="91"/>
 <wire x1="78.74" y1="40.64" x2="78.74" y2="30.48" width="0.1524" layer="91"/>
@@ -3535,6 +3536,11 @@ Source: www.mpe-connector.de / garry_shortform_2012.pdf</description>
 <pinref part="R3" gate="G$1" pin="1"/>
 <pinref part="C2" gate="G$1" pin="-"/>
 <wire x1="96.52" y1="35.56" x2="96.52" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="132.08" y1="45.72" x2="129.54" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="129.54" y1="45.72" x2="109.22" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="109.22" y1="45.72" x2="109.22" y2="30.48" width="0.1524" layer="91"/>
+<pinref part="ACCEL" gate="A" pin="RESERVED"/>
+<junction x="129.54" y="45.72"/>
 </segment>
 <segment>
 <pinref part="DEL13" gate="G$1" pin="GND"/>
