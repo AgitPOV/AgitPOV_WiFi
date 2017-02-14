@@ -1,5 +1,8 @@
 // Ajoute accept-charset="UTF-8" au formulaire pour les accents
+///// Use 'post' from a webpage to send a word from https://gist.github.com/bbx10/5a2885a700f30af75fc5
 
+
+///// page that will be sent over to the client
 const char INDEX_HTML[] =
 "<!DOCTYPE HTML>"
 "<html>"

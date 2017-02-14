@@ -182,8 +182,11 @@ int stereoArray[][7]={
 void nouveauArray(String leMot){
 
   static byte lettrebyte;
-  Serial.print("mot  : ");
+  Serial.print("nouveau mot  : ");
   Serial.println(leMot);
+
+  Serial.println(leMot.length()); // retourne 6 pour "1è1à"
+  Serial.println(sizeof(leMot));
  
   for(int i =0;i < leMot.length();i++){   /// merci // gracias // thank you Alex Keeling!!  
 
