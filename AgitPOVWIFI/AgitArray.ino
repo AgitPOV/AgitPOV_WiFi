@@ -1,4 +1,4 @@
-int stereoArray[][7]={
+int stereoArray[][7]={   /// merci // gracias // thank you Alex Keeling!!  
 {0,0,0,0,0,0,0}, //space U+0020
 {0,0,831,895,0,0,0}, //!
 {0,0,3,0,3,0,0}, //"
@@ -107,9 +107,11 @@ int stereoArray[][7]={
 {0,4,2,2,1,1,0}, //´ U+00B4  //105
 {260,136,80,292,136,80,32}, //» U+00BB  
 {1792,3456,2284,2156,2048,3072,1024}, //¿ U+00BF
-{992,1009,73,74,74,1012,992}, //À
-{992,1012,74,74,73,1009,992}, //Á
-{992,1012,74,73,74,1012,992}, //Â  //110
+
+{992,1009,73,74,74,1012,992}, //À // 195 128
+{992,1012,74,74,73,1009,992}, //Á // 195 129
+//110
+{992,1012,74,73,74,1012,992}, //Â  
 {992,1010,73,73,74,1010,993}, //Ã
 {992,1008,74,72,72,1010,992}, //Ä
 {992,1008,74,77,77,1010,992}, //Å
@@ -167,6 +169,7 @@ int stereoArray[][7]={
 {496,1008,516,512,512,500,1008}, //ü  //165
 {2104,3192,1732,898,386,249,121}, //ý U+00FD
 {2104,3192,1730,896,384,250,120}, //ÿ U+00FF
+
 {40,510,1023,553,553,553,258}, //€ U+20AC euro   
 {768,400,144,256,528,784,384}, //⍨ U+2368 confused
 {1668,2396,2087,2055,2087,2396,1668}, //☃ U+2603 snowman    //170
@@ -180,100 +183,53 @@ int stereoArray[][7]={
 };
 
 void nouveauArray(String leMot){
+  
+    Serial.print("nouveau mot  : ");
+    Serial.println(leMot);
+    
+    povArray[arrayOffset]= 0; // Ajouter un espace au début, revoir sur la roue
+    // arrayOffset++; 
 
-  static byte lettrebyte;
-  Serial.print("nouveau mot  : ");
-  Serial.println(leMot);
-
-  Serial.println(leMot.length()); // retourne 6 pour "1è1à"
-  Serial.println(sizeof(leMot));
+    while (iByte < leMot.length()){ 
+      
+      Serial.print("Valeur de iByte :"); 
+      Serial.println(iByte); 
+      byte lettreByte = byte(leMot.charAt(iByte)); // Isole les lettres une par une, convertir en byte pour vérifier le ASCII
  
-  for(int i =0;i < leMot.length();i++){   /// merci // gracias // thank you Alex Keeling!!  
-
-    povArray[arrayOffset]= 0; // ajouter un espace au début, revoir sur la roue
-    arrayOffset++; 
-
-    lettrebyte = byte (leMot.charAt(i)); // isole les lettres une par une, convertir en byte pour vérifier le ASCII
+    if(lettreByte <= 127){ // Condition exécutée si on a du ASCII 'normal', par exemple 'm' = 109 en valeur ASCII
+      Serial.print("On a du ASCII! :"); 
+      Serial.println(lettreByte); 
+      indexArr = lettreByte-32;  // Cherche l'index du tableau stereoArray
+      construireArray(indexArr);
+      iByte++;
+      arrayOffset++;
+      }
+   
+    else if(lettreByte == 195){ // Filtre pour un char à deux bytes
     
-    Serial.print("lettrebyte : ");
-    Serial.println(lettrebyte);
-    
-    if(lettrebyte < 128){  //  condition exécutée si on a du ASCII 'normal', par exemple 'm' = 109 en valeur ASCII
-      indexArr = lettrebyte-32;  // cherche l'index du tableau stereoArray
-    } 
-    else if(0x00A1 <= lettrebyte && lettrebyte <= 0x00A9){  // (entre 161-169)
-      indexArr = lettrebyte-66;
-    }  
-    else if (0x00AB == lettrebyte){ 
-      indexArr = lettrebyte - 67; // (0xAB - 104) (171 - Casi...revoir la logique d'Alex Keeling)
-    }
-    else if (0x00B4 == lettrebyte){ 
-      indexArr = lettrebyte - 75; // (0xB4 - 105)
-    }
-    else if (0x00BB == lettrebyte){ 
-      indexArr = lettrebyte - 81; // (0xBB - 106)
-    }
-    else if (0x00BF <= lettrebyte && lettrebyte <= 0x00DD){ // (entre 191 et 221)
-      indexArr = lettrebyte - 84; // (0xBF - 107)
-    }
-    else if (0x00E0 <= lettrebyte && lettrebyte <= 0x00EF){ // (entre 224 et 239)
-      indexArr = lettrebyte - 86; // (0xE0 - 86)  
-    }
-    else if (0x00F1 <= lettrebyte && lettrebyte <= 0x00FD){ // (entre 241 et 253)
-      indexArr = lettrebyte - 87; // (0xF1 - 87 = 154) (241 -87 = 154)
-    }
-    else if (0x00FF == lettrebyte){ 
-      indexArr = lettrebyte - 88; // (0xFF - 88 = 167) (255 - 88 = 167)
-    }
-      else {
-      switch (lettrebyte) {
-      case L'€': 
-        indexArr = 168; 
-        break;
-      case L'⍨': 
-        indexArr = 169; 
-        break;
-      case L'☃': 
-        indexArr = 170; 
-        break;
-      case L'☠': 
-        indexArr = 171; 
-        break;
-      case L'☹': 
-        indexArr = 172; 
-        break;
-      case L'☺': 
-        indexArr = 173; 
-        break;
-      case L'☻': 
-        indexArr = 174; 
-        break;
-      case L'♡': 
-        indexArr = 175; 
-        break;
-      case L'♥': 
-        indexArr = 176; 
-        break;
-      case L'〠': 
-        indexArr = 177; 
-        break;  
-      /* 
-        default : 
-        a = 0; 
-        break;
-        */
-            }  // fin du switch
-      } // fin du else
+      byte maByte = byte(leMot.charAt(iByte+1));
+      Serial.print("Extended play :");
+      Serial.println(maByte);
+      indexArr = maByte-22;  // Cherche l'index du tableau stereoArray
+      construireArray(indexArr);
+      iByte=iByte+2;
+      arrayOffset++;
+      }
 
-   construireArray(indexArr);
+    delay(1000);
     }
-  }
-
+    iByte = 0;  // reset iByte
+     
+   } // fin de la fonction nouveauArray() /////////////////////////////////
+  
+ 
 void construireArray(int indexArray){
-     Serial.print("indexArray : ");
+          
+          Serial.print("indexArray : ");
           Serial.println(indexArray);
-  for(int j=0;j<sizeof(stereoArray[indexArray])/sizeof(int);j++){
-          povArray[j+arrayOffset]=  {stereoArray[indexArray][j]}; // attribue la première valeur du tableau à la position indexArr
+  
+    for(int j=0;j<sizeof(stereoArray[indexArray])/sizeof(int);j++){
+          povArray[j+arrayOffset]=  {stereoArray[indexArray][j]}; // Attribue la première valeur du tableau à la position indexArr
           int valeur = stereoArray[indexArray][j];  
           // lettre = leMot.charAt(i);
           Serial.print("valeur : ");
@@ -282,6 +238,5 @@ void construireArray(int indexArray){
       
       arrayOffset = arrayOffset+sizeof(stereoArray[indexArray])/sizeof(int);
 
-  
   }
 
