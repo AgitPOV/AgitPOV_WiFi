@@ -215,14 +215,17 @@ void nouveauArray(String leMot){
       iByte=iByte+2;
       arrayOffset++;
       }
-
-    delay(1000);
+      
+    else{
+      indexArr = 14;  // Si nous n'avons pas de correspondance, mettre un '.' 
+      construireArray(indexArr);
+      }
     }
+  
     iByte = 0;  // reset iByte
      
-   } // fin de la fonction nouveauArray() /////////////////////////////////
+   } // fin de la fonction nouveauArray() 
   
- 
 void construireArray(int indexArray){
           
           Serial.print("indexArray : ");
