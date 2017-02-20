@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.05" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.0005" altunitdist="inch" altunit="mm"/>
+<grid distance="1.96850394" unitdist="mil" unit="mil" style="lines" multiple="1" display="yes" altdistance="0.0005" altunitdist="inch" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="yes"/>
@@ -12710,7 +12710,7 @@
 <text x="6.91268125" y="49.2671625" size="0.8128" layer="26" rot="MR0">D3</text>
 <text x="24.05408125" y="46.6369625" size="0.8128" layer="26" rot="MR0">D5</text>
 <text x="23.95408125" y="49.0369625" size="0.8128" layer="26" rot="MR0">D6</text>
-<text x="12.73028125" y="62.0035625" size="0.8128" layer="26" rot="MR0">D4</text>
+<text x="12.73028125" y="62.0035625" size="0.8128" layer="26" rot="MR0">D7</text>
 <text x="19.48888125" y="62.0035625" size="0.8128" layer="26" rot="MR0">+3.3V</text>
 <text x="16.01608125" y="61.9257625" size="0.8128" layer="26" rot="MR0">GND</text>
 <text x="6.99048125" y="51.8433625" size="0.8128" layer="26" rot="MR0">D4</text>
@@ -31297,6 +31297,8 @@
 <wire x1="12.4206" y1="23.8506" x2="12.4206" y2="23.9776" width="0.254" layer="21"/>
 <wire x1="12.4206" y1="23.9776" x2="12.3952" y2="23.9776" width="0.254" layer="21"/>
 <wire x1="12.3952" y1="23.9776" x2="12.3952" y2="24.511" width="0.254" layer="21"/>
+<text x="24.02228125" y="54.4139625" size="0.8128" layer="26" rot="MR0">D8</text>
+<text x="24.02228125" y="51.6639625" size="0.8128" layer="26" rot="MR0">D7</text>
 </plain>
 <libraries>
 <library name="SparkFun-Connectors">
@@ -31878,10 +31880,10 @@ design rules under a new name.</description>
 <attribute name="MPN" value="MMA7660FCT" x="9.65408125" y="44.2369625" size="1.27" layer="27" rot="R270" display="off"/>
 <attribute name="SUPPLIER" value="FREESCALE SEMICONDUCTOR" x="9.65408125" y="44.2369625" size="1.27" layer="27" rot="R270" display="off"/>
 <attribute name="OC_FARNELL" value="-" x="9.65408125" y="44.2369625" size="1.27" layer="27" rot="R270" display="off"/>
-<attribute name="NAME" x="6.26628125" y="45.6105625" size="1.016" layer="25" ratio="10" rot="SR270"/>
+<attribute name="NAME" x="6.81628125" y="45.7105625" size="0.8128" layer="25" ratio="10" rot="SR270"/>
 </element>
 <element name="R1" library="SparkFun-Resistors" package="1206" value="4.7k" x="9.55408125" y="40.3529625" smashed="yes">
-<attribute name="VALUE" x="5.43008125" y="41.2499625" size="0.8128" layer="27" rot="SR270"/>
+<attribute name="VALUE" x="5.43008125" y="40.6499625" size="0.8128" layer="27" rot="SR270"/>
 </element>
 <element name="R2" library="SparkFun-Resistors" package="1206" value="4.7k" x="9.55408125" y="37.0529625" smashed="yes">
 <attribute name="VALUE" x="5.43008125" y="37.9499625" size="0.8128" layer="27" rot="SR270"/>
@@ -31913,6 +31915,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="12.4968" y="30.5402" size="0.8128" layer="25"/>
 <attribute name="VALUE" x="5.4214" y="31.7484" size="0.8128" layer="27" rot="SR270"/>
 </element>
+<element name="R4" library="SparkFun-Resistors" package="1206" value="10k" x="21.45" y="62.7" rot="R270"/>
 </elements>
 <signals>
 <signal name="GND">
@@ -32087,6 +32090,8 @@ design rules under a new name.</description>
 <wire x1="12.6" y1="50.75" x2="17.25408125" y2="60.1369625" width="0.254" layer="1" curve="-52.744681"/>
 <wire x1="12.6" y1="41.99888125" x2="10.16208125" y2="41.99888125" width="0.254" layer="1"/>
 <wire x1="10.16208125" y1="41.99888125" x2="10.16208125" y2="42.9161625" width="0.254" layer="1"/>
+<contactref element="R4" pad="2"/>
+<wire x1="17.25408125" y1="60.1369625" x2="21.45" y2="61.3" width="0.254" layer="1"/>
 </signal>
 <signal name="N$6">
 </signal>
@@ -32721,13 +32726,7 @@ design rules under a new name.</description>
 </signal>
 <signal name="N$66">
 </signal>
-<signal name="N$1">
-<contactref element="HALL" pad="3"/>
-<contactref element="WEMOS2" pad="3"/>
-<wire x1="12.17408125" y1="60.1369625" x2="3.94208125" y2="52.2049625" width="0.254" layer="1" curve="-90"/>
-<wire x1="3.94208125" y1="52.2049625" x2="3.44408125" y2="52.2049625" width="0.254" layer="1"/>
-</signal>
-<signal name="N$5">
+<signal name="SCL">
 <contactref element="WEMOS2" pad="6"/>
 <contactref element="ACCEL" pad="6"/>
 <contactref element="R2" pad="1"/>
@@ -32738,7 +32737,7 @@ design rules under a new name.</description>
 <wire x1="5.223" y1="41.0798" x2="5.223" y2="38.48404375" width="0.3048" layer="1"/>
 <wire x1="5.223" y1="38.48404375" x2="8.15408125" y2="37.0529625" width="0.3048" layer="1" curve="90"/>
 </signal>
-<signal name="N$65">
+<signal name="SDA">
 <contactref element="ACCEL" pad="7"/>
 <contactref element="WEMOS2" pad="5"/>
 <contactref element="R1" pad="1"/>
@@ -32750,11 +32749,20 @@ design rules under a new name.</description>
 <wire x1="6.5" y1="41.1" x2="6.5" y2="44.06904375" width="0.254" layer="16"/>
 <wire x1="6.5" y1="44.06904375" x2="3.44408125" y2="47.1249625" width="0.254" layer="16" curve="90"/>
 </signal>
-<signal name="N$67">
-<contactref element="WEMOS2" pad="4"/>
+<signal name="INT">
 <contactref element="ACCEL" pad="5"/>
-<wire x1="8.66348125" y1="45.5577625" x2="4.55628125" y2="49.6649625" width="0.254" layer="1" curve="90"/>
-<wire x1="4.55628125" y1="49.6649625" x2="3.44408125" y2="49.6649625" width="0.254" layer="1"/>
+<contactref element="HALL" pad="3"/>
+<contactref element="R4" pad="1"/>
+<wire x1="29.4" y1="56.85" x2="21.45" y2="64.1" width="0.254" layer="1" curve="103.37383"/>
+<wire x1="21.45" y1="64.1" x2="16.13711875" y2="64.1" width="0.254" layer="1"/>
+<wire x1="16.13711875" y1="64.1" x2="12.17408125" y2="60.1369625" width="0.254" layer="1" curve="90"/>
+<wire x1="8.66348125" y1="45.5577625" x2="8.6422375" y2="45.5577625" width="0.254" layer="1"/>
+<wire x1="8.6422375" y1="45.5577625" x2="7.1" y2="47.1" width="0.254" layer="1" curve="-90"/>
+<wire x1="7.1" y1="47.1" x2="7.1" y2="55.06288125" width="0.254" layer="1"/>
+<wire x1="7.1" y1="55.06288125" x2="12.17408125" y2="60.1369625" width="0.254" layer="1" curve="-90"/>
+<contactref element="WEMOS1" pad="6"/>
+<wire x1="29.4" y1="56.85" x2="29.4" y2="55.30088125" width="0.254" layer="1"/>
+<wire x1="29.4" y1="55.30088125" x2="26.30408125" y2="52.2049625" width="0.254" layer="1" curve="-90"/>
 </signal>
 <signal name="PULLDOWN">
 <contactref element="PUSHBUTTON" pad="3"/>
@@ -32781,6 +32789,9 @@ design rules under a new name.</description>
 <wire x1="15.95408125" y1="14.1369625" x2="13.65408125" y2="11.8369625" width="0.6096" layer="16" curve="-90"/>
 <wire x1="13.65408125" y1="11.8369625" x2="6.39828125" y2="11.8369625" width="0.6096" layer="16"/>
 <wire x1="6.39828125" y1="11.8369625" x2="2.40488125" y2="7.8435625" width="0.6096" layer="16" curve="90"/>
+</signal>
+<signal name="N$1">
+<contactref element="WEMOS1" pad="7"/>
 </signal>
 </signals>
 <errors>
