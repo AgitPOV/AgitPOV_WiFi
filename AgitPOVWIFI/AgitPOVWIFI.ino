@@ -46,7 +46,7 @@ byte bPosition = 0;               //
 ////////////////////////////////////
 
 ///////////////// HALL SENSOR //////
-#define HALL_PIN D3               //
+#define HALL_PIN D4               //
 volatile boolean povDoIt = false; //
 ////////////////////////////////////
 
@@ -75,9 +75,9 @@ void setup(void){
   strip.show();  // Turn all LEDs off ASAP
   
   ////////////////////// initialize HALL with interrupt //
-  // pinMode(HALL_PIN, INPUT_PULLUP); // D3 and D4 have an internal pullup 10k resistor
-  // attachInterrupt(HALL_PIN, hallInterrupt, FALLING);
-    
+  pinMode(HALL_PIN, INPUT_PULLUP); // D3 and D4 have an internal pullup 10k resistor
+  attachInterrupt(HALL_PIN, hallInterrupt, FALLING);
+   
   } ///// fin du setup
 
 void loop(void){
