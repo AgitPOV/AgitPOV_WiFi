@@ -3418,7 +3418,6 @@ Source: www.mpe-connector.de / garry_shortform_2012.pdf</description>
 <part name="JP-GNDE" library="SparkFun-Connectors" deviceset="M01" device="PTH" value="-"/>
 <part name="R3" library="SparkFun-Resistors" deviceset="RESISTOR" device="1206" value="10k"/>
 <part name="C2" library="SparkFun-Capacitors" deviceset="10UF-16V-10%(TANT)" device="" value="0.1uF"/>
-<part name="R4" library="SparkFun-Resistors" deviceset="RESISTOR" device="1206" value="10k"/>
 </parts>
 <sheets>
 <sheet>
@@ -3474,7 +3473,6 @@ Source: www.mpe-connector.de / garry_shortform_2012.pdf</description>
 <instance part="JP-GNDE" gate="G$1" x="78.74" y="10.16" rot="R180"/>
 <instance part="R3" gate="G$1" x="25.4" y="60.96" rot="R90"/>
 <instance part="C2" gate="G$1" x="96.52" y="40.64"/>
-<instance part="R4" gate="G$1" x="76.2" y="60.96" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -3603,7 +3601,6 @@ Source: www.mpe-connector.de / garry_shortform_2012.pdf</description>
 <wire x1="96.52" y1="43.18" x2="96.52" y2="53.34" width="0.1524" layer="91"/>
 <pinref part="C2" gate="G$1" pin="+"/>
 <wire x1="63.5" y1="60.96" x2="71.12" y2="60.96" width="0.1524" layer="91"/>
-<pinref part="R4" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="5V" class="0">
@@ -4017,27 +4014,6 @@ Source: www.mpe-connector.de / garry_shortform_2012.pdf</description>
 <junction x="167.64" y="50.8"/>
 </segment>
 </net>
-<net name="INT" class="0">
-<segment>
-<wire x1="165.1" y1="53.34" x2="172.72" y2="53.34" width="0.1524" layer="91"/>
-<pinref part="ACCEL" gate="A" pin="~INT"/>
-<wire x1="38.1" y1="63.5" x2="58.42" y2="63.5" width="0.1524" layer="91"/>
-<wire x1="58.42" y1="63.5" x2="91.44" y2="63.5" width="0.1524" layer="91"/>
-<wire x1="91.44" y1="63.5" x2="172.72" y2="63.5" width="0.1524" layer="91"/>
-<wire x1="172.72" y1="63.5" x2="172.72" y2="53.34" width="0.1524" layer="91"/>
-<pinref part="HALL" gate="G$1" pin="3"/>
-<wire x1="63.5" y1="30.48" x2="66.04" y2="30.48" width="0.1524" layer="91"/>
-<wire x1="63.5" y1="30.48" x2="58.42" y2="30.48" width="0.1524" layer="91"/>
-<wire x1="58.42" y1="30.48" x2="58.42" y2="63.5" width="0.1524" layer="91"/>
-<pinref part="R4" gate="G$1" pin="1"/>
-<wire x1="81.28" y1="60.96" x2="91.44" y2="60.96" width="0.1524" layer="91"/>
-<wire x1="91.44" y1="60.96" x2="91.44" y2="63.5" width="0.1524" layer="91"/>
-<wire x1="38.1" y1="63.5" x2="38.1" y2="58.42" width="0.1524" layer="91"/>
-<pinref part="WEMOS1" gate="G$1" pin="6"/>
-<wire x1="38.1" y1="58.42" x2="38.1" y2="55.88" width="0.1524" layer="91"/>
-<junction x="38.1" y="58.42"/>
-</segment>
-</net>
 <net name="PULLDOWN" class="0">
 <segment>
 <pinref part="PUSHBUTTON" gate="1" pin="P"/>
@@ -4066,6 +4042,25 @@ Source: www.mpe-connector.de / garry_shortform_2012.pdf</description>
 <segment>
 <pinref part="WEMOS1" gate="G$1" pin="7"/>
 <wire x1="35.56" y1="58.42" x2="35.56" y2="55.88" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$41" class="0">
+<segment>
+<pinref part="HALL" gate="G$1" pin="3"/>
+<wire x1="63.5" y1="30.48" x2="66.04" y2="30.48" width="0.1524" layer="91"/>
+<wire x1="63.5" y1="30.48" x2="38.1" y2="30.48" width="0.1524" layer="91"/>
+<wire x1="38.1" y1="40.64" x2="38.1" y2="35.56" width="0.1524" layer="91"/>
+<pinref part="WEMOS2" gate="G$1" pin="3"/>
+<wire x1="38.1" y1="35.56" x2="38.1" y2="30.48" width="0.1524" layer="91"/>
+<junction x="38.1" y="35.56"/>
+</segment>
+</net>
+<net name="N$65" class="0">
+<segment>
+<wire x1="38.1" y1="63.5" x2="38.1" y2="58.42" width="0.1524" layer="91"/>
+<pinref part="WEMOS1" gate="G$1" pin="6"/>
+<junction x="38.1" y="58.42"/>
+<wire x1="38.1" y1="58.42" x2="38.1" y2="55.88" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
