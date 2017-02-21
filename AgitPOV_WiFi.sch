@@ -3474,6 +3474,8 @@ http://cache.freescale.com/files/sensors/doc/data_sheet/MMA8452Q.pdf</descriptio
 <part name="C2" library="SparkFun-Capacitors" deviceset="10UF-16V-10%(TANT)" device="" value="0.1uF"/>
 <part name="U1" library="SparkFun-Sensors" deviceset="MMA8452Q" device=""/>
 <part name="C3" library="SparkFun-Capacitors" deviceset="10UF-16V-10%(TANT)" device="" value="4.7uF"/>
+<part name="INT1" library="SparkFun-Connectors" deviceset="M01" device="PTH"/>
+<part name="INT2" library="SparkFun-Connectors" deviceset="M01" device="PTH"/>
 </parts>
 <sheets>
 <sheet>
@@ -3530,6 +3532,8 @@ http://cache.freescale.com/files/sensors/doc/data_sheet/MMA8452Q.pdf</descriptio
 <instance part="C2" gate="G$1" x="101.6" y="40.64"/>
 <instance part="U1" gate="G$1" x="127" y="43.18"/>
 <instance part="C3" gate="G$1" x="81.28" y="40.64"/>
+<instance part="INT1" gate="G$1" x="170.18" y="40.64" rot="R180"/>
+<instance part="INT2" gate="G$1" x="170.18" y="50.8" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -4116,6 +4120,21 @@ http://cache.freescale.com/files/sensors/doc/data_sheet/MMA8452Q.pdf</descriptio
 <wire x1="114.3" y1="60.96" x2="144.78" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="152.4" y1="60.96" x2="144.78" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="91.44" y1="48.26" x2="91.44" y2="60.96" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$65" class="0">
+<segment>
+<pinref part="U1" gate="G$1" pin="INT1"/>
+<pinref part="INT1" gate="G$1" pin="1"/>
+<wire x1="139.7" y1="40.64" x2="162.56" y2="40.64" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$67" class="0">
+<segment>
+<pinref part="U1" gate="G$1" pin="INT2"/>
+<pinref part="INT2" gate="G$1" pin="1"/>
+<wire x1="139.7" y1="43.18" x2="162.56" y2="43.18" width="0.1524" layer="91"/>
+<wire x1="162.56" y1="43.18" x2="162.56" y2="50.8" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
