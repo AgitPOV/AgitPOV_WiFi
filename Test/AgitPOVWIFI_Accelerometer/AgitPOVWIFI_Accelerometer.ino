@@ -47,7 +47,7 @@ byte bPosition = 0;               //
 
 ///////////////// HALL SENSOR //////
 //#define HALL_PIN D4               //
-volatile boolean povDoIt = false; //
+// volatile boolean povDoIt = false; //
 ////////////////////////////////////
 
 
