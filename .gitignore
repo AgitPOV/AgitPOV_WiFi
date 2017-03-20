@@ -218,6 +218,7 @@ pip-log.txt
 
 eagleUp/AgitPOV_WiFi.eup
 
+
 *.b##
 
 AgitPOV_WiFi.b#1
@@ -243,3 +244,4 @@ AgitPOV_WiFi.sch
 AgitPOV_WiFi.sch
 
 AgitPOV_WiFi.brd
+
