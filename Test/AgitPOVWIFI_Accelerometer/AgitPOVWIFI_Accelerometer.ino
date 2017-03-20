@@ -47,7 +47,7 @@ byte bPosition = 0;               //
 
 ///////////////// HALL SENSOR //////
 //#define HALL_PIN D4               //
-// volatile boolean povDoIt = false; //
+volatile boolean povDoIt = false; //
 ////////////////////////////////////
 
 
@@ -57,6 +57,12 @@ byte bPosition = 0;               //
 
 MMA8452Q accel;
 float previousCy;
+const int nmbrLectures = 7;  // 10 semble fonctionner
+int lectures[nmbrLectures];      // the readings from the analog input
+int lectureIndex = 0;              // the index of the current reading
+float total = 0;                  // the running total
+float moyenne = 0;                // the average
+
 
 void setup(void){
 
@@ -78,7 +84,7 @@ void setup(void){
   // SPIFFS.format(); // Besoin une seule fois pour formatter le système de fichiers // Wait 30 secs
   // Serial.println("Spiffs formatted");
   listFiles();
-  eraseFiles(); 
+  // eraseFiles(); 
   lireFichier();
   
   strip.begin(); // DOTSTAR Initialize pins for output
@@ -136,14 +142,28 @@ void loop(void){
   if(palabra == true && nouveauMot == true){ // Affiche le mot à répétition après avoir obtenu le mot, terminé par le passage d'un aimant
     dotNouveauMot();
     }
-
+    
    if (accel.available()) {
-     accel.read();
-    Serial.println(accel.cy);
-     if ( (previousCy > 0 && accel.cy < 0 ) ||  (previousCy < 0 && accel.cy > 0 ) ) {
-      if ( abs(accel.cy-previousCy) < 1 ) povDoIt = true;
+    accel.read();
+    total = total - lectures[lectureIndex];  // subtract the last reading:
+    lectures[lectureIndex] = accel.cy;
+    total = total + lectures[lectureIndex];  // add the reading to the total:
+    lectureIndex = lectureIndex + 1; // advance to the next position in the array:
+    
+    if (lectureIndex >= nmbrLectures) {   // if we're at the end of the array...
+      lectureIndex = 0;  // ...wrap around to the beginning:
+      }
+
+    moyenne = total / nmbrLectures;
+    // Serial.println(accel.cy);
+    
+     if ( (previousCy == 0 && moyenne > 0 ) ) {
+        povDoIt = true;
+      //  if ( (previousCy > 0 && accel.cy < 0 ) ||  (previousCy < 0 && accel.cy > 0 ) ) {
+      //  if ( abs(accel.cy-previousCy) < 1 ) povDoIt = true; // 
+      //  if ( abs(accel.cy-previousCy) < 1 ) povDoIt = true; // 
      }
-    previousCy = accel.cy;
+    previousCy = moyenne;
    }
   
   if(palabra == true && povDoIt == true){  //Con palabra? Incendiaron los leds! 

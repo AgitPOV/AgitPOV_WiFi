@@ -45,7 +45,7 @@ MMA8452Q accel;
 
 int AgitAngle = 0;
 
-const int nmbrLectures = 10;  // 10 semble fonctionner
+const int nmbrLectures = 5;  // 10 semble fonctionner
 int lectures[nmbrLectures];      // the readings from the analog input
 int lectureIndex = 0;              // the index of the current reading
 float total = 0;                  // the running total
@@ -91,7 +91,7 @@ void loop()
     // calculer le laps de temps entre les deux points subséquents les plus hauts vitesseTour
     // 
     
-   /*
+   
     //printCalculatedAccels();
     //printAccels(); // Uncomment to print digital readings
     String data = "data ";
@@ -99,7 +99,8 @@ void loop()
     data+= " ";
     data+= String(accel.cy,3);
     data+= " ";
-    //data+= String(accel.cz,3);
+    data+= String(accel.cz,3);
+    data+= " ";
     data+= String(moyenne,3); // un moyenne de Y pour faire du lissage des données 
     
     // Calcul de l'angle...
@@ -114,7 +115,7 @@ void loop()
     Udp.beginPacket(remoteIP, remotePort);
     Udp.write(udpMessageBuffer);
     Udp.endPacket();
-    */
+    
 
      // accel.read() will update two sets of variables. 
     // * int's x, y, and z will store the signed 12-bit values 
@@ -217,15 +218,14 @@ void printCalculatedAccels()
     dotStop();
     
   for(byte i = 0;i<=12;i++){ /// UP!!
-      
-      for(byte j = 0;j<=120;j=j+50){
-      strip.setBrightness(j); 
+     
+      strip.setBrightness(200); 
       strip.setPixelColor(i, color); 
       strip.show(); 
       yield(); // donne un peu de temps au wifi
       delay(1);
       yield();
-      }
+   
       
     /*  for(int k = 120;k>=0;k=k-50){ /// Down
         strip.setBrightness(k); 

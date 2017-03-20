@@ -71,7 +71,7 @@ void dotDoIt(){
     strip.setPixelColor(i, bitRead(povArray[k],i%12)*color);
     }
   strip.show();   
-  delay(3);// Refresh strip //delayMicroseconds(1300); // Microseconds ne semble pas fonctionner avec le ESP8266
+  delay(2);// Refresh strip //delayMicroseconds(1300); // Microseconds ne semble pas fonctionner avec le ESP8266
   }                 
  povDoIt = false; // reset pour le prochain passage // est pe en train de doubler le nombre de passages d'aimant nécessaire
  nouveauMot = false;
