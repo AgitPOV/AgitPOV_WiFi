@@ -52,6 +52,16 @@ float total = 0;                  // the running total
 float moyenne = 0;                // the average
 float derniereValeur = 1;
 
+
+float cy;
+float cyLop;
+float cyLopSlow;
+
+float cyPrevious;
+
+float cyV;
+float cyVLop;
+
 void setup()
 {
 
@@ -77,6 +87,18 @@ void loop()
     // First, use accel.read() to read the new variables:
     accel.read();
 
+
+   cyV = cy - cyPrevious;
+   cyVLop = (cyV - cyVLop) * 0.1 + cyVLop;
+   cyPrevious = cy;
+
+   cy = accel.cy;
+   cyLop = (cy - cyLop) * 0.1 + cyLop;
+
+   cyLopSlow = (cy - cyLopSlow) * 0.01 + cyLopSlow;
+   
+   
+   /* Moving average
     total = total - lectures[lectureIndex];  // subtract the last reading:
     lectures[lectureIndex] = accel.cy;
     total = total + lectures[lectureIndex];  // add the reading to the total:
@@ -88,6 +110,7 @@ void loop()
 
     moyenne = total / nmbrLectures;
 
+*/
     // calculer le laps de temps entre les deux points subséquents les plus hauts vitesseTour
     // 
     
@@ -95,13 +118,15 @@ void loop()
     //printCalculatedAccels();
     //printAccels(); // Uncomment to print digital readings
     String data = "data ";
-    data+= String(accel.cx,3);
+    data+= String(cy,3);
     data+= " ";
-    data+= String(accel.cy,3);
+    data+= String(cyLop,3);
     data+= " ";
-    data+= String(accel.cz,3);
+    data+= String(cyLopSlow,3);
     data+= " ";
-    data+= String(moyenne,3); // un moyenne de Y pour faire du lissage des données 
+    data+= String(cyV,3); // un moyenne de Y pour faire du lissage des données 
+    data+= " ";
+    data+= String(cyVLop,3); // un moyenne de Y pour faire du lissage des données 
     
     // Calcul de l'angle...
     // AgitAngle = round(atan2 (accel.cx,accel.cy) * -180/3.14159265 ); // ne fonctionne pas avec le X au plancher (+ de '8G') 
