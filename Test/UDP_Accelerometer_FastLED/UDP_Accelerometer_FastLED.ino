@@ -74,7 +74,9 @@ float cyLopPrevious;
 
 float cyCentered;
 
-float threshold = 0.5;
+float thresholdUp = 0.5;
+float thresholdDown = 0;
+
 bool triggered = false;
 
 
@@ -108,12 +110,12 @@ void loop()
 
   updateAccelerometer();
 
-  if ( cyCentered > threshold ) {
+  if ( cyCentered >= thresholdUp  ) {
     if ( triggered == false ) {
       triggered = true;
       dotDoIt();
     }
-  } else {
+  } else if ( cyCentered <= thresholdDown) {
     triggered = false;
   }
 
