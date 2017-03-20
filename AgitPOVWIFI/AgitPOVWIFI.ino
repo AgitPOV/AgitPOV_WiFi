@@ -45,10 +45,7 @@ bool pitonState = 0;              // the current reading from the input pin
 byte bPosition = 0;               //
 ////////////////////////////////////
 
-///////////////// HALL SENSOR //////
-#define HALL_PIN D4               //
 volatile boolean povDoIt = false; //
-////////////////////////////////////
 
 void setup(void){
 
@@ -74,9 +71,6 @@ void setup(void){
   strip.begin(); // DOTSTAR Initialize pins for output
   strip.show();  // Turn all LEDs off ASAP
   
-  ////////////////////// initialize HALL with interrupt //
-  pinMode(HALL_PIN, INPUT_PULLUP); // D3 and D4 have an internal pullup 10k resistor
-  attachInterrupt(HALL_PIN, hallInterrupt, FALLING);
    
   } ///// fin du setup
 
@@ -132,7 +126,7 @@ void loop(void){
 
 } // fin du loop
 
-void hallInterrupt() { // pour l'aimant mais ça devra être changé pour l'accéléromètre
+void hallInterrupt() { // pour l' mais ça devra être changé pour l'accéléromètre
 
   povDoIt = true;
   /*// Restart
