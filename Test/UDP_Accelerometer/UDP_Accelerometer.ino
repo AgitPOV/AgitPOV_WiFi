@@ -58,9 +58,11 @@ float cyLop;
 float cyLopSlow;
 
 float cyPrevious;
+float cyLopPrevious;
 
 float cyV;
 float cyVLop;
+
 
 void setup()
 {
@@ -88,15 +90,20 @@ void loop()
     accel.read();
 
 
-    cyV = cy - cyPrevious;
-    cyVLop = (cyV - cyVLop) * 0.1 + cyVLop;
-    cyPrevious = cy;
+    
 
     cy = accel.cy;
     cyLop = (cy - cyLop) * 0.1 + cyLop;
+    
+    cyV = cyLop - cyLopPrevious;
+    cyVLop = (cyV - cyVLop) * 0.1 + cyVLop;
 
-    cyLopSlow = (cy - cyLopSlow) * 0.01 + cyLopSlow;
+    cyLopSlow = (cy - cyLopSlow) * 0.001 + cyLopSlow;
 
+
+
+    cyLopPrevious = cyLop;
+    cyPrevious = cy;
 
     /* Moving average
       total = total - lectures[lectureIndex];  // subtract the last reading:
