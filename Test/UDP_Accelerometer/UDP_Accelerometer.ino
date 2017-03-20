@@ -95,7 +95,7 @@ void loop()
     cy = accel.cy;
     cyLop = (cy - cyLop) * 0.1 + cyLop;
     
-    cyV = cyLop - cyLopPrevious;
+    cyV = cy - cyPrevious;
     cyVLop = (cyV - cyVLop) * 0.1 + cyVLop;
 
     cyLopSlow = (cy - cyLopSlow) * 0.001 + cyLopSlow;
