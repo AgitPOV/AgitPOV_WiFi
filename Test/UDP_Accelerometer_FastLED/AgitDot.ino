@@ -15,7 +15,8 @@ void dotBlank() { // éteint toutes les lumières
 
 void dotDoIt() {
   //Serial.println("un aimant");
-  for (int k = 0; k < sizeof(povArray) / sizeof(int); k++) { // la longueur du tableau qui contient le mot
+  int arraySize = sizeof(povArray) / sizeof(int);
+  for (int k = 0; k < arraySize; k++) { // la longueur du tableau qui contient le mot
     for (int i = 0; i < 23; i++) { // pour chaque DEL
       //strip.setPixelColor(i, bitRead(povArray[k], i % 12)*color);
       if ( bitRead(povArray[k], i % 12) ) {
@@ -24,7 +25,7 @@ void dotDoIt() {
         leds[i] = CRGB::Black; 
       }
     }
-    updateAccelerometer();
+    //updateAccelerometer();
     FastLED.show();
     //delay(2);// Refresh strip //delayMicroseconds(1300); // Microseconds ne semble pas fonctionner avec le ESP8266
     updateAccelerometer();

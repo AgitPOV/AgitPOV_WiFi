@@ -2,7 +2,7 @@
 #include <Chrono.h>
 #include <Math.h>
 
-//#define UDP_DEBUG
+#define UDP_DEBUG
 
 #ifdef UDP_DEBUG
 #include <ESP8266WiFi.h>
@@ -89,6 +89,8 @@ void setup()
 
   Udp.begin(localUdpPort);
   #endif UDP_DEBUG
+
+  
   //Serial.printf("Now listening at IP %s, UDP port %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
 
   accel.init(SCALE_8G, ODR_800);
@@ -125,7 +127,7 @@ void updateAccelerometer() {
 
     cy = accel.cy;
     cyLop = lop(cy, cyLop, 0.1); 
-
+  
     cyLopSlow = lop(cy, cyLopSlow, 0.01); 
 
     cyCentered = cyLop - cyLopSlow;
@@ -136,8 +138,8 @@ void updateAccelerometer() {
   #ifdef UDP_DEBUG
     String data = "data ";
     data += String(cy, 3);
-   // data += " ";
-    //data += String(cyLop, 3);
+    data += " ";
+    data += String(cyCentered, 3);
     //data += " ";
    // data += String(cyLopSlow, 3);
    // data += " ";

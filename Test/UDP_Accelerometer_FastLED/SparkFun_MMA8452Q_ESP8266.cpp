@@ -45,6 +45,7 @@ byte MMA8452Q::init(MMA8452Q_Scale fsr, MMA8452Q_ODR odr, int pinA, int pinB)
 	scale = fsr; // Haul fsr into our class variable, scale
 	
 	Wire.begin(pinA,pinB); // Initialize I2C
+	Wire.setClock(400000L);
 	
 	byte c = readRegister(WHO_AM_I);  // Read WHO_AM_I register
 	
