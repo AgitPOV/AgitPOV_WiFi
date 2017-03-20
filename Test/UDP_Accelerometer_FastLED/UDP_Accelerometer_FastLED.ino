@@ -1,7 +1,12 @@
-#include <ESP8266WiFi.h>
-#include <WiFiUdp.h>
+
 #include <Chrono.h>
 #include <Math.h>
+
+//#define UDP_DEBUG
+
+#ifdef UDP_DEBUG
+#include <ESP8266WiFi.h>
+#include <WiFiUdp.h>
 
 /*
   const char* ssid = "********";
@@ -17,18 +22,22 @@ unsigned int localUdpPort = 4210;  // local port to listen on
 char incomingPacket[255];  // buffer for incoming packets
 char  replyPacekt[] = "Hi there! Got the message :-)";  // a reply string to send back
 char udpMessageBuffer[64];
+#endif
 
-Chrono udpSendChrono;
+//int povArray[] = { 0 , 0 , 2040 , 2176 , 2176 , 2176 , 2040 , 0 , 2032 , 2056 , 2056 , 2120 , 1136 , 0 , 3064 , 0 , 2048 , 2048 , 4088 , 2048 , 2048 , 0 , 0 , 4088 , 2176 , 2176 , 2176 , 3968 , 0 , 2032 , 2056 , 2056 , 2056 , 2032 , 0 , 4064 , 16 , 8 , 16 , 4064 , 0 , 0 };
+int povArray[] = {252,510,771,771,771,510,252,0,512,516,518,1023,1023,512,512,0,774,899,705,609,561,543,526,0,385,785,561,569,621,967,387,0,30,31,16,16,1020,1022,16,0,399,783,521,521,521,1017,497,0,510,995,529,529,529,1011,486,0,3,897,961,97,49,31,15};
 
 
 /******************************************************************************/
 // DOTSTAR /////////////////////////////
-#include <Adafruit_DotStar.h>
-#include <SPI.h>    // pour les dotstars
+//#include <Adafruit_DotStar.h>
+//#include <SPI.h>    // pour les dotstars
+#include <FastLED.h>
 #define NUMPIXELS 24 // Number of LEDs in strip
 #define DATAPIN    D6
 #define CLOCKPIN   D5
-Adafruit_DotStar strip = Adafruit_DotStar(NUMPIXELS, DATAPIN, CLOCKPIN, DOTSTAR_BGR);
+CRGB leds[NUMPIXELS];
+//Adafruit_DotStar strip = Adafruit_DotStar(NUMPIXELS, DATAPIN, CLOCKPIN, DOTSTAR_BGR);
 // uint32_t color = 0x121212;  // couleur pour l'affichage d'un mot
 // uint32_t color = 0xCC3300; // naranja
 //uint32_t color = 0x991100; // rouge pas trop clair
@@ -72,18 +81,23 @@ bool triggered = false;
 void setup()
 {
 
-  Serial.begin(115200);
-
+  //Serial.begin(115200);
+#ifdef UDP_DEBUG
   WiFi.mode(WIFI_AP);
   WiFi.softAPConfig(myIP, myIP, IPAddress(255, 255, 255, 0));
   WiFi.softAP("UDP_Accelerometer");
 
   Udp.begin(localUdpPort);
-  Serial.printf("Now listening at IP %s, UDP port %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
+  #endif UDP_DEBUG
+  //Serial.printf("Now listening at IP %s, UDP port %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
 
   accel.init(SCALE_8G, ODR_800);
-  strip.begin(); // DOTSTAR Initialize pins for output
-  strip.show();  // Turn all LEDs off ASAP
+
+  FastLED.addLeds<APA102, DATAPIN, CLOCKPIN>(leds, NUMPIXELS);
+  leds[0] = CRGB::Red; 
+  FastLED.show();
+  //strip.begin(); // DOTSTAR Initialize pins for output
+  //strip.show();  // Turn all LEDs off ASAP
 }
 
 
@@ -95,7 +109,7 @@ void loop()
   if ( cyCentered > threshold ) {
     if ( triggered == false ) {
       triggered = true;
-      dotInit();
+      dotDoIt();
     }
   } else {
     triggered = false;
@@ -116,10 +130,10 @@ void updateAccelerometer() {
 
     cyCentered = cyLop - cyLopSlow;
 
-    cyLopPrevious = cyLop;
-    cyPrevious = cy;
+    //cyLopPrevious = cyLop;
+    //cyPrevious = cy;
 
-  
+  #ifdef UDP_DEBUG
     String data = "data ";
     data += String(cy, 3);
    // data += " ";
@@ -134,6 +148,8 @@ void updateAccelerometer() {
     Udp.beginPacket(remoteIP, remotePort);
     Udp.write(udpMessageBuffer);
     Udp.endPacket();
+    
+    #endif
   }
 
 }
@@ -146,42 +162,3 @@ float lop(float target, float current , float amount) {
 }
 
 
-
-void dotStop() { // éteint toutes les lumières
-
-  for (byte i = 0; i <= 23; i++) {
-    strip.setBrightness(0);
-    strip.setPixelColor(i, 0);
-    strip.show();
-  }
-}
-
-void dotInit() { // séquence de départ
-
-  dotStop();
-  strip.setBrightness(200);
-  
-  for (byte i = 0; i <= 12; i++) { /// UP!!
-
-    strip.setPixelColor(i, color);
-    
-    
-  
-
-
-    /*  for(int k = 120;k>=0;k=k-50){ /// Down
-        strip.setBrightness(k);
-        strip.setPixelColor(i, color);
-        strip.show();
-        yield(); // donne un peu de temps au wifi
-        delay(1);
-        yield();
-      }*/
-    
-
-  }
-  strip.show();
-  updateAccelerometer();
-  dotStop();
-
-} // fin dotInit
