@@ -217,6 +217,7 @@ pip-log.txt
 .mr.developer.cfg
 
 eagleUp/AgitPOV_WiFi.eup
+<<<<<<< HEAD
 
 *.b##
 
@@ -243,3 +244,5 @@ AgitPOV_WiFi.sch
 AgitPOV_WiFi.sch
 
 AgitPOV_WiFi.brd
+=======
+>>>>>>> parent of f504241... tests avec PD

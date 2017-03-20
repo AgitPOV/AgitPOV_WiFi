@@ -60,7 +60,7 @@ void dotNouveauMot(){
       strip.setPixelColor(i, bitRead(povArray[k],i%12)*color);
       }
     strip.show();   
-    //delay(3);// Refresh strip //delayMicroseconds(1300);    // semble ne plus fonctionner
+    delay(3);// Refresh strip //delayMicroseconds(1300);    // semble ne plus fonctionner
     }                 
 } // fin dotNouveauMot
 
