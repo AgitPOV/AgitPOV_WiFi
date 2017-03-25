@@ -1,5 +1,5 @@
 int stereoArray[][7]={   /// merci // gracias // thank you Alex Keeling!!  
-{0,0,0,0,0,0,0}, //space U+0020
+{0,0,0,0,0,0,0}, //space U+0020 // 0
 {0,0,831,895,0,0,0}, //!
 {0,0,3,0,3,0,0}, //"
 {144,1020,144,144,144,1020,144}, //#
@@ -167,8 +167,8 @@ int stereoArray[][7]={   /// merci // gracias // thank you Alex Keeling!!
 {496,1012,514,514,513,497,1008}, //ú
 {496,1012,514,513,514,500,1008}, //û
 {496,1008,516,512,512,500,1008}, //ü  //165
-{2104,3192,1732,898,386,249,121}, //ý U+00FD
-{2104,3192,1730,896,384,250,120}, //ÿ U+00FF
+{2104,3192,1732,898,386,249,121}, //ý U+00FD // 166 
+{2104,3192,1730,896,384,250,120}, //ÿ U+00FF // 167
 
 {40,510,1023,553,553,553,258}, //€ U+20AC euro   
 {768,400,144,256,528,784,384}, //⍨ U+2368 confused
@@ -205,12 +205,12 @@ void nouveauArray(String leMot){
       arrayOffset++;
       }
    
-    else if(lettreByte == 195){ // Filtre pour un char à deux bytes
+    else if(lettreByte == 195){ // Filtre pour un caractère (char) à deux bytes
     
       byte maByte = byte(leMot.charAt(iByte+1));
       Serial.print("Extended play :");
       Serial.println(maByte);
-      indexArr = maByte-22;  // Cherche l'index du tableau stereoArray
+      indexArr = maByte-23;  // Cherche l'index du tableau stereoArray
       construireArray(indexArr);
       iByte=iByte+2;
       arrayOffset++;
