@@ -40,6 +40,7 @@ int indexArr;
 
 bool palabra;  // pour la condition d'écriture par la page web ou non
 bool nouveauMot;
+bool povDoIt;
 //////// Pour la conversion du mot en entrée à son code pour les DELs
 
 /// ACCEL
@@ -92,10 +93,14 @@ void loop(void){
    
    if(palabra == false){ // Sin palabra? escuchar el servidor, por el momento el se inciendio al reset ///
    
-   if(nbrC<=0 && piton == false){
+   if(nbrC<=0){
     dotInit(); // séquence de départ, arrête lorsque qu'un client se connecte
     }
-   
+    else{
+      dotIndique();
+    }
+
+    
    client_status(); // Si nous avons un client, arrêter la séquence doInit()
    
    dnsServer.processNextRequest(); /// a-t-on une requête de connexion ? 

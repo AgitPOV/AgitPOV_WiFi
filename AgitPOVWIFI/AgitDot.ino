@@ -48,7 +48,8 @@
 void dotNouveauMot(){
   // Serial.println(nouveauMot); 
   for (int k=0;k<sizeof(povArray)/sizeof(int);k++){
-    for (int i=0;i<23;i++){
+   // for (int i=0;i<23;i++){
+    for (int i=23;i>0;i--){
       strip.setPixelColor(i, bitRead(povArray[k],i%12)*color);
       }
     strip.setBrightness(120);
