@@ -37,6 +37,7 @@ int indexArr;
 // int povArray[] = { 0 , 0 , 2040 , 2176 , 2176 , 2176 , 2040 , 0 , 2032 , 2056 , 2056 , 2120 , 1136 , 0 , 3064 , 0 , 2048 , 2048 , 4088 , 2048 , 2048 , 0 , 0 , 4088 , 2176 , 2176 , 2176 , 3968 , 0 , 2032 , 2056 , 2056 , 2056 , 2032 , 0 , 4064 , 16 , 8 , 16 , 4064 , 0 , 0 };
 bool palabra;  // pour la condition d'écriture par la page web ou non
 bool nouveauMot;
+bool povDoIt;
 //////// Pour la conversion du mot en entrée à son code pour les DELs
 
 void setup(void){
@@ -71,7 +72,7 @@ void loop(void){
    
    if(palabra == false){ // Sin palabra? escuchar el servidor, por el momento el se inciendio al reset ///
    
-   if(nbrC<=0 && piton == false){
+   if(nbrC<=0){
     dotInit(); // séquence de départ, arrête lorsque qu'un client se connecte
     }
    
@@ -90,15 +91,3 @@ void loop(void){
     }
 
 } // fin du loop
-
-void hallInterrupt() { // pour l'aimant mais ça devra être changé pour l'accéléromètre
-
-  povDoIt = true;
-  /*// Restart
-  _povArrayIndex = _povArraySize-1;
-  povInterval = max((millis() - povTimeStamp),2)-1;
-  povTimeStamp = millis() ;
-  povIntervalColumns = povInterval  * _povColumnWidth ; 
-  */
-}
-

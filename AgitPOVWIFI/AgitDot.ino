@@ -23,14 +23,6 @@
       yield();
       }
       
-    /*  for(int k = 120;k>=0;k=k-50){ /// Down
-        strip.setBrightness(k); 
-        strip.setPixelColor(i, color); 
-        strip.show(); 
-        yield(); // donne un peu de temps au wifi
-        delay(1);
-        yield();
-      }*/
      //  dotStop(); // Une seule LED allumée à la fois
 
     } 
@@ -54,20 +46,21 @@
       }
 
 void dotNouveauMot(){
-  // Serial.println(nouveauMot);
+  // Serial.println(nouveauMot); 
   for (int k=0;k<sizeof(povArray)/sizeof(int);k++){
     for (int i=0;i<23;i++){
       strip.setPixelColor(i, bitRead(povArray[k],i%12)*color);
       }
+    strip.setBrightness(120);
     strip.show();   
     delay(3);// Refresh strip //delayMicroseconds(1300);    // semble ne plus fonctionner
     }                 
 } // fin dotNouveauMot
 
 void dotDoIt(){
-  Serial.println("un aimant");
+ // Serial.println("un aimant");
   for (int k=0;k<sizeof(povArray)/sizeof(int);k++){  // la longueur du tableau qui contient le mot
-    for (int i=0;i<23;i++){ // pour chaque DEL
+    for (int i=0;i<23;i++){ // pour chaque DEL // change order
     strip.setPixelColor(i, bitRead(povArray[k],i%12)*color);
     }
   strip.show();   

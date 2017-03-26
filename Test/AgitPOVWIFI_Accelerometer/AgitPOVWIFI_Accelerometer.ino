@@ -42,18 +42,6 @@ bool palabra;  // pour la condition d'écriture par la page web ou non
 bool nouveauMot;
 //////// Pour la conversion du mot en entrée à son code pour les DELs
 
-/////////////Bouton ////////////////
-bool piton = 0;                   //
-bool pitonState = 0;              // the current reading from the input pin
-byte bPosition = 0;               //
-////////////////////////////////////
-
-///////////////// HALL SENSOR //////
-//#define HALL_PIN D4               //
-volatile boolean povDoIt = false; //
-////////////////////////////////////
-
-
 /// ACCEL
 //#include <Wire.h> // Must include Wire library for I2C
 #include "SparkFun_MMA8452Q_ESP8266.h"
@@ -92,13 +80,7 @@ void setup(void){
   
   strip.begin(); // DOTSTAR Initialize pins for output
   strip.show();  // Turn all LEDs off ASAP
-  
-  ////////////////////// initialize HALL with interrupt //
-  //pinMode(HALL_PIN, INPUT_PULLUP); // D3 and D4 have an internal pullup 10k resistor
-  //attachInterrupt(HALL_PIN, hallInterrupt, FALLING);
-
- //pinMode(D7, OUTPUT);
- //digitalWrite(D7,HIGH);
+ 
  accel.init(SCALE_8G);
  Serial.println("All good");
    
@@ -113,27 +95,6 @@ void loop(void){
    if(nbrC<=0 && piton == false){
     dotInit(); // séquence de départ, arrête lorsque qu'un client se connecte
     }
-
-   if(bPosition>=1){
-    //dotPosition(bPosition);
-    bPosition = bPosition % 13;  // utilise seulement 12 positions
-    dotIndique(bPosition-1); // patentage (le "-1") 
-    }
-
-   //Serial.println(digitalRead(D0));
-   
-   if(digitalRead(D0) != pitonState){  // seulement si le piton a changé
-     pitonState != pitonState; // toggle pitonState
-     
-    if(digitalRead(D0)){ // seulement si le bouton est à HIGH
-      piton = true;
-      Serial.print("le piton : ");
-      Serial.println(piton);
-      bPosition = bPosition+1;
-      Serial.print("bPosition : ");
-      Serial.println(bPosition);
-      } 
-   }
    
    client_status(); // Si nous avons un client, arrêter la séquence doInit()
    
@@ -173,22 +134,6 @@ void loop(void){
     dotDoIt();
     }
 
-    
-
-//if(palabra == true && bPosition > 0){  // pour entrer dans cette routine avec un mot dans le système de fichiers
-//  dotMot(bPosition);
-//  }
-
 } // fin du loop
 
-void hallInterrupt() { // pour l'aimant mais ça devra être changé pour l'accéléromètre
-
-  povDoIt = true;
-  /*// Restart
-  _povArrayIndex = _povArraySize-1;
-  povInterval = max((millis() - povTimeStamp),2)-1;
-  povTimeStamp = millis() ;
-  povIntervalColumns = povInterval  * _povColumnWidth ; 
-  */
-}
 

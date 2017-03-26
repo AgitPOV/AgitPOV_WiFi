@@ -24,7 +24,8 @@ void client_status() { /// This works, ty sohialsadiq!
   stat_info = wifi_softap_get_station_info();
   Serial.print("Nombre de clients = ");
   Serial.println(nbrC);
-  bPosition = 1;  // test pour donner une indication visuelle d'une connection
+  
+  // bPosition = 1;  // test pour donner une indication visuelle d'une connection
   yield();
   delay(50);
   yield();
