@@ -1,6 +1,6 @@
 /*
  * AgitPOV
- * 12-RGB LED POV for Arduino
+ * 24-RGB LED POV for Arduino
  *
  * (c) 2011-2017
  * Contributors over the years 

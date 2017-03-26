@@ -1,7 +1,3 @@
-//// TODO ////
-
-
-
 ////////////// AgitPOV /////////////
 
 #include "AgitPage.h"
@@ -43,17 +39,6 @@ bool palabra;  // pour la condition d'écriture par la page web ou non
 bool nouveauMot;
 //////// Pour la conversion du mot en entrée à son code pour les DELs
 
-/////////////Bouton ////////////////
-bool piton = 0;                   //
-bool pitonState = 0;              // the current reading from the input pin
-byte bPosition = 0;               //
-////////////////////////////////////
-
-///////////////// HALL SENSOR //////
-#define HALL_PIN D4               //
-volatile boolean povDoIt = false; //
-////////////////////////////////////
-
 void setup(void){
 
   Serial.begin(115200);
@@ -77,12 +62,8 @@ void setup(void){
   
   strip.begin(); // DOTSTAR Initialize pins for output
   strip.show();  // Turn all LEDs off ASAP
-  
-  ////////////////////// initialize HALL with interrupt //
-  pinMode(HALL_PIN, INPUT_PULLUP); // D3 and D4 have an internal pullup 10k resistor
-  attachInterrupt(HALL_PIN, hallInterrupt, FALLING);
    
-  } ///// fin du setup
+} ///// fin du setup
 
 void loop(void){
   
@@ -93,34 +74,12 @@ void loop(void){
    if(nbrC<=0 && piton == false){
     dotInit(); // séquence de départ, arrête lorsque qu'un client se connecte
     }
-
-   if(bPosition>=1){
-    //dotPosition(bPosition);
-    bPosition = bPosition % 13;  // utilise seulement 12 positions
-    dotIndique(bPosition-1); // patentage (le "-1") 
-    }
-
-   //Serial.println(digitalRead(D0));
-   
-   if(digitalRead(D0) != pitonState){  // seulement si le piton a changé
-     pitonState != pitonState; // toggle pitonState
-     
-    if(digitalRead(D0)){ // seulement si le bouton est à HIGH
-      piton = true;
-      Serial.print("le piton : ");
-      Serial.println(piton);
-      bPosition = bPosition+1;
-      Serial.print("bPosition : ");
-      Serial.println(bPosition);
-      } 
-   }
    
    client_status(); // Si nous avons un client, arrêter la séquence doInit()
    
    dnsServer.processNextRequest(); /// a-t-on une requête de connexion ? 
    server.handleClient();
   } /// fin de la condition 'palabra' == false
-
 
   if(palabra == true && nouveauMot == true){ // Affiche le mot à répétition après avoir obtenu le mot, terminé par le passage d'un aimant
     dotNouveauMot();
@@ -129,10 +88,6 @@ void loop(void){
   if(palabra == true && povDoIt == true){  //Con palabra? Incendiaron los leds! 
     dotDoIt();
     }
-
-//if(palabra == true && bPosition > 0){  // pour entrer dans cette routine avec un mot dans le système de fichiers
-//  dotMot(bPosition);
-//  }
 
 } // fin du loop
 
