@@ -11,25 +11,49 @@ void dotBlank() { // éteint toutes les lumières
 }
 
 
-
-
 void dotDoIt() {
   //Serial.println("un aimant");
   int arraySize = sizeof(povArray) / sizeof(int);
   for (int k = 0; k < arraySize; k++) { // la longueur du tableau qui contient le mot
-    for (int i = 0; i < 23; i++) { // pour chaque DEL
-      //strip.setPixelColor(i, bitRead(povArray[k], i % 12)*color);
-      if ( bitRead(povArray[k], i % 12) ) {
-        leds[i] = CRGB::White; 
+   
+    for (int i = 0; i <= 23; i++) { // pour chaque DEL // pour la premiére série :
+  
+      if ( i <=11 ) {
+             if ( bitRead(povArray[k], i % 12) ) {
+        
+        
+        // leds[i] = CRGB::White;
+        leds[i] = color;
+
+         
       } else {
         leds[i] = CRGB::Black; 
       }
+      
+      }
+
+      else {
+
+           if ( bitRead(povArray[arraySize-k], i % 12) ) { // bizarro world pour les DELs 23 à 12
+        
+        leds[35-i] = color; // countdown 23 -> 12
+           
+      } else {
+        leds[35-i] = CRGB::Black; 
+      }
+        
+      }
+      
+ 
     }
+    
     //updateAccelerometer();
     FastLED.show();
-    //delay(2);// Refresh strip //delayMicroseconds(1300); // Microseconds ne semble pas fonctionner avec le ESP8266
+    delay(1);// Refresh strip //delayMicroseconds(1300); // Microseconds ne semble pas fonctionner avec le ESP8266
     updateAccelerometer();
   }
+
+ 
   // povDoIt = false; // reset pour le prochain passage // est pe en train de doubler le nombre de passages d'aimant nécessaire
   // nouveauMot = false;
   dotBlank();

@@ -2,7 +2,7 @@
 #include <Chrono.h>
 #include <Math.h>
 
-#define UDP_DEBUG
+// #define UDP_DEBUG  // Comment to turn off WiFi + UDP
 
 #ifdef UDP_DEBUG
 #include <ESP8266WiFi.h>
@@ -25,23 +25,21 @@ char udpMessageBuffer[64];
 #endif
 
 //int povArray[] = { 0 , 0 , 2040 , 2176 , 2176 , 2176 , 2040 , 0 , 2032 , 2056 , 2056 , 2120 , 1136 , 0 , 3064 , 0 , 2048 , 2048 , 4088 , 2048 , 2048 , 0 , 0 , 4088 , 2176 , 2176 , 2176 , 3968 , 0 , 2032 , 2056 , 2056 , 2056 , 2032 , 0 , 4064 , 16 , 8 , 16 , 4064 , 0 , 0 };
-int povArray[] = {252,510,771,771,771,510,252,0,512,516,518,1023,1023,512,512,0,774,899,705,609,561,543,526,0,385,785,561,569,621,967,387,0,30,31,16,16,1020,1022,16,0,399,783,521,521,521,1017,497,0,510,995,529,529,529,1011,486,0,3,897,961,97,49,31,15};
+// int povArray[] = {252,510,771,771,771,510,252,0,512,516,518,1023,1023,512,512,0,774,899,705,609,561,543,526,0,385,785,561,569,621,967,387,0,30,31,16,16,1020,1022,16,0,399,783,521,521,521,1017,497,0,510,995,529,529,529,1011,486,0,3,897,961,97,49,31,15};
+int povArray[] = {1008,2040,3084,3084,3084,2040,1008,0,4,516,1540,4092,4092,4,4,0,1548,3100,2100,2148,2244,3972,1796,0,2072,2188,2244,2500,2916,3644,3096,0,1920,3968,128,128,1020,2044,128,0,3864,3852,2308,2308,2308,2556,2296,0,2040,3196,2180,2180,2180,3324,1656,0,3072,2076,2108,2144,2240,3968,3840};
 
 
 /******************************************************************************/
-// DOTSTAR /////////////////////////////
-//#include <Adafruit_DotStar.h>
-//#include <SPI.h>    // pour les dotstars
+// FastLED /////////
 #include <FastLED.h>
 #define NUMPIXELS 24 // Number of LEDs in strip
 #define DATAPIN    D6
 #define CLOCKPIN   D5
 CRGB leds[NUMPIXELS];
-//Adafruit_DotStar strip = Adafruit_DotStar(NUMPIXELS, DATAPIN, CLOCKPIN, DOTSTAR_BGR);
 // uint32_t color = 0x121212;  // couleur pour l'affichage d'un mot
-// uint32_t color = 0xCC3300; // naranja
+uint32_t color = 0xCC3300; // naranja
 //uint32_t color = 0x991100; // rouge pas trop clair
-uint32_t color = 0xFFFFFF; // test blanc
+// uint32_t color = 0xFFFFFF; // test blanc
 
 
 #include <Wire.h> // Must include Wire library for I2C
@@ -52,15 +50,7 @@ uint32_t color = 0xFFFFFF; // test blanc
 //  here on out.
 MMA8452Q accel;
 
-int AgitAngle = 0;
-
-const int nmbrLectures = 5;  // 10 semble fonctionner
-int lectures[nmbrLectures];      // the readings from the analog input
-int lectureIndex = 0;              // the index of the current reading
-float total = 0;                  // the running total
-float moyenne = 0;                // the average
-float derniereValeur = 1;
-
+// int AgitAngle = 0;
 
 float cy;
 float cyLop;
@@ -83,7 +73,7 @@ bool triggered = false;
 void setup()
 {
 
-  //Serial.begin(115200);
+  Serial.begin(115200);
 #ifdef UDP_DEBUG
   WiFi.mode(WIFI_AP);
   WiFi.softAPConfig(myIP, myIP, IPAddress(255, 255, 255, 0));
@@ -97,11 +87,10 @@ void setup()
 
   accel.init(SCALE_8G, ODR_800);
 
-  FastLED.addLeds<APA102, DATAPIN, CLOCKPIN>(leds, NUMPIXELS);
+  FastLED.addLeds<APA102, DATAPIN, CLOCKPIN, BGR>(leds, NUMPIXELS);
+  // FastLEDS.addLeds<WS2811,DATA_PIN, CLOCKPIN, BGR>(leds, NUMPIXELS);
   leds[0] = CRGB::Red; 
   FastLED.show();
-  //strip.begin(); // DOTSTAR Initialize pins for output
-  //strip.show();  // Turn all LEDs off ASAP
 }
 
 
@@ -145,7 +134,7 @@ void updateAccelerometer() {
     //data += " ";
    // data += String(cyLopSlow, 3);
    // data += " ";
-   // data += String(cyCentered, 3); // un moyenne de Y pour faire du lissage des données
+   // data += String(cyCentered, 3); // une moyenne de Y pour faire du lissage des données
    
     data.toCharArray(udpMessageBuffer, 32) ;
 
