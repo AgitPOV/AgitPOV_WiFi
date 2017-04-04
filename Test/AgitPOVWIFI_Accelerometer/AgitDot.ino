@@ -41,7 +41,7 @@
       }
     strip.setBrightness(200);
     strip.show();   
-    delsiay(3);// Refresh strip //delayMicroseconds(1300);    // semble ne plus fonctionner
+    delay(3);// Refresh strip //delayMicroseconds(1300);    // semble ne plus fonctionner
     }                 
  } // fin dotNouveauMot
 

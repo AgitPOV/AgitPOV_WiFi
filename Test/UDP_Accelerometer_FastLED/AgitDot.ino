@@ -12,7 +12,7 @@ void dotBlank() { // éteint toutes les lumières
 
 
 void dotDoIt() {
-  //Serial.println("un aimant");
+ // Serial.println("un aimant");
   int arraySize = sizeof(povArray) / sizeof(int);
   for (int k = 0; k < arraySize; k++) { // la longueur du tableau qui contient le mot
    
