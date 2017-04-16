@@ -17,7 +17,7 @@
  * under the License.
  */
 
-var monMot = "yesssir"; 
+var monMot = "testing"; 
 
 var app = {
     // Application Constructor
@@ -70,9 +70,10 @@ function envoi(unMot) {
   //   console.log(unMot);
   newInput1.value = unMot;
   theForm.appendChild(newInput1);
+    alert("le mot est : "+unMot);
   document.getElementById('hidden_form_container').appendChild(theForm);
   theForm.submit();
-  alert("le mot est : "+unMot);
+  
   }
 
 app.initialize();
