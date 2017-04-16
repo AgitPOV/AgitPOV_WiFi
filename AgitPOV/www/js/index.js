@@ -51,6 +51,8 @@ app.initialize();
     var monMot = "yesssir"; 
     
 function envoi(unMot) {
+    
+    alert(monMot);
   // from http://stackoverflow.com/questions/8638984/send-post-data-to-php-without-using-an-html-form
   var theForm, newInput1;
   theForm = document.createElement('form');
