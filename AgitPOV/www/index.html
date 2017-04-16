@@ -37,11 +37,15 @@
     </head>
     <body>
         <div class="app">
-            <h1>Apache Cordova</h1>
+            <h1>AgitPOV</h1>
             <div id="deviceready" class="blink">
                 <p class="event listening">Connecting to Device</p>
                 <p class="event received">Device is Ready</p>
             </div>
+            
+        <div id="hidden_form_container" style="display:none;"></div>
+        <input type="button" value="envoyer" onclick="envoi(monMot);">
+            
         </div>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
