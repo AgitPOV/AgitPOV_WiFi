@@ -41,7 +41,13 @@ var app = {
 
         console.log('Received Event: ' + id);
     }
+
+
     
+};
+
+app.initialize();
+
     var monMot = "yesssir"; 
     
 function envoi(unMot) {
@@ -61,9 +67,3 @@ function envoi(unMot) {
   theForm.submit();
   }
     
-</script>
-
-    
-};
-
-app.initialize();
