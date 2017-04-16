@@ -12700,7 +12700,7 @@
 <wire x1="27.35408125" y1="52.1369625" x2="24.15408125" y2="52.1369625" width="0.254" layer="22"/>
 <text x="4.7558375" y="17.38268125" size="0.8128" layer="26" rot="MR90">GND</text>
 <text x="2.0425625" y="17.35291875" size="0.8128" layer="26" rot="MR90">BATT+</text>
-<text x="28.1948375" y="22.35568125" size="0.8128" layer="26" rot="MR270">BATT+</text>
+<text x="27.50568125" y="22.4551625" size="0.8128" layer="26" rot="MR0">BATT+</text>
 <text x="4.6877625" y="50.52071875" size="0.8128" layer="26" rot="MR90">+5V</text>
 <text x="4.6647625" y="47.10011875" size="0.8128" layer="26" rot="MR90">GND</text>
 <text x="22.9639625" y="48.87771875" size="0.8128" layer="26" rot="MR90">+3.3V</text>
@@ -31273,7 +31273,7 @@
 <text x="13.8544" y="19.4534" size="0.8128" layer="26" rot="MR90">GND</text>
 <circle x="5" y="65.15" radius="3.090709375" width="0.4064" layer="20"/>
 <circle x="5.1" y="5.2" radius="3.090709375" width="0.4064" layer="20"/>
-<hole x="7.80408125" y="20.6869625" drill="3.2"/>
+<hole x="7.45408125" y="20.8369625" drill="3.2"/>
 <wire x1="24.8630375" y1="12.75408125" x2="12.8630375" y2="12.75408125" width="0.3048" layer="21"/>
 <wire x1="12.8630375" y1="12.75408125" x2="12.8630375" y2="3.55408125" width="0.3048" layer="21"/>
 <wire x1="24.8630375" y1="3.55408125" x2="24.8630375" y2="12.75408125" width="0.3048" layer="21"/>
@@ -31767,7 +31767,7 @@ design rules under a new name.</description>
 <attribute name="VALUE" x="10.73408125" y="-0.6880375" size="1.27" layer="27"/>
 </element>
 <element name="GND" library="SparkFun-Connectors" package="1X01" value="Batt Charger" x="12.20408125" y="20.6869625" smashed="yes">
-<attribute name="NAME" x="13.8443625" y="21.82591875" size="0.8128" layer="25" rot="R270"/>
+<attribute name="NAME" x="13.4443625" y="20.82591875" size="0.8128" layer="25" rot="R270"/>
 <attribute name="VALUE" x="21.9365" y="4.877403125" size="0.8128" layer="26" rot="MR0"/>
 </element>
 <element name="BATT+" library="SparkFun-Connectors" package="1X01" value="" x="25.70408125" y="20.6869625" smashed="yes">
@@ -31818,19 +31818,19 @@ design rules under a new name.</description>
 </element>
 <element name="U1" library="SparkFun-Sensors" package="QFN-16_0.5MM" value="MMA8452Q" x="8.1" y="49.4" smashed="yes" rot="R270">
 <attribute name="PROD_ID" value="IC-10769" x="8.1" y="49.4" size="1.778" layer="27" rot="R270" display="off"/>
-<attribute name="NAME" x="6.1" y="46.4" size="0.8128" layer="25"/>
-<attribute name="VALUE" x="6.1484" y="45.5366" size="0.6096" layer="27" rot="SR0"/>
+<attribute name="NAME" x="10.45" y="49.4" size="0.8128" layer="25"/>
+<attribute name="VALUE" x="6.0484" y="46.7366" size="0.6096" layer="27" rot="SR0"/>
 </element>
 <element name="C3" library="SparkFun-Capacitors" package="EIA3216" value="4.7uF" x="7.85" y="42.6" smashed="yes">
 <attribute name="PROD_ID" value="CAP-00811" x="7.85" y="42.6" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="10.61" y="42.731" size="0.8128" layer="25"/>
 <attribute name="VALUE" x="10.708" y="41.832" size="0.6096" layer="27" rot="SR0"/>
 </element>
-<element name="JP-GND" library="SparkFun-Connectors" package="1X01" value="SWITCH" x="21.5630375" y="13.90408125" smashed="yes" rot="R180">
-<attribute name="VALUE" x="23.6462375" y="10.44168125" size="0.8128" layer="26" rot="R270"/>
+<element name="JP-GND" library="SparkFun-Connectors" package="1X01" value="SWITCH" x="16.2630375" y="13.95408125" smashed="yes" rot="R180">
+<attribute name="VALUE" x="23.5462375" y="8.24168125" size="0.8128" layer="26" rot="R270"/>
 </element>
-<element name="JP-GNDE" library="SparkFun-Connectors" package="1X01" value="" x="16.2630375" y="13.95408125" smashed="yes" rot="MR0">
-<attribute name="VALUE" x="17.5330375" y="10.77908125" size="1.27" layer="28" rot="MR0"/>
+<element name="JP-GNDE" library="SparkFun-Connectors" package="1X01" value="" x="21.5630375" y="13.95408125" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="22.8330375" y="10.77908125" size="1.27" layer="28" rot="MR0"/>
 </element>
 </elements>
 <signals>
@@ -31976,6 +31976,8 @@ design rules under a new name.</description>
 <wire x1="6.3766" y1="54.0766" x2="21.5" y2="61.2" width="0.3048" layer="1" curve="-125.634004"/>
 <wire x1="21.5" y1="61.2" x2="28.84824375" y2="51.6999375" width="0.3048" layer="1" curve="-33.288502"/>
 <wire x1="6.45328125" y1="32.7887625" x2="1.1" y2="26.13548125" width="0.3048" layer="1" curve="90"/>
+<wire x1="1.1" y1="26.13548125" x2="0.95" y2="15.1" width="0.3048" layer="1"/>
+<wire x1="0.95" y1="14.85" x2="0.95" y2="14.7" width="0.3048" layer="1"/>
 <wire x1="26.8" y1="26.2" x2="6.45328125" y2="32.7887625" width="0.3048" layer="1" curve="-50.908348"/>
 <wire x1="27.1" y1="6.24104375" x2="27.1" y2="19.2" width="0.3048" layer="1" curve="-1.291462"/>
 <wire x1="27.1" y1="19.2" x2="27.1" y2="25.9" width="0.3048" layer="1"/>
@@ -31985,11 +31987,14 @@ design rules under a new name.</description>
 <wire x1="1.15" y1="69.15" x2="1.15" y2="48.85" width="0.3048" layer="16"/>
 <wire x1="1.15" y1="48.85" x2="1.8550375" y2="48.1449625" width="0.3048" layer="16"/>
 <wire x1="1.8550375" y1="48.1449625" x2="2.84408125" y2="48.1449625" width="0.3048" layer="16"/>
+<wire x1="0.95" y1="15.1" x2="0.95" y2="14.85" width="0.3048" layer="1"/>
+<wire x1="0.95" y1="14.85" x2="1.15" y2="11.2" width="0.3048" layer="1"/>
+<wire x1="1.15" y1="11.2" x2="2.85" y2="9.5" width="0.3048" layer="1" curve="90"/>
+<wire x1="2.85" y1="9.5" x2="11.85" y2="9.5" width="0.4064" layer="1"/>
+<wire x1="11.85" y1="9.5" x2="16.25" y2="13.9" width="0.4064" layer="1" curve="90"/>
 <wire x1="2.84408125" y1="48.1449625" x2="4.45" y2="49.75088125" width="0.4064" layer="1" curve="90"/>
 <wire x1="4.45" y1="49.75088125" x2="4.45" y2="52.82735625" width="0.4064" layer="1"/>
 <wire x1="4.45" y1="52.82735625" x2="5.00584375" y2="53.3832" width="0.4064" layer="1" curve="-90"/>
-<wire x1="1.1" y1="26.13548125" x2="9.91451875" y2="26.13548125" width="0.3048" layer="1"/>
-<wire x1="9.91451875" y1="26.13548125" x2="21.55" y2="14.5" width="0.3048" layer="1" curve="-90"/>
 </signal>
 <signal name="N$6">
 </signal>
@@ -32654,11 +32659,10 @@ design rules under a new name.</description>
 <contactref element="BATT" pad="1"/>
 <wire x1="5.24511875" y1="12.2064375" x2="5.03251875" y2="14.1564375" width="0.4064" layer="1"/>
 <wire x1="5.03251875" y1="14.1564375" x2="5.13251875" y2="15.5904375" width="0.4064" layer="1"/>
-<wire x1="5.13251875" y1="15.5904375" x2="15.1" y2="15.5904375" width="0.4064" layer="1"/>
-<wire x1="15.1" y1="15.5904375" x2="15.3095625" y2="15.5904375" width="0.4064" layer="1"/>
-<wire x1="15.3095625" y1="15.5904375" x2="16.3" y2="14.6" width="0.4064" layer="1" curve="-90"/>
-<wire x1="12.20408125" y1="20.6869625" x2="12.20408125" y2="18.48635625" width="0.4064" layer="1"/>
-<wire x1="12.20408125" y1="18.48635625" x2="15.1" y2="15.5904375" width="0.4064" layer="1" curve="90"/>
+<wire x1="12.20408125" y1="20.6869625" x2="14.9130375" y2="20.6869625" width="0.4064" layer="1"/>
+<wire x1="14.9130375" y1="20.6869625" x2="21.65" y2="13.95" width="0.4064" layer="1" curve="-90"/>
+<wire x1="12.20408125" y1="20.6869625" x2="6.75755625" y2="15.5904375" width="0.4064" layer="1" curve="-90"/>
+<wire x1="6.75755625" y1="15.5904375" x2="5.13251875" y2="15.5904375" width="0.4064" layer="1"/>
 </signal>
 <signal name="N$1">
 <contactref element="WEMOS1" pad="7"/>
@@ -32706,6 +32710,7 @@ design rules under a new name.</description>
 </signal>
 <signal name="GND1">
 <contactref element="JP-GND" pad="1"/>
+<wire x1="16.2804" y1="13.93671875" x2="16.2630375" y2="13.95408125" width="0.6096" layer="1" curve="90"/>
 </signal>
 </signals>
 <errors>

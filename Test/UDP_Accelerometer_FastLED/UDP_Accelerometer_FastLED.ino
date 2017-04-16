@@ -2,7 +2,7 @@
 #include <Chrono.h>
 #include <Math.h>
 
-// #define UDP_DEBUG  // Comment to turn off WiFi + UDP
+#define UDP_DEBUG  // Comment to turn off WiFi + UDP
 
 #ifdef UDP_DEBUG
 #include <ESP8266WiFi.h>
