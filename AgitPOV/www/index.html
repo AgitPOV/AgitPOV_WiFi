@@ -33,31 +33,8 @@
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
         <link rel="stylesheet" type="text/css" href="css/index.css">
-        <title>Hello World</title>
-        
-        <script>
-        
-var monMot = "yesssir"; 
+        <title>AgitPOV</title>
     
-function envoi(unMot) {
-    
-    alert(monMot);
-  // from http://stackoverflow.com/questions/8638984/send-post-data-to-php-without-using-an-html-form
-  var theForm, newInput1;
-  theForm = document.createElement('form');
-  theForm.action = 'http://192.168.4.1';
-  theForm.method = 'post';
-  newInput1 = document.createElement('input');
-  newInput1.type = 'hidden';
-  newInput1.name = 'AgitPOV';
-  // newInput1.value = 'téstËng';
-    console.log(unMot);
-  newInput1.value = unMot;
-  theForm.appendChild(newInput1);
-  document.getElementById('hidden_form_container').appendChild(theForm);
-  theForm.submit();
-  }
-        </script>
         
     </head>
     <body>
@@ -69,7 +46,7 @@ function envoi(unMot) {
             </div>
             
         <div id="hidden_form_container" style="display:none;"></div>
-        <input type="button" value="envoyer" onclick="envoi(monMot);">
+        <input id="envoiButton" type="submit" size="7" value="Envoi" class="gobutton" />  
             
         </div>
         <script type="text/javascript" src="cordova.js"></script>
