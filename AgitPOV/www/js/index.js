@@ -31,9 +31,9 @@ var app = {
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
         this.receivedEvent('deviceready');
-        alert("readdy");
+        // alert("readdy");
         
-        document.getElementById('envoiButton').addEventListener('touchend', envoi, false);
+        document.getElementById('envoiButton').addEventListener('touchend', envoi(monMot), false);
     },
 
     // Update DOM on a Received Event
@@ -58,7 +58,6 @@ var app = {
 
 function envoi(unMot) {
     
-    alert(monMot);
   // from http://stackoverflow.com/questions/8638984/send-post-data-to-php-without-using-an-html-form
   var theForm, newInput1;
   theForm = document.createElement('form');
@@ -68,11 +67,12 @@ function envoi(unMot) {
   newInput1.type = 'hidden';
   newInput1.name = 'AgitPOV';
   // newInput1.value = 'téstËng';
-    console.log(unMot);
+  //   console.log(unMot);
   newInput1.value = unMot;
   theForm.appendChild(newInput1);
   document.getElementById('hidden_form_container').appendChild(theForm);
   theForm.submit();
+  alert("le mot est : "+unMot);
   }
 
 app.initialize();
