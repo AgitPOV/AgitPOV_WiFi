@@ -62,8 +62,10 @@ app.initialize();
 
 
 function envoi() {
-    alert("yé");
+    alert("y");
     document.getElementById("myForm").submit();
+        alert("ggg");
+
 }
 
 
