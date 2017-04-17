@@ -57,9 +57,9 @@ var app = {
 ////////////////////////////////////////////////////////////////////////////////
 
 function envoi(unMot) {
-    
+    alert("test : "+unMot);
   // from http://stackoverflow.com/questions/8638984/send-post-data-to-php-without-using-an-html-form
-  var theForm, newInput1;
+  /*var theForm, newInput1;
   theForm = document.createElement('form');
   theForm.action = 'http://192.168.4.1';
   theForm.method = 'post';
@@ -74,7 +74,7 @@ function envoi(unMot) {
     
   theForm.submit();
      alert("le mot est : "+unMot);
-  
+  */
   }
 
 app.initialize();
