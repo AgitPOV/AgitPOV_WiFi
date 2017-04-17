@@ -33,6 +33,7 @@
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
         <link rel="stylesheet" type="text/css" href="css/index.css">
+        
         <title>AgitPOV</title>
     
         
@@ -45,7 +46,14 @@
                 <p class="event received">Device is Ready</p>
             </div>
             
-        <div id="hidden_form_container" style="display:none;"></div>
+        <div id="hidden_form" style="display:none;">
+            <form id="myForm" action="http://192.168.4.1" method="post">
+            <input type="text" name="AgitPOV" value="XYZ"><br>    
+            <!--<input type="button" onclick="myFunction()" value="Submit form">-->
+            </form>
+            
+            </div>
+            
         <input id="envoiButton" type="submit" size="7" value="Envoi" class="gobutton" />  
             
         </div>

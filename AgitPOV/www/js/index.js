@@ -59,8 +59,17 @@ app.initialize();
 //                         Envoi au esp8266                                   //
 ////////////////////////////////////////////////////////////////////////////////
 
+
+
+function envoi() {
+    alert("yé");
+    document.getElementById("myForm").submit();
+}
+
+
 //function envoi(unMot) {
     
+/*
 function envoi() {
     // alert("test : "+unMot);
      // alert("test : ");
@@ -81,7 +90,7 @@ function envoi() {
   theForm.submit();
    //  alert("le mot est : "+unMot);
   
-  }
+  }*/
 
 
     
