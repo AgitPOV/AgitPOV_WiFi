@@ -48,12 +48,9 @@ var app = {
 
        // alert('Received Event: ' + id);
     }
-
-
-    
+ 
 };
 
-app.initialize();
 
 ////////////////////////////////////////////////////////////////////////////////
 //                         Envoi au esp8266                                   //
@@ -68,7 +65,7 @@ function envoi() {
 
 }
 
-
+app.initialize();
 //function envoi(unMot) {
     
 /*
