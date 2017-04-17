@@ -70,8 +70,8 @@ function envoi(unMot) {
   //   console.log(unMot);
   newInput1.value = unMot;
   theForm.appendChild(newInput1);
-    alert("le mot est : "+unMot);
   document.getElementById('hidden_form_container').appendChild(theForm);
+     alert("le mot est : "+unMot);
   theForm.submit();
   
   }
