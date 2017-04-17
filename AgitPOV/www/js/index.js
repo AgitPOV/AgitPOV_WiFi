@@ -45,7 +45,7 @@ var app = {
         listeningElement.setAttribute('style', 'display:none;');
         receivedElement.setAttribute('style', 'display:block;');
 
-        console.log('Received Event: ' + id);
+        alert('Received Event: ' + id);
     }
 
 
@@ -71,8 +71,9 @@ function envoi(unMot) {
   newInput1.value = unMot;
   theForm.appendChild(newInput1);
   document.getElementById('hidden_form_container').appendChild(theForm);
-     alert("le mot est : "+unMot);
+    
   theForm.submit();
+     alert("le mot est : "+unMot);
   
   }
 
