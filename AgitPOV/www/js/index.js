@@ -46,12 +46,14 @@ var app = {
         listeningElement.setAttribute('style', 'display:none;');
         receivedElement.setAttribute('style', 'display:block;');
 
-        alert('Received Event: ' + id);
+       // alert('Received Event: ' + id);
     }
 
 
     
 };
+
+app.initialize();
 
 ////////////////////////////////////////////////////////////////////////////////
 //                         Envoi au esp8266                                   //
@@ -81,5 +83,5 @@ function envoi() {
   
   }
 
-app.initialize();
+
     
