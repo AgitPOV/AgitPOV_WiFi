@@ -33,7 +33,8 @@ var app = {
         this.receivedEvent('deviceready');
         // alert("readdy");
         
-        document.getElementById('envoiButton').addEventListener('touchend', envoi(monMot), false);
+        document.getElementById('envoiButton').addEventListener('touchend', envoi, false);
+        // document.getElementById('envoiButton').addEventListener('touchend', envoi(monMot), false);
     },
 
     // Update DOM on a Received Event
@@ -56,8 +57,11 @@ var app = {
 //                         Envoi au esp8266                                   //
 ////////////////////////////////////////////////////////////////////////////////
 
-function envoi(unMot) {
-    alert("test : "+unMot);
+//function envoi(unMot) {
+    
+function envoi() {
+    //alert("test : "+unMot);
+     alert("test : ");
   // from http://stackoverflow.com/questions/8638984/send-post-data-to-php-without-using-an-html-form
   /*var theForm, newInput1;
   theForm = document.createElement('form');
