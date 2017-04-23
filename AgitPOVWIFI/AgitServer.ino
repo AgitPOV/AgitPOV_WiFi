@@ -34,8 +34,32 @@ void client_status() { /// This works, ty sohialsadiq!
 
 void handleRoot()
 {
+  Serial.print("nombre arguments : ");
+  Serial.println(server.args()); // un tableau contenant le nombre d'arguments  
+  Serial.print("arg name 0 : ");
+  Serial.println(server.argName(0));
+  Serial.print("arg name 1 : ");
+  Serial.println(server.argName(1));
+  Serial.print("arg 0 : ");
+  Serial.println(server.arg(0));
+  Serial.print("arg 1 : ");
+  Serial.println(server.arg(1));
 
-  Serial.println("nouveau client");
+  /*
+server arg : 
+nombre arguments : 2
+arg name 0 : name
+arg name 1 : value
+arg 0 : AgitPOV
+arg 1 : XYZ
+-=-=-
+server arg : motff
+nombre arguments : 1
+arg name 0 : AgitPOV
+arg name 1 : 
+arg 0 : motff
+arg 1 : 
+   */
   if (server.hasArg("AgitPOV")) {
     handleSubmit();
   }
@@ -54,15 +78,11 @@ void returnFail(String msg)
 void handleSubmit()
 {
   String mot;
-
   if (!server.hasArg("AgitPOV")) return returnFail("BAD ARGS");
     mot = server.arg("AgitPOV");
     Serial.print("mot envoyé : ");
     Serial.println(mot);
-    server.send(200, "text/html", INDEX_HTML);
-    
     ecrireFichier(mot); // 
-    
     turnItOff(); // ferme le serveur pour conserver de l'énergie   
   }
  
