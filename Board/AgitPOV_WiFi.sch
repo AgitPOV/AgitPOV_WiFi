@@ -2711,12 +2711,11 @@ http://cache.freescale.com/files/sensors/doc/data_sheet/MMA8452Q.pdf</descriptio
 <part name="R2" library="SparkFun-Resistors" deviceset="RESISTOR" device="1206" value="4.7k"/>
 <part name="C1" library="SparkFun-Capacitors" deviceset="10UF-16V-10%(TANT)" device="" value="0.1uF"/>
 <part name="JST" library="con-garry" deviceset="332-02" device=""/>
-<part name="JP-GND" library="SparkFun-Connectors" deviceset="M01" device="PTH" value="SWITCH"/>
-<part name="JP-GNDE" library="SparkFun-Connectors" deviceset="M01" device="PTH" value="-"/>
 <part name="C2" library="SparkFun-Capacitors" deviceset="10UF-16V-10%(TANT)" device="" value="0.1uF"/>
 <part name="U1" library="SparkFun-Sensors" deviceset="MMA8452Q" device=""/>
 <part name="C3" library="SparkFun-Capacitors" deviceset="10UF-16V-10%(TANT)" device="" value="4.7uF"/>
-<part name="JP1" library="SparkFun-Connectors" deviceset="M01" device="PTH"/>
+<part name="JPGND" library="SparkFun-Connectors" deviceset="M01" device="PTH" value="switch"/>
+<part name="JP-GNDE" library="SparkFun-Connectors" deviceset="M01" device="PTH"/>
 </parts>
 <sheets>
 <sheet>
@@ -2765,12 +2764,11 @@ http://cache.freescale.com/files/sensors/doc/data_sheet/MMA8452Q.pdf</descriptio
 <instance part="JST" gate="-2" x="60.96" y="22.86" smashed="yes" rot="R90">
 <attribute name="NAME" x="61.722" y="25.4" size="1.524" layer="95" rot="R90"/>
 </instance>
-<instance part="JP-GND" gate="G$1" x="20.32" y="35.56" rot="MR180"/>
-<instance part="JP-GNDE" gate="G$1" x="81.28" y="20.32" rot="R180"/>
 <instance part="C2" gate="G$1" x="101.6" y="48.26"/>
 <instance part="U1" gate="G$1" x="127" y="50.8"/>
 <instance part="C3" gate="G$1" x="81.28" y="48.26"/>
-<instance part="JP1" gate="G$1" x="233.68" y="43.18"/>
+<instance part="JPGND" gate="G$1" x="20.32" y="33.02"/>
+<instance part="JP-GNDE" gate="G$1" x="81.28" y="22.86" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -2800,12 +2798,11 @@ http://cache.freescale.com/files/sensors/doc/data_sheet/MMA8452Q.pdf</descriptio
 <wire x1="233.68" y1="76.2" x2="256.54" y2="76.2" width="0.1524" layer="91"/>
 <pinref part="DEL12" gate="G$1" pin="GND"/>
 <wire x1="256.54" y1="76.2" x2="279.4" y2="76.2" width="0.1524" layer="91"/>
-<wire x1="27.94" y1="76.2" x2="27.94" y2="35.56" width="0.1524" layer="91"/>
+<wire x1="27.94" y1="76.2" x2="27.94" y2="33.02" width="0.1524" layer="91"/>
 <pinref part="WEMOS2" gate="G$1" pin="2"/>
 <wire x1="35.56" y1="35.56" x2="35.56" y2="43.18" width="0.1524" layer="91"/>
-<pinref part="JP-GND" gate="G$1" pin="1"/>
-<wire x1="27.94" y1="35.56" x2="35.56" y2="35.56" width="0.1524" layer="91"/>
-<wire x1="27.94" y1="35.56" x2="81.28" y2="35.56" width="0.1524" layer="91"/>
+<wire x1="27.94" y1="33.02" x2="35.56" y2="35.56" width="0.1524" layer="91"/>
+<wire x1="27.94" y1="33.02" x2="81.28" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="81.28" y1="35.56" x2="81.28" y2="40.64" width="0.1524" layer="91"/>
 <wire x1="81.28" y1="40.64" x2="81.28" y2="43.18" width="0.1524" layer="91"/>
 <wire x1="81.28" y1="43.18" x2="91.44" y2="43.18" width="0.1524" layer="91"/>
@@ -2824,6 +2821,8 @@ http://cache.freescale.com/files/sensors/doc/data_sheet/MMA8452Q.pdf</descriptio
 <wire x1="111.76" y1="45.72" x2="111.76" y2="43.18" width="0.1524" layer="91"/>
 <wire x1="111.76" y1="43.18" x2="111.76" y2="40.64" width="0.1524" layer="91"/>
 <wire x1="116.84" y1="43.18" x2="111.76" y2="43.18" width="0.1524" layer="91"/>
+<pinref part="JPGND" gate="G$1" pin="1"/>
+<junction x="27.94" y="33.02"/>
 </segment>
 <segment>
 <pinref part="DEL13" gate="G$1" pin="GND"/>
@@ -3264,14 +3263,14 @@ http://cache.freescale.com/files/sensors/doc/data_sheet/MMA8452Q.pdf</descriptio
 <pinref part="GND" gate="G$1" pin="1"/>
 <pinref part="JST" gate="-1" pin="S"/>
 <pinref part="BATT" gate="G$1" pin="1"/>
-<junction x="73.66" y="20.32"/>
 <pinref part="BATT" gate="G$1" pin="1"/>
-<wire x1="73.66" y1="20.32" x2="73.66" y2="10.16" width="0.1524" layer="91"/>
+<wire x1="73.66" y1="22.86" x2="73.66" y2="10.16" width="0.1524" layer="91"/>
 <junction x="73.66" y="10.16"/>
-<pinref part="JP-GNDE" gate="G$1" pin="1"/>
-<wire x1="73.66" y1="20.32" x2="60.96" y2="15.24" width="0.1524" layer="91"/>
+<wire x1="73.66" y1="22.86" x2="60.96" y2="15.24" width="0.1524" layer="91"/>
 <junction x="60.96" y="15.24"/>
 <wire x1="73.66" y1="10.16" x2="71.12" y2="10.16" width="0.1524" layer="91"/>
+<pinref part="JP-GNDE" gate="G$1" pin="1"/>
+<junction x="73.66" y="22.86"/>
 </segment>
 </net>
 <net name="N$1" class="0">
@@ -3310,6 +3309,12 @@ http://cache.freescale.com/files/sensors/doc/data_sheet/MMA8452Q.pdf</descriptio
 <wire x1="114.3" y1="68.58" x2="144.78" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="152.4" y1="68.58" x2="144.78" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="91.44" y1="55.88" x2="91.44" y2="68.58" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$41" class="0">
+<segment>
+<wire x1="38.1" y1="45.72" x2="38.1" y2="43.18" width="0.1524" layer="91"/>
+<pinref part="WEMOS2" gate="G$1" pin="3"/>
 </segment>
 </net>
 </nets>

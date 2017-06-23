@@ -14,23 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "10E1608D1EA833E8004B15CA"
+               BlueprintIdentifier = "102EF5DD1EAD3B7600ACA570"
                BuildableName = "AgitPOV.app"
                BlueprintName = "AgitPOV"
-               ReferencedContainer = "container:AgitPOV.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "10E160A21EA833E9004B15CA"
-               BuildableName = "AgitPOVTests.xctest"
-               BlueprintName = "AgitPOVTests"
                ReferencedContainer = "container:AgitPOV.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -46,9 +32,19 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "10E160A21EA833E9004B15CA"
+               BlueprintIdentifier = "102EF5F11EAD3B7600ACA570"
                BuildableName = "AgitPOVTests.xctest"
                BlueprintName = "AgitPOVTests"
+               ReferencedContainer = "container:AgitPOV.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "102EF5FC1EAD3B7700ACA570"
+               BuildableName = "AgitPOVUITests.xctest"
+               BlueprintName = "AgitPOVUITests"
                ReferencedContainer = "container:AgitPOV.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -56,7 +52,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "10E1608D1EA833E8004B15CA"
+            BlueprintIdentifier = "102EF5DD1EAD3B7600ACA570"
             BuildableName = "AgitPOV.app"
             BlueprintName = "AgitPOV"
             ReferencedContainer = "container:AgitPOV.xcodeproj">
@@ -79,7 +75,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "10E1608D1EA833E8004B15CA"
+            BlueprintIdentifier = "102EF5DD1EAD3B7600ACA570"
             BuildableName = "AgitPOV.app"
             BlueprintName = "AgitPOV"
             ReferencedContainer = "container:AgitPOV.xcodeproj">
@@ -98,7 +94,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "10E1608D1EA833E8004B15CA"
+            BlueprintIdentifier = "102EF5DD1EAD3B7600ACA570"
             BuildableName = "AgitPOV.app"
             BlueprintName = "AgitPOV"
             ReferencedContainer = "container:AgitPOV.xcodeproj">
