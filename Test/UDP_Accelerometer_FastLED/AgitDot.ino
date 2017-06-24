@@ -47,14 +47,10 @@ void dotDoIt() {
  
     }
     
-    //updateAccelerometer();
     FastLED.show();
     delay(1);// Refresh strip //delayMicroseconds(1300); // Microseconds ne semble pas fonctionner avec le ESP8266
     updateAccelerometer();
   }
 
- 
-  // povDoIt = false; // reset pour le prochain passage // est pe en train de doubler le nombre de passages d'aimant nécessaire
-  // nouveauMot = false;
   dotBlank();
 } // fin dotDoIt

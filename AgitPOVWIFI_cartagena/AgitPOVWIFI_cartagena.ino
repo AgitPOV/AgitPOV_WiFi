@@ -24,9 +24,10 @@ char MAC_char[18];
 #include <Adafruit_DotStar.h>
 #include <SPI.h>    // pour les dotstars
 #define NUMPIXELS 24 // Number of LEDs in strip
-#define DATAPIN    D6 
-#define CLOCKPIN   D5
-Adafruit_DotStar strip = Adafruit_DotStar(NUMPIXELS, DATAPIN, CLOCKPIN, DOTSTAR_BGR); 
+// #define DATAPIN    D6 
+// #define CLOCKPIN   D5
+// Adafruit_DotStar strip = Adafruit_DotStar(NUMPIXELS, DATAPIN, CLOCKPIN, DOTSTAR_BGR); 
+Adafruit_DotStar strip = Adafruit_DotStar(NUMPIXELS); // hardware SPI (mosi == D7, sck ==D5)
 uint32_t color = 0xCC3300; // couleur pour l'affichage d'un mot // naranja
 
 // Pour un mot en entrée

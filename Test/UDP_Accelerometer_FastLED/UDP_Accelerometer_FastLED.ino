@@ -45,7 +45,7 @@ uint32_t color = 0xEE5522; // naranja intense
 //uint32_t color = 0x991100; // rouge pas trop clair
 // uint32_t color = 0xFFFFFF; // test blanc
 
-
+//////// ACCEL //////////////////////
 #include <Wire.h> // Must include Wire library for I2C
 #include "SparkFun_MMA8452Q_ESP8266.h"
 
@@ -150,7 +150,7 @@ void updateAccelerometer() {
     #endif
   }
 
-}
+} // fin updateAccelerometer
 
 
 float lop(float target, float current , float amount) {

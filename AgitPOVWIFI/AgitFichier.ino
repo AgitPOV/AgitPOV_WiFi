@@ -20,7 +20,7 @@
 // 1. lire les fichiers dans le dossier
 // 1.txt, 2.txt, 3.txt ... 11.txt
 
-void listFiles(){
+void lireFichier(){
 
   Serial.println("les fichiers : ");
   Dir dir = SPIFFS.openDir("/");
@@ -33,17 +33,9 @@ void listFiles(){
    String s=f.readStringUntil('\n');
       Serial.print("mot en mémoire : ");
       Serial.println(s);
-
- if(s.length()>1){
-        palabra = true;
-        Serial.print("palabra : ");
-        Serial.println(palabra);
-      }
-      else{
-        palabra = false;
-        Serial.print("palabra : ");
-        Serial.println(palabra);
-      }
+//    mot = s; // change la valeur de mot et passe-le à la fonction nouveauArray, ensuite démarre le tout.
+      nouveauArray(s); // construit le tableau
+      arrayOffset = 0;
    
     }
 }
@@ -62,33 +54,6 @@ void eraseFiles(){
     
     //File f = dir.openFile("r");
     }
-}
-
-void lireFichier(){
-
-///////////////////////////////////////////////////
-  // Commence par vérifier si un mot est présent   //
-    File f = SPIFFS.open("/f.txt", "r");
-      if (!f) {
-        Serial.println("file open failed");
-      }  
-      Serial.println("====== Lecture du fichier SPIFFS =======");
-      // read palabra
-      String s=f.readStringUntil('\n');
-      Serial.print("mot en mémoire : ");
-      Serial.println(s);
-      // Serial.println(s.length());
-      if(s.length()>1){
-        palabra = true;
-        Serial.print("palabra : ");
-        Serial.println(palabra);
-      }
-      else{
-        palabra = false;
-        Serial.print("palabra : ");
-        Serial.println(palabra);
-      }
-  
 }
 
 void ecrireFichier(String unMot){
@@ -115,8 +80,6 @@ void ecrireFichier(String unMot){
       Serial.print("mot en mémoire : ");
       Serial.println(s);
       mot = s; // change la valeur de mot et passe-le à la fonction nouveauArray, ensuite démarre le tout.
-      nouveauArray(mot);
+      nouveauArray(mot); // construit le tableau
       arrayOffset = 0;
-      palabra = true;
-      nouveauMot = true; // essai de le faire afficher le mot à répétition.
 }

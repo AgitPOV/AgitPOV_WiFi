@@ -1,51 +1,19 @@
-/////// à intégrer ////////
-/*  De: https://learn.sparkfun.com/tutorials/esp8266-thing-hookup-guide/example-sketch-ap-web-server
-   // Do a little work to get a unique-ish name. Append the
-  // last two bytes of the MAC (HEX'd) to "Thing-":
-  uint8_t mac[WL_MAC_ADDR_LENGTH];
-  WiFi.softAPmacAddress(mac);
-
-//////
-
-WiFi.macAddress(mac);
-  Serial.print("MAC: ");
-  Serial.print(mac[5],HEX);
-  Serial.print(":");
-  Serial.print(mac[4],HEX);
-  Serial.print(":");
-  Serial.print(mac[3],HEX);
-  Serial.print(":");
-  Serial.print(mac[2],HEX);
-  Serial.print(":");
-  Serial.print(mac[1],HEX);
-  Serial.print(":");
-  Serial.println(mac[0],HEX);
-
-//////  
-  String macID = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) +
-                 String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
-  macID.toUpperCase();
-  String AP_NameString = "ESP8266 Thing " + macID;
-
-  char AP_NameChar[AP_NameString.length() + 1];
-  memset(AP_NameChar, 0, AP_NameString.length() + 1);
-
-  for (int i=0; i<AP_NameString.length(); i++)
-    AP_NameChar[i] = AP_NameString.charAt(i);
-
-  WiFi.softAP(AP_NameChar, WiFiAPPSK);
-}
-*/
 void client_status() { /// This works, ty sohialsadiq!
   struct station_info *stat_info;
   nbrC= wifi_softap_get_station_num(); // Count of stations which are connected to ESP8266 soft-AP
   stat_info = wifi_softap_get_station_info();
   Serial.print("Nombre de clients = ");
   Serial.println(nbrC);
-  
-  // bPosition = 1;  // test pour donner une indication visuelle d'une connection
+
+if (nbrC > 0) {
+
+   for(byte i = 0;i<=23;i++){ /// UP!!
+      leds[i] = color;
+      FastLED.show();
+   }
+}
   yield();
-  delay(50);
+  delay(10);
   yield();
   } 
 
@@ -78,7 +46,7 @@ void returnFail(String msg)
   server.send(500, "text/plain", msg + "\r\n");
 }
 
-void handleSubmit()
+void handleSubmit() // ajouter l'enregistrement de la couleur
 {
   String mot;
   
@@ -125,6 +93,7 @@ switch (inputIntColor) {
 } // fin du break
     ecrireFichier(mot); // 
     turnItOff(); // ferme le serveur pour conserver de l'énergie   
+    inicio = false; // si on a un nouveau mot alors affiche tout de suite
   } // fin de handleSubmit
  
 void returnOK()

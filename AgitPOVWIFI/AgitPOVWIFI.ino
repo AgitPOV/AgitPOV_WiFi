@@ -10,6 +10,19 @@ extern "C" { // Infos sur les clients connectés
 #include<user_interface.h>
 }
 
+////////// ACCEL ////////////
+#include <Chrono.h>
+#include <Math.h>
+///////// FIN ACCEL /////////
+
+////////// FastLED //////////
+#include <FastLED.h>
+#define NUMPIXELS 24 // Number of LEDs in strip
+#define DATAPIN    D6
+#define CLOCKPIN   D5
+CRGB leds[NUMPIXELS];
+///////// FIN FastLED ///////
+
 const byte DNS_PORT = 53;
 byte nbrC; // nombre de clients connectés
 IPAddress apIP(192, 168, 4, 1);
@@ -20,14 +33,7 @@ ESP8266WebServer server(80);
 uint8_t MAC_array[6];
 char MAC_char[18];
 
-// DOTSTAR /////////////////////////////
-#include <Adafruit_DotStar.h>
-#include <SPI.h>    // pour les dotstars
-#define NUMPIXELS 24 // Number of LEDs in strip
-#define DATAPIN    D6 
-#define CLOCKPIN   D5
-Adafruit_DotStar strip = Adafruit_DotStar(NUMPIXELS, DATAPIN, CLOCKPIN, DOTSTAR_BGR); 
-uint32_t color = 0xCC3300; // couleur pour l'affichage d'un mot // naranja
+uint32_t color = 0x221100; // couleur pour l'affichage d'un mot // naranja
 
 // Pour un mot en entrée
 int povArray[100];
@@ -36,10 +42,39 @@ int iByte = 0;
 int indexArr;
 
 // int povArray[] = { 0 , 0 , 2040 , 2176 , 2176 , 2176 , 2040 , 0 , 2032 , 2056 , 2056 , 2120 , 1136 , 0 , 3064 , 0 , 2048 , 2048 , 4088 , 2048 , 2048 , 0 , 0 , 4088 , 2176 , 2176 , 2176 , 3968 , 0 , 2032 , 2056 , 2056 , 2056 , 2032 , 0 , 4064 , 16 , 8 , 16 , 4064 , 0 , 0 };
-bool palabra;  // pour la condition d'écriture par la page web ou non
 bool nouveauMot;
-bool povDoIt;
+// bool povDoIt;
+bool inicio = true;
 //////// Pour la conversion du mot en entrée à son code pour les DELs
+
+//////// accel //////////////////////
+#include <Wire.h> // Must include Wire library for I2C
+#include "SparkFun_MMA8452Q_ESP8266.h"
+
+// Begin using the library by creating an instance of the MMA8452Q
+//  class. We'll call it "accel". That's what we'll reference from
+//  here on out.
+MMA8452Q accel;
+
+// int AgitAngle = 0;
+
+float cy;
+float cyLop;
+float cyLopSlow;
+
+float cyPrevious;
+float cyLopPrevious;
+
+//float cyV;
+//float cyVLop;
+
+float cyCentered;
+
+float thresholdUp = 0.5;
+float thresholdDown = 0;
+
+bool triggered = false;
+/////////// FIN accel //////////////
 
 void setup(void){
 
@@ -53,28 +88,24 @@ void setup(void){
  
   WiFi.mode(WIFI_AP);
   WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
-
-
+  
   ///// MAC ID ACCESS POINT ////
 
   Serial.print("MAC address, last pair : ");
   Serial.println(String(MAC_array[5]));
-  String AP_NameString = "AgitPOV" + String(MAC_array[5]) ;
+  String AP_NameString = "AgitzZz" + String(MAC_array[5]) ;
   Serial.print("AP_NameString : ");
   Serial.println(AP_NameString);
   
   char AP_NameChar[AP_NameString.length() + 1];
-memset(AP_NameChar, 0, AP_NameString.length() + 1);
+  memset(AP_NameChar, 0, AP_NameString.length() + 1);
 
 for (int i=0; i<AP_NameString.length(); i++){
   AP_NameChar[i] = AP_NameString.charAt(i);
   
   }
 
-  WiFi.softAP(AP_NameChar);
-  
-  //WiFi.softAP("AgitPOV");  
-  
+  WiFi.softAP(AP_NameChar);  //WiFi.softAP("AgitPOV")
   dnsServer.start(DNS_PORT, "*", apIP);   // if DNSServer is started with "*" for domain name, it will reply with  // provided IP to all DNS request
   server.on("/", handleRoot);
   server.onNotFound(handleNotFound);
@@ -85,21 +116,30 @@ for (int i=0; i<AP_NameString.length(); i++){
   // Serial.println("Please wait 30 secs for SPIFFS to be formatted");
   // SPIFFS.format(); // Besoin une seule fois pour formatter le système de fichiers // Wait 30 secs
   // Serial.println("Spiffs formatted");
-  listFiles();
+ 
   // eraseFiles(); 
-  // lireFichier();
-  
-  strip.begin(); // DOTSTAR Initialize pins for output
-  strip.show();  // Turn all LEDs off ASAP
-   
+  lireFichier(); 
+
+////////// CAT accel FastLEDs ///////////
+  accel.init(SCALE_8G, ODR_800);
+
+  FastLED.addLeds<APA102, DATAPIN, CLOCKPIN, BGR>(leds, NUMPIXELS);
+  // FastLED.addLeds<WS2801,DATAPIN, CLOCKPIN, RGB>(leds, NUMPIXELS);
+/*
+ for (int i = 0; i <24; i++){
+  leds[i] = CRGB::Blue; 
+ }
+ */
+  leds[0] = CRGB::Blue; 
+  FastLED.show();
+/////////// FIN CAT accel FastLEDs //////
+
 } ///// fin du setup
 
-void loop(void){
+void loop(){
   
-   // Serial.println("hello ESP");
-   
-   if(palabra == false){ // Sin palabra? escuchar el servidor, por el momento el se inciendio al reset ///
-   
+   if(inicio == true){ // abrir el servidor al inicio //
+      
    if(nbrC<=0){
     dotInit(); // séquence de départ, arrête lorsque qu'un client se connecte
     }
@@ -108,14 +148,30 @@ void loop(void){
    
    dnsServer.processNextRequest(); /// a-t-on une requête de connexion ? 
    server.handleClient();
-  } /// fin de la condition 'palabra' == false
 
-  if(palabra == true && nouveauMot == true){ // Affiche le mot à répétition après avoir obtenu le mot, terminé par le passage d'un aimant
-    dotNouveauMot();
+    if(millis() > 60000){
+      inicio = false; 
+      turnItOff(); // fermeture du serveur
+   }
+  } /// fin de la condition initiale
+
+ else if (inicio != true) {
+
+//////////// CAT LOOP /////////////
+  updateAccelerometer();
+
+  if ( cyCentered >= thresholdUp  ) {
+    // Serial.println("errr?");
+    if ( triggered == false ) {
+      triggered = true;
+      dotDoIt();
     }
+  } else if ( cyCentered <= thresholdDown) {
+    triggered = false;
+  }
   
-  if(palabra == true && povDoIt == true){  //Con palabra? Incendiaron los leds! 
-    dotDoIt();
-    }
+////////// FIN CAT LOOP ///////////
+  
+}
 
 } // fin du loop
