@@ -22,7 +22,7 @@
 
 void lireFichier(){
 
-  Serial.println("les fichiers : ");
+  Serial.println("le fichier : ");
   Dir dir = SPIFFS.openDir("/");
   while (dir.next()) {
     Serial.println(dir.fileName());

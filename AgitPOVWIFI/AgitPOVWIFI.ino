@@ -93,7 +93,7 @@ void setup(void){
 
   Serial.print("MAC address, last pair : ");
   Serial.println(String(MAC_array[5]));
-  String AP_NameString = "AgitzZz" + String(MAC_array[5]) ;
+  String AP_NameString = "AgitPOV" + String(MAC_array[5]) ;
   Serial.print("AP_NameString : ");
   Serial.println(AP_NameString);
   
@@ -116,10 +116,16 @@ for (int i=0; i<AP_NameString.length(); i++){
   // Serial.println("Please wait 30 secs for SPIFFS to be formatted");
   // SPIFFS.format(); // Besoin une seule fois pour formatter le système de fichiers // Wait 30 secs
   // Serial.println("Spiffs formatted");
- 
-  // eraseFiles(); 
-  lireFichier(); 
 
+ 
+ 
+ // eraseFiles(); 
+ ecrireFichier("AgitPOV");
+ //  lireFichier(); 
+
+Serial.println("Début init LEDs");
+Serial.println("////////// Cuidado, los LEDs necesitan la bateria par iniciarse!! ///////////////");
+Serial.println("/////// Attention, les LEds ont besoin de la pile pour s'initialiser !! /////////");
 ////////// CAT accel FastLEDs ///////////
   accel.init(SCALE_8G, ODR_800);
 
@@ -132,13 +138,18 @@ for (int i=0; i<AP_NameString.length(); i++){
  */
   leds[0] = CRGB::Blue; 
   FastLED.show();
+
+  Serial.println("fin init LEDs");
 /////////// FIN CAT accel FastLEDs //////
 
 } ///// fin du setup
 
 void loop(){
-  
+  // Serial.println("world?");
    if(inicio == true){ // abrir el servidor al inicio //
+
+
+  //    Serial.println("hello");
       
    if(nbrC<=0){
     dotInit(); // séquence de départ, arrête lorsque qu'un client se connecte
@@ -160,6 +171,8 @@ void loop(){
 //////////// CAT LOOP /////////////
   updateAccelerometer();
 
+  Serial.print("cyCentered : ");
+  Serial.println(cyCentered);
   if ( cyCentered >= thresholdUp  ) {
     // Serial.println("errr?");
     if ( triggered == false ) {

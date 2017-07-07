@@ -6,7 +6,7 @@ void updateAccelerometer() {
     accel.read();
 
     cy = accel.cy;
-    cyLop = lop(cy, cyLop, 0.1); 
+    cyLop = lop(cy, cyLop, 0.1); // calcul de cy avec un 'low pass filter'
   
     cyLopSlow = lop(cy, cyLopSlow, 0.01); 
 
