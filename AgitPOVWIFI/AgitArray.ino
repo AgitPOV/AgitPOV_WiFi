@@ -186,6 +186,8 @@ void nouveauArray(String leMot){
     Serial.print("nouveau mot  : ");
     Serial.println(leMot);
 
+    Serial.print("inputIntColor ");
+    Serial.println(inputIntColor);
     
     for(byte i = 0;i<=23;i++){ /// descanso /// comment est-ce qu'on fait varier l'intensité des FastLEDs?
         yield;
@@ -196,7 +198,7 @@ void nouveauArray(String leMot){
     povArray[arrayOffset]= 0; // Ajouter un espace au début, revoir sur la roue
     // arrayOffset++; 
 
-    while (iByte < leMot.length()){ 
+    while (iByte < leMot.length()-1){ // on enlève le char qui correspond à la couleur
       
       Serial.print("Valeur de iByte :"); 
       Serial.println(iByte); 

@@ -4,8 +4,70 @@
    FastLED.show();
 }
 
+void dotPovInterval(){
+  
+  povInterval = _max((millis() - povTimeStamp),2)-1; // doit utiliser _max à cause d'un conflit de définition de fonction
+  povTimeStamp = millis();
+  povIntervalColumns = povInterval * povColumnWidth; 
+  if (povIntervalColumns > 10000){
+
+    povIntervalColumns = 10000;
+  }
+  
+  //Serial.print("IntervalColumns : ");
+  //Serial.println(povIntervalColumns); 
+  
+ }
+
 void dotDoIt() {
- // Serial.println("un aimant");
+ // Serial.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+  int arraySize = sizeof(povArray) / sizeof(int);
+  for (int k = 0; k < arraySize; k++) { // la longueur du tableau qui contient le mot
+   
+    for (int i = 0; i <= 23; i++) { // pour chaque DEL // pour la premiére série :
+  
+      if ( i <=11 ) {
+             if ( bitRead(povArray[k], i % 12) ) {
+           
+        // leds[i] = CRGB::White;
+        leds[i] = color;
+ 
+      } else {
+        leds[i] = CRGB::Black; 
+      }
+      
+      }
+
+      else {
+
+           if ( bitRead(povArray[arraySize-k], i % 12) ) { // bizarro world pour les DELs 23 à 12
+        
+        leds[35-i] = color; // countdown 23 -> 12
+           
+      } else {
+        leds[35-i] = CRGB::Black; 
+      }
+        
+      }
+      
+ 
+    }
+    
+    FastLED.show();
+    delay(0);// Refresh strip //delayMicroseconds(1300); // Microseconds ne semble pas fonctionner avec le ESP8266
+    delayMicroseconds(povIntervalColumns); // testing!!
+    updateAccelerometer();
+    
+  }
+
+  dotBlank();
+} // fin dotDoIt
+/////////////////// FIN CAT ///////////////////
+
+///// testing /////
+
+void TioDtod() {
+ Serial.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
   int arraySize = sizeof(povArray) / sizeof(int);
   for (int k = 0; k < arraySize; k++) { // la longueur du tableau qui contient le mot
    
@@ -45,9 +107,10 @@ void dotDoIt() {
 
   dotBlank();
 } // fin dotDoIt
-/////////////////// FIN CAT ///////////////////
 
-/////// À REFAIRE pour les FastLEDs ///////
+////// fin testing /////
+
+
 
  void dotInit(){ // séquence de départ
    

@@ -51,12 +51,16 @@ void handleSubmit() // ajouter l'enregistrement de la couleur
   String mot;
   
   String inputColor = server.arg(1);
-  int inputIntColor = inputColor.toInt();
+  inputIntColor = inputColor.toInt();
   if (!server.hasArg("AgitPOV")) return returnFail("BAD ARGS");
     mot = server.arg("AgitPOV");
     Serial.print("mot envoyé : ");
     Serial.println(mot);
-   //// switch 
+
+    Serial.print("Couleur envoyée : ");
+    Serial.println(inputIntColor);
+
+   //// switch //// à intégrer en fonction parce qu'elle est ré-écrite deux fois
 switch (inputIntColor) {
     case 0:    
       Serial.println("rojo");

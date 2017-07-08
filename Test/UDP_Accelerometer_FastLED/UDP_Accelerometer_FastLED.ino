@@ -121,7 +121,8 @@ void updateAccelerometer() {
     // First, use accel.read() to read the new variables:
     accel.read();
 
-    cy = accel.cy;
+    cy = accel.cx;
+    //cx = accel.cx;
     cyLop = lop(cy, cyLop, 0.1); 
   
     cyLopSlow = lop(cy, cyLopSlow, 0.01); 

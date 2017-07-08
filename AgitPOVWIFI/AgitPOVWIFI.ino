@@ -76,6 +76,19 @@ float thresholdDown = 0;
 bool triggered = false;
 /////////// FIN accel //////////////
 
+//////// Test interval entre les colonnes ////////
+
+unsigned long povIntervalColumns = 3300;
+int povColumnWidth = 4;
+volatile unsigned long povInterval = 1100;
+volatile unsigned long povTimeStamp;
+
+/////////////////////////////////////////////////
+
+int inputIntColor = 0;
+
+int ouvertureServeur = 60000; // ouvrir le serveur pendant une minute
+
 void setup(void){
 
   Serial.begin(115200);
@@ -120,8 +133,8 @@ for (int i=0; i<AP_NameString.length(); i++){
  
  
  // eraseFiles(); 
- ecrireFichier("AgitPOV");
- //  lireFichier(); 
+ // ecrireFichier("AgitPOV1"); // pour programmer un mot
+lireFichier(); 
 
 Serial.println("Début init LEDs");
 Serial.println("////////// Cuidado, los LEDs necesitan la bateria par iniciarse!! ///////////////");
@@ -160,7 +173,7 @@ void loop(){
    dnsServer.processNextRequest(); /// a-t-on une requête de connexion ? 
    server.handleClient();
 
-    if(millis() > 60000){
+    if(millis() > ouvertureServeur){ // temps d'ouverture du serveur pour recevoir les mots '5000' pour tester 
       inicio = false; 
       turnItOff(); // fermeture du serveur
    }
@@ -168,19 +181,26 @@ void loop(){
 
  else if (inicio != true) {
 
+  // détection pour savoir si on est en mode 'manuel' et non 'vélo'
+  // peut-être en utilisant cx et cy au début?
+  // nécessite de comparer les résultats entre la roue de vélo et la main
+
 //////////// CAT LOOP /////////////
   updateAccelerometer();
-
-  Serial.print("cyCentered : ");
-  Serial.println(cyCentered);
+  
+  // Serial.print("cyCentered : ");
+  // Serial.println(cyCentered);
   if ( cyCentered >= thresholdUp  ) {
+      dotPovInterval();
     // Serial.println("errr?");
     if ( triggered == false ) {
       triggered = true;
       dotDoIt();
+      // compter l'intervalle entre les tours
     }
   } else if ( cyCentered <= thresholdDown) {
     triggered = false;
+    // TioDtod(); // on écrit à l'envers, un test
   }
   
 ////////// FIN CAT LOOP ///////////

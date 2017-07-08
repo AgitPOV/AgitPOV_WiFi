@@ -31,10 +31,57 @@ void lireFichier(){
     Serial.println(f.size());
 
    String s=f.readStringUntil('\n');
-      Serial.print("mot en mémoire : ");
+      Serial.print("Texte : ");
       Serial.println(s);
-//    mot = s; // change la valeur de mot et passe-le à la fonction nouveauArray, ensuite démarre le tout.
-      nouveauArray(s); // construit le tableau
+      String motMem = s.substring(0, s.length()-1); // change la valeur de mot et passe-le à la fonction nouveauArray, ensuite démarre le tout.
+
+      Serial.print("Texte : ");
+      Serial.println(motMem); 
+      
+      String inputColor = s.substring(s.length()-1); // tente d'isoler le dernier charactère du texte en mémoire.
+      inputIntColor = inputColor.toInt();
+
+    
+      Serial.print("inputIntColor : ");
+      Serial.println(inputIntColor); 
+
+       //// switch //// à intégrer en fonction parce qu'elle est ré-écrite deux fois
+switch (inputIntColor) {
+    case 0:    
+      Serial.println("rojo");
+       color = 0xFF0000; // rojo
+      break;
+    case 1:    
+      Serial.println("naranja");
+       color = 0xCC3300; // naranja
+      break;
+    case 2:    
+      Serial.println("amarillo"); // jaune
+      color = 0xFFFF00;
+      break;
+    case 3:   
+      Serial.println("verde");
+       color = 0x00FF00;
+      break;
+    case 4:   
+      Serial.println("azul"); // bleu
+       color = 0x0000FF;
+      break;
+    case 5:   
+      Serial.println("morado"); // mauve
+       color = 0xFF00FF;
+      break;
+    case 6:   
+      Serial.println("luz"); // lumière
+      color = 0xFFFFFF;
+      break;
+    case 7:  
+      Serial.println("arcoiris");
+      // insert desbinario routine aqui
+      break;
+} // fin du break
+      
+      nouveauArray(motMem); // construit le tableau
       arrayOffset = 0;
    
     }
@@ -66,6 +113,7 @@ void ecrireFichier(String unMot){
     Serial.println("====== Writing palabra to SPIFFS file =========");
     // write palabra to file
     f.print(mot);
+    f.print(inputIntColor);
     f.close();
 
     // open file for reading
