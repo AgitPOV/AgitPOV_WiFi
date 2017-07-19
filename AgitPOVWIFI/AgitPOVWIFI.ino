@@ -87,7 +87,7 @@ volatile unsigned long povTimeStamp;
 
 int inputIntColor = 0;
 
-int ouvertureServeur = 60000; // ouvrir le serveur pendant une minute
+int ouvertureServeur = 45000; // ouvrir le serveur pendant une minute
 
 void setup(void){
 
@@ -137,8 +137,8 @@ for (int i=0; i<AP_NameString.length(); i++){
 lireFichier(); 
 
 Serial.println("Début init LEDs");
-Serial.println("////////// Cuidado, los LEDs necesitan la bateria par iniciarse!! ///////////////");
-Serial.println("/////// Attention, les LEds ont besoin de la pile pour s'initialiser !! /////////");
+Serial.println("////////// ¡Cuidado, es necesario de desconectar y reconectar el cable despues de programmar el POV! ///////////////");
+Serial.println("/////// Attention, il faut débrancher et rebrancher le câble pour réinitialiser apres la programmation du POV! /////////");
 ////////// CAT accel FastLEDs ///////////
   accel.init(SCALE_8G, ODR_800);
 

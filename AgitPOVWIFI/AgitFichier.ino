@@ -73,11 +73,12 @@ switch (inputIntColor) {
       break;
     case 6:   
       Serial.println("luz"); // lumière
-      color = 0xFFFFFF;
+      color = 0xCCCCCC;
       break;
     case 7:  
       Serial.println("arcoiris");
       // insert desbinario routine aqui
+      color = 7;
       break;
 } // fin du break
       
