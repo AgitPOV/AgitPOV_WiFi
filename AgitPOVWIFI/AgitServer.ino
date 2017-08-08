@@ -7,7 +7,7 @@ void client_status() { /// This works, ty sohialsadiq!
 
   if (nbrC > 0) {
 
-   leds.fill(color);
+   leds.fill(colorId);
   }
   yield();
   delay(10);
@@ -57,6 +57,9 @@ void handleSubmit() // ajouter l'enregistrement de la couleur
   Serial.print("Couleur envoyée : ");
   Serial.println(inputIntColor);
 
+  colorId = inputIntColor;
+
+/*
   //// switch //// à intégrer en fonction parce qu'elle est ré-écrite deux fois
   switch (inputIntColor) {
     case 0:
@@ -92,6 +95,7 @@ void handleSubmit() // ajouter l'enregistrement de la couleur
       // insert desbinario routine aqui
       break;
   } // fin du break
+  */
   ecrireFichier(mot); //
   turnItOff(); // ferme le serveur pour conserver de l'énergie
   inicio = false; // si on a un nouveau mot alors affiche tout de suite

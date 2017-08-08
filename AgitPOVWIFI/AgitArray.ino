@@ -189,7 +189,7 @@ void nouveauArray(String leMot){
     Serial.print("inputIntColor ");
     Serial.println(inputIntColor);
     
-    leds.fill(color);
+    leds.fill(colorId);
   
     povArray[arrayOffset]= 0; // Ajouter un espace au début, revoir sur la roue
     // arrayOffset++; 

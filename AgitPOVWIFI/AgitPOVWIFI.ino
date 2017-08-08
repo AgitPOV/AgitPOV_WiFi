@@ -57,11 +57,15 @@ ESP8266WebServer server(80);
 uint8_t MAC_array[6];
 char MAC_char[18];
 
+
+
+
 ////////// Leds //////////
 #include "Leds.h"
 Leds leds;
 
-CRGB color = 0x221100; // couleur pour l'affichage d'un mot // naranja
+int colorId = 7; // see matching colors in Leds.h, 7 is RAINBOW
+
 
 
 
@@ -186,7 +190,7 @@ void loop() {
   if (inicio) {
 
     if (nbrC <= 0) {
-      leds.initSequence(color); // séquence de départ, arrête lorsque qu'un client se connecte
+      leds.initSequence(colorId); // séquence de départ, arrête lorsque qu'un client se connecte
     }
 
     client_status(); // Si nous avons un client, arrêter la séquence doInit()
@@ -205,22 +209,15 @@ void loop() {
     // MODE ANIMATION //
     ////////////////////
 
-    if ( frameAccelerator.wave(povArrayLength,2) ) {
+    if ( frameAccelerator.wave(povArrayLength, 2) ) {
       int frame = frameAccelerator.getFrame();
-      leds.displayFrame(povArray[frame],color); 
+
+        // display         side a,          side b,                           with this colorId
+        leds.displayFrame( povArray[frame], povArray[povArrayLength - frame - 1], colorId);
+      
     } else {
       leds.blank();
     }
-    
-    /*
-    int frame = frameAccelerator.getFrame();
-    leds.displayFrame(povArray[frame],color); 
-      */
-    
-    
-
-    
-
 
   }
 

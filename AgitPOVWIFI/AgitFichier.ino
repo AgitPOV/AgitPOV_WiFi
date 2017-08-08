@@ -45,6 +45,8 @@ void lireFichier(){
       Serial.print("inputIntColor : ");
       Serial.println(inputIntColor); 
 
+      colorId = inputIntColor;
+/*
        //// switch //// à intégrer en fonction parce qu'elle est ré-écrite deux fois
 switch (inputIntColor) {
     case 0:    
@@ -81,7 +83,7 @@ switch (inputIntColor) {
       color = 7;
       break;
 } // fin du break
-      
+      */
       nouveauArray(motMem); // construit le tableau
       arrayOffset = 0;
    

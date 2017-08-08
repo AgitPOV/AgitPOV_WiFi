@@ -6,6 +6,13 @@
 class Leds {
     CRGB leds[NUMPIXELS];
 
+    #define COLOR_COUNT 7
+
+    //               rojo,    naranja, amarillo,   verde,    azul,     morado,   luz
+    CRGB colors[COLOR_COUNT] = { 0xFF0000, 0xCC3300, 0xFFFF00, 0x00FF00, 0x0000FF, 0xFF00FF, 0xFFFFFF };
+
+
+
   public:
 
     void setup() {
@@ -19,12 +26,22 @@ class Leds {
       FastLED.show();
     }
 
-    void initSequence(CRGB color) {
+    CRGB colorIdToColor(int colorId, int rainbowOffset) {
+          if ( colorId == 7 ) return colors[(rainbowOffset / 2) % COLOR_COUNT];
+          else return colors[colorId];
+    }
+
+    void initSequence(int colorId) {
+
+     
+
       for (byte i = 0; i <= 23; i++) { /// UP!!
 
         for (byte j = 0; j <= 120; j = j + 50) {
 
-          leds[i] = color;
+           leds[i] = colorIdToColor(colorId,i);
+         
+         
           //strip.setBrightness(j);
           //strip.setPixelColor(i, color);
           //strip.show();
@@ -40,30 +57,34 @@ class Leds {
       blank();
     }
 
-    void fill(CRGB color) {
+    void fill(int colorId) {
+
       for (int i = 0; i < 24; i++) {
-        leds[i] = color;
+         leds[i] = colorIdToColor(colorId,i);
       }
       FastLED.show();
     }
 
-    void displayFrame(int frameData, CRGB color) {
+    void displayFrame(int sideAFrame, int sideBFrame, int colorId) {
+
       for (int i = 0; i < 12; i++) { // pour chaque DEL d'un côté
-        if ( frameData & 0x01 ) {
-          leds[i] = color;
+        if ( sideAFrame & 0x01 ) {
+          leds[i] = colorIdToColor(colorId,i);
         } else {
           leds[i] = CRGB::Black;
         }
-        frameData = frameData >> 1; // offset frame data
+        sideAFrame = sideAFrame >> 1;
       }
-      for (int i = 23; i > 11; i--) { // pour chaque DEL de l'autre côté dans le sens inverse
-        if ( frameData & 0x01 ) {
-          leds[i] = color;
+
+      for (int i = 23; i > 11; i--) { // pour chaque DEL de l'autre côté dans le sens inverse vertical
+        if ( sideBFrame & 0x01 ) {
+         leds[i] = colorIdToColor(colorId,i);
         } else {
           leds[i] = CRGB::Black;
         }
-        frameData = frameData >> 1; // offset frame data
+        sideBFrame = sideBFrame >> 1;
       }
+
       FastLED.show();
     }
 
