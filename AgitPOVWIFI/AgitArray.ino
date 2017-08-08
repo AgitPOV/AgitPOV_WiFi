@@ -189,11 +189,7 @@ void nouveauArray(String leMot){
     Serial.print("inputIntColor ");
     Serial.println(inputIntColor);
     
-    for(byte i = 0;i<=23;i++){ /// descanso /// comment est-ce qu'on fait varier l'intensité des FastLEDs?
-        yield;
-        leds[i] = color; 
-    }
-      FastLED.show();
+    leds.fill(color);
   
     povArray[arrayOffset]= 0; // Ajouter un espace au début, revoir sur la roue
     // arrayOffset++; 
