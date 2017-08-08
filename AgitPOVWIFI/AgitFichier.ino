@@ -22,6 +22,8 @@
 
 void lireFichier(){
 
+  Serial.println("====== Reading palabra from SPIFFS file =========");
+
   Serial.println("le fichier : ");
   Dir dir = SPIFFS.openDir("/");
   while (dir.next()) {
@@ -85,7 +87,7 @@ switch (inputIntColor) {
 } // fin du break
       */
       nouveauArray(motMem); // construit le tableau
-      arrayOffset = 0;
+      
    
     }
 }
@@ -119,18 +121,6 @@ void ecrireFichier(String unMot){
     f.print(inputIntColor);
     f.close();
 
-    // open file for reading
-    f = SPIFFS.open("/1.txt", "r");
-      if (!f) {
-        Serial.println("file open failed");
-      }  
-      Serial.println("====== Reading from SPIFFS file =======");
-      // read palabra
-      String s=f.readStringUntil('\n');  
+   lireFichier();
       
-      Serial.print("mot en mémoire : ");
-      Serial.println(s);
-      mot = s; // change la valeur de mot et passe-le à la fonction nouveauArray, ensuite démarre le tout.
-      nouveauArray(mot); // construit le tableau
-      arrayOffset = 0;
 }

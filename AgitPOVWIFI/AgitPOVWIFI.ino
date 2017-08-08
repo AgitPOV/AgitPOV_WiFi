@@ -4,8 +4,8 @@
    (c) 2011-2017
    Contributors over the years
 
+        Thomas Ouellet Fredericks - Debuging, Accelerometer and LED engine and animation code
         Alexandre Castonguay
-        Thomas Ouellet Fredericks - Accelerometer and LED code
         Alan Kwok
         Andre Girard andre@andre-girard.com
         Sofian Audry
@@ -68,11 +68,7 @@ int colorId = 7; // see matching colors in Leds.h, 7 is RAINBOW
 
 
 
-// Pour un mot en entrée
 
-int arrayOffset = 0;
-int iByte = 0;
-int indexArr;
 
 //#define SKIP_WIFI
 
@@ -182,17 +178,18 @@ void setup(void) {
   // WAIT FOR CLIENTS
   while ( numberOfClients <= 0 && (millis() - timeServerStarted < keepServerOpenInterval) ) {
     numberOfClients = getNumberOfClients();
-    leds.nonBlockingAnimation(7);
+    leds.nonBlockingOsXAnimation();
     yield();
   }
 
   // BLANK IF NO CLIENTS || FILL OTHERWISE
-  if ( numberOfClients ) leds.fill(7);
-  else leds.blank();
+  if ( numberOfClients == 0  ) leds.blank();
 
   // GOT A CONNEXION : WAIT TILL ITS CONCLUSION
   // QUIT IF THE CONNEXION IS LOST
   while ( numberOfClients > 0 ) {
+
+    leds.nonBlockingRainbowAnimation();
 
     dnsServer.processNextRequest(); /// a-t-on une requête de connexion ?
     server.handleClient();
@@ -201,12 +198,15 @@ void setup(void) {
 
     numberOfClients = getNumberOfClients();
 
+    
+
   }
 
   turnItOff(); // fermeture du serveur
 
 #endif
 
+   Serial.println("Setuping frameAccelerator");
   frameAccelerator.setup();
 
 } ///// fin du setup
@@ -217,8 +217,8 @@ void loop() {
   if ( frameAccelerator.wave(povArrayLength, 2) ) {
     int frame = frameAccelerator.getFrame();
 
-    // display         side a,          side b,                           with this colorId
-    leds.displayFrame( povArray[frame], povArray[povArrayLength - frame - 1], colorId);
+    // display         side a,          side b,                               with this colorId
+    leds.displayFrame( povArray[povArrayLength - frame - 1], povArray[frame] , colorId);
 
   } else {
     leds.blank();

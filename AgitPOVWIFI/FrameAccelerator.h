@@ -25,6 +25,7 @@ class FameAccelerator {
     }
   public:
     void setup() {
+     
       mma8452q.init(SCALE_8G, ODR_800);
     }
 

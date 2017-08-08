@@ -31,27 +31,51 @@ class Leds {
       else return colors[colorId];
     }
 
-/*
-    void blockingAnimation(int colorId, unsigned long duration) {
-      unsigned long timeStarted = millis();
-      float animationCounter = 0;
-      while ( millis() - timeStarted < duration ) {
-        byte grey = floor(sin(animationCounter*0.4-PI*0.5)*127+128);
-        animationCounter++;
-        for (int i = 0; i < 24; i++) {
-          leds[i] = grey | ( grey << 8 ) | ( grey << 16 ) ;
+    /*
+        void blockingAnimation(int colorId, unsigned long duration) {
+          unsigned long timeStarted = millis();
+          float animationCounter = 0;
+          while ( millis() - timeStarted < duration ) {
+            byte grey = floor(sin(animationCounter*0.4-PI*0.5)*127+128);
+            animationCounter++;
+            for (int i = 0; i < 24; i++) {
+              leds[i] = grey | ( grey << 8 ) | ( grey << 16 ) ;
+            }
+            FastLED.show();
+            unsigned long yieldStarted = millis(); while ( millis() - yieldStarted <= 100 ) yield(); // 100 ms yield delay
+          }
         }
-        FastLED.show();
-        unsigned long yieldStarted = millis(); while ( millis() - yieldStarted <= 100 ) yield(); // 100 ms yield delay
+    */
+
+    void nonBlockingOsXAnimation() {
+
+      byte grey = floor(sin(millis() * 0.005 - PI * 0.5) * 127 + 128);
+    
+      for (int i = 0; i < 24; i++) {
+        leds[i] = grey | ( grey << 8 ) | ( grey << 16 ) ;
       }
+      FastLED.show();
+
     }
-*/
 
     // Does an initilizing sequence timed with millis(). Returns immediatly.
-    void nonBlockingAnimation(int colorId) {
+    void nonBlockingRainbowAnimation() {
 
-      int last = (millis()/50)%24;
-      
+
+      for (int  i = 0; i <= 24 ; i++) { /// COLOR!!
+        leds[i] = colorIdToColor(7, i + (millis()/100));
+      }
+
+      FastLED.show();
+
+    }
+
+    /*
+       // Does an initilizing sequence timed with millis(). Returns immediatly.
+    void nonBlockingRainbowAnimation(int colorId) {
+
+      int last = (millis() / 50) % 24;
+
       for (int  i = 0; i <= last ; i++) { /// COLOR!!
         leds[i] = colorIdToColor(colorId, i);
       }
@@ -59,11 +83,12 @@ class Leds {
       for (int  i = 23; i > last  ; i--) { /// BLACK!!
         leds[i] = CRGB::Black;
       }
-     
-      
-       FastLED.show();
-     
+
+
+      FastLED.show();
+
     }
+     */
 
     void fill(int colorId) {
 
