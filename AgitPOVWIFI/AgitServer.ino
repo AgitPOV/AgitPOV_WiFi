@@ -1,22 +1,15 @@
-void client_status() { /// This works, ty sohialsadiq!
-  struct station_info *stat_info;
-  nbrC = wifi_softap_get_station_num(); // Count of stations which are connected to ESP8266 soft-AP
-  stat_info = wifi_softap_get_station_info();
-  Serial.print("Nombre de clients = ");
-  Serial.println(nbrC);
-
-  if (nbrC > 0) {
-
-   leds.fill(colorId);
-  }
-  yield();
-  delay(10);
-  yield();
+int getNumberOfClients() {
+  //struct station_info *stat_info;
+  int nbrC = wifi_softap_get_station_num(); // Count of stations which are connected to ESP8266 soft-AP
+  //stat_info = wifi_softap_get_station_info();
+  //Serial.print("Nombre de clients = ");
+  //Serial.println(nbrC);
+  return nbrC;
+  
 }
 
 
-void handleRoot()
-{
+void handleRoot() {
   Serial.print("nombre arguments : ");
   Serial.println(server.args()); // un tableau contenant le nombre d'arguments
   Serial.print("arg name 0 : ");

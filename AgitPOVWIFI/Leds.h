@@ -1,12 +1,12 @@
 #include <FastLED.h>
-#define NUMPIXELS 24 // Number of LEDs in strip
+
 #define DATAPIN    D6
 #define CLOCKPIN   D5
 
 class Leds {
-    CRGB leds[NUMPIXELS];
+    CRGB leds[24];
 
-    #define COLOR_COUNT 7
+#define COLOR_COUNT 7
 
     //               rojo,    naranja, amarillo,   verde,    azul,     morado,   luz
     CRGB colors[COLOR_COUNT] = { 0xFF0000, 0xCC3300, 0xFFFF00, 0x00FF00, 0x0000FF, 0xFF00FF, 0xFFFFFF };
@@ -16,9 +16,9 @@ class Leds {
   public:
 
     void setup() {
-      FastLED.addLeds<APA102, DATAPIN, CLOCKPIN, BGR>(leds, NUMPIXELS);
-      leds[0] = CRGB::Blue;
-      FastLED.show();
+
+      FastLED.addLeds<APA102, DATAPIN, CLOCKPIN, BGR>(leds, 24);
+
 
     }
     void blank() { // éteint toutes les lumières
@@ -27,40 +27,48 @@ class Leds {
     }
 
     CRGB colorIdToColor(int colorId, int rainbowOffset) {
-          if ( colorId == 7 ) return colors[(rainbowOffset / 2) % COLOR_COUNT];
-          else return colors[colorId];
+      if ( colorId == 7 ) return colors[(rainbowOffset / 2) % COLOR_COUNT];
+      else return colors[colorId];
     }
 
-    void initSequence(int colorId) {
-
-     
-
-      for (byte i = 0; i <= 23; i++) { /// UP!!
-
-        for (byte j = 0; j <= 120; j = j + 50) {
-
-           leds[i] = colorIdToColor(colorId,i);
-         
-         
-          //strip.setBrightness(j);
-          //strip.setPixelColor(i, color);
-          //strip.show();
-          yield(); // donne un peu de temps au wifi
-          // delay(1);
-          // yield();
+/*
+    void blockingAnimation(int colorId, unsigned long duration) {
+      unsigned long timeStarted = millis();
+      float animationCounter = 0;
+      while ( millis() - timeStarted < duration ) {
+        byte grey = floor(sin(animationCounter*0.4-PI*0.5)*127+128);
+        animationCounter++;
+        for (int i = 0; i < 24; i++) {
+          leds[i] = grey | ( grey << 8 ) | ( grey << 16 ) ;
         }
-
         FastLED.show();
-        unsigned long timeStarted = millis(); while ( millis() - timeStarted <= 50 ) yield(); // 50 ms yield delay
-
+        unsigned long yieldStarted = millis(); while ( millis() - yieldStarted <= 100 ) yield(); // 100 ms yield delay
       }
-      blank();
+    }
+*/
+
+    // Does an initilizing sequence timed with millis(). Returns immediatly.
+    void nonBlockingAnimation(int colorId) {
+
+      int last = (millis()/50)%24;
+      
+      for (int  i = 0; i <= last ; i++) { /// COLOR!!
+        leds[i] = colorIdToColor(colorId, i);
+      }
+
+      for (int  i = 23; i > last  ; i--) { /// BLACK!!
+        leds[i] = CRGB::Black;
+      }
+     
+      
+       FastLED.show();
+     
     }
 
     void fill(int colorId) {
 
       for (int i = 0; i < 24; i++) {
-         leds[i] = colorIdToColor(colorId,i);
+        leds[i] = colorIdToColor(colorId, i);
       }
       FastLED.show();
     }
@@ -69,7 +77,7 @@ class Leds {
 
       for (int i = 0; i < 12; i++) { // pour chaque DEL d'un côté
         if ( sideAFrame & 0x01 ) {
-          leds[i] = colorIdToColor(colorId,i);
+          leds[i] = colorIdToColor(colorId, i);
         } else {
           leds[i] = CRGB::Black;
         }
@@ -78,7 +86,7 @@ class Leds {
 
       for (int i = 23; i > 11; i--) { // pour chaque DEL de l'autre côté dans le sens inverse vertical
         if ( sideBFrame & 0x01 ) {
-         leds[i] = colorIdToColor(colorId,i);
+          leds[i] = colorIdToColor(colorId, 23 - i);
         } else {
           leds[i] = CRGB::Black;
         }

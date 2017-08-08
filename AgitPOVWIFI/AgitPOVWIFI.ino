@@ -48,7 +48,6 @@ FameAccelerator frameAccelerator;
 
 
 const byte DNS_PORT = 53;
-byte nbrC; // nombre de clients connectés
 IPAddress apIP(192, 168, 4, 1);
 DNSServer dnsServer;
 ESP8266WebServer server(80);
@@ -75,14 +74,18 @@ int arrayOffset = 0;
 int iByte = 0;
 int indexArr;
 
-#define SKIP_WIFI 1
+//#define SKIP_WIFI
+
+#define POV_ARRAY_MAX_SIZE 105
 
 #ifdef SKIP_WIFI
+
 int povArray[] = { 0 , 0 , 2040 , 2176 , 2176 , 2176 , 2040 , 0 , 2032 , 2056 , 2056 , 2120 , 1136 , 0 , 3064 , 0 , 2048 , 2048 , 4088 , 2048 , 2048 , 0 , 0 , 4088 , 2176 , 2176 , 2176 , 3968 , 0 , 2032 , 2056 , 2056 , 2056 , 2032 , 0 , 4064 , 16 , 8 , 16 , 4064 , 0 , 0 };
 int povArrayLength = 42;
 bool inicio = false;
 #else
-int povArray[100];
+int povArray[POV_ARRAY_MAX_SIZE];
+int povArrayLength = 0;
 bool nouveauMot;
 bool inicio = true;
 #endif
@@ -113,11 +116,18 @@ bool inicio = true;
 
 int inputIntColor = 0;
 
-int ouvertureServeur = 45000; // ouvrir le serveur pendant 45 secondes
 
 void setup(void) {
 
   Serial.begin(115200);
+
+  leds.setup();
+
+  leds.blank();
+
+  Serial.println("////////// ¡Cuidado, es necesario de desconectar y reconectar el cable despues de programmar el POV! ///////////////");
+  Serial.println("/////// Attention, il faut débrancher et rebrancher le câble pour réinitialiser apres la programmation du POV! /////////");
+
 
 #ifndef SKIP_WIFI
 
@@ -159,24 +169,43 @@ void setup(void) {
   // SPIFFS.format(); // Besoin une seule fois pour formatter le système de fichiers // Wait 30 secs
   // Serial.println("Spiffs formatted");
 
-
-
   // eraseFiles();
   // ecrireFichier("AgitPOV1"); // pour programmer un mot
   lireFichier();
+
+  // WAIT FOR CONNEXION
+  unsigned long keepServerOpenInterval = 45000; // ouvrir le serveur pendant 45 secondes
+  unsigned long timeServerStarted = millis();
+
+  int numberOfClients = 0;
+
+  // WAIT FOR CLIENTS
+  while ( numberOfClients <= 0 && (millis() - timeServerStarted < keepServerOpenInterval) ) {
+    numberOfClients = getNumberOfClients();
+    leds.nonBlockingAnimation(7);
+    yield();
+  }
+
+  // BLANK IF NO CLIENTS || FILL OTHERWISE
+  if ( numberOfClients ) leds.fill(7);
+  else leds.blank();
+
+  // GOT A CONNEXION : WAIT TILL ITS CONCLUSION
+  // QUIT IF THE CONNEXION IS LOST
+  while ( numberOfClients > 0 ) {
+
+    dnsServer.processNextRequest(); /// a-t-on une requête de connexion ?
+    server.handleClient();
+
+    yield();
+
+    numberOfClients = getNumberOfClients();
+
+  }
+
+  turnItOff(); // fermeture du serveur
+
 #endif
-
-  Serial.println("Début init LEDs");
-  Serial.println("////////// ¡Cuidado, es necesario de desconectar y reconectar el cable despues de programmar el POV! ///////////////");
-  Serial.println("/////// Attention, il faut débrancher et rebrancher le câble pour réinitialiser apres la programmation du POV! /////////");
-
-
-
-  leds.setup();
-
-  Serial.println("fin init LEDs");
-  /////////// FIN CAT accel FastLEDs //////
-
 
   frameAccelerator.setup();
 
@@ -184,41 +213,17 @@ void setup(void) {
 
 void loop() {
 
-  /////////////////////////
-  // MODE INITIALISATION //
-  /////////////////////////
-  if (inicio) {
 
-    if (nbrC <= 0) {
-      leds.initSequence(colorId); // séquence de départ, arrête lorsque qu'un client se connecte
-    }
+  if ( frameAccelerator.wave(povArrayLength, 2) ) {
+    int frame = frameAccelerator.getFrame();
 
-    client_status(); // Si nous avons un client, arrêter la séquence doInit()
+    // display         side a,          side b,                           with this colorId
+    leds.displayFrame( povArray[frame], povArray[povArrayLength - frame - 1], colorId);
 
-    dnsServer.processNextRequest(); /// a-t-on une requête de connexion ?
-    server.handleClient();
-
-    if (millis() > ouvertureServeur) { // temps d'ouverture du serveur pour recevoir les mots '5000' pour tester
-      inicio = false;
-      turnItOff(); // fermeture du serveur
-    }
-    /// fin de la condition initiale
   } else {
-
-    ////////////////////
-    // MODE ANIMATION //
-    ////////////////////
-
-    if ( frameAccelerator.wave(povArrayLength, 2) ) {
-      int frame = frameAccelerator.getFrame();
-
-        // display         side a,          side b,                           with this colorId
-        leds.displayFrame( povArray[frame], povArray[povArrayLength - frame - 1], colorId);
-      
-    } else {
-      leds.blank();
-    }
-
+    leds.blank();
   }
+
+
 
 } // fin du loop

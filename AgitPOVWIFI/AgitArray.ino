@@ -10,7 +10,7 @@ int stereoArray[][7]={   /// merci // gracias // thank you Alex Keeling!!
 {0,0,252,510,513,0,0}, //(
 {0,0,513,510,252,0,0}, //)
 {17,10,4,31,4,10,17}, //*  //10
-{0,32,32,248,32,32,0}, //+
+{0,32,32,248,32,32,0}, //+ 0xf00, 0xf00, 0xf00, 0x000, 0x000, 0x000, 0x000 }
 {0,0,2816,1792,0,0,0}, //,
 {0,32,32,32,32,32,0}, //-
 {0,0,768,768,0,0,0}, //.   
@@ -192,9 +192,25 @@ void nouveauArray(String leMot){
     leds.fill(colorId);
   
     povArray[arrayOffset]= 0; // Ajouter un espace au début, revoir sur la roue
+
+    // If we have a bad string, get out!
+    if (leMot.length() <= 1 )  {
+      return;
+    }
+
+    int characterCount = leMot.length()-1;
+      
+    povArrayLength = (characterCount) * 7;
+    if ( povArrayLength > POV_ARRAY_MAX_SIZE ) {
+      povArrayLength = POV_ARRAY_MAX_SIZE;
+      characterCount = povArrayLength / 7;
+    }
+
+    Serial.print("characterCount) ");
+    Serial.println(characterCount);
     // arrayOffset++; 
 
-    while (iByte < leMot.length()-1){ // on enlève le char qui correspond à la couleur
+    while (iByte < characterCount){ // on enlève le char qui correspond à la couleur
       
       Serial.print("Valeur de iByte :"); 
       Serial.println(iByte); 
