@@ -42,7 +42,7 @@ extern "C" { // Infos sur les clients connectés
 #include <Chrono.h>
 #include <Math.h>
 #include "FrameAccelerator.h"
-FameAccelerator frameAccelerator;
+FrameAccelerator frameAccelerator;
 ///////// FIN ACCEL /////////
 
 
@@ -115,6 +115,9 @@ void setup(void) {
 
   leds.blank();
 
+  Serial.println("Setuping frameAccelerator");
+  frameAccelerator.setup();
+
   
 
   // MAC ADDRESS ////////
@@ -158,15 +161,15 @@ void setup(void) {
   // eraseFiles();
   // ecrireFichier("AgitPOV1"); // pour programmer un mot
 
-
-  // WAIT FOR CONNEXION
+ 
+  // WAIT FOR CLIENTS
+  int numberOfClients = 0;
   unsigned long keepServerOpenInterval = 45000; // ouvrir le serveur pendant 45 secondes
   unsigned long timeServerStarted = millis();
-
-  int numberOfClients = 0;
-
-  // WAIT FOR CLIENTS
+  
   while ( numberOfClients <= 0 && (millis() - timeServerStarted < keepServerOpenInterval) ) {
+    frameAccelerator.update();
+    if ( frameAccelerator.shaken(6) ) break;
     numberOfClients = getNumberOfClients();
     leds.nonBlockingOsXAnimation();
     yield();
@@ -199,9 +202,6 @@ void setup(void) {
 
   leds.fill(colorId);
 
-  Serial.println("Setuping frameAccelerator");
-  frameAccelerator.setup();
-
   Serial.println("Fading");
   leds.blockingFadeOut(colorId,2500);
 
@@ -211,7 +211,10 @@ void setup(void) {
 
 void loop() {
 
-  //   bool wave(int frameCount, float threshold)
+  // Update accelerator values
+  frameAccelerator.update();
+
+  //   bool wave(int frameCount, float threshold) return true of it is triggered
   if ( frameAccelerator.wave(povArrayLength, 2) ) {
     int frame = frameAccelerator.getFrame();
 
