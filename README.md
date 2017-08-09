@@ -1,4 +1,18 @@
-# AgitPOV_WiFi
+#  AgitPOV Wifi: 24-RGB LED dual sided POV with Wifi (ESP8266)
+
+ (c) 2011-2017
+ Contributors over the years for this version
+
+* Thomas Ouellet Fredericks - Debuging, Accelerometer and LED engine and animation code
+* Alexandre Castonguay
+* Andre Girard andre@andre-girard.com
+* Alan Kwok
+* Sofian Audry
+* Mariangela Aponte Nuñez
+* Jean-Pascal Bellemare
+* Daniel Felipe Valencia dfvalen0223@gmail.com
+* Alex Keeling
+
 
 [FR] Cette version utilise une puce ESP8266 qui permet de programmer un mot à partir de n'importe quelle connexion WiFi.
 Les DELs RVB seront pré-assemblées pour que les ateliers se concentrent sur la sélection des mots que nous aimerions voir

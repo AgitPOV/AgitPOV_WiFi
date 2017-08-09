@@ -22,6 +22,8 @@
 
 void lireFichier(){
 
+  Serial.println("====== Reading palabra from SPIFFS file =========");
+
   Serial.println("le fichier : ");
   Dir dir = SPIFFS.openDir("/");
   while (dir.next()) {
@@ -45,45 +47,10 @@ void lireFichier(){
       Serial.print("inputIntColor : ");
       Serial.println(inputIntColor); 
 
-       //// switch //// à intégrer en fonction parce qu'elle est ré-écrite deux fois
-switch (inputIntColor) {
-    case 0:    
-      Serial.println("rojo");
-       color = 0xFF0000; // rojo
-      break;
-    case 1:    
-      Serial.println("naranja");
-       color = 0xCC3300; // naranja
-      break;
-    case 2:    
-      Serial.println("amarillo"); // jaune
-      color = 0xFFFF00;
-      break;
-    case 3:   
-      Serial.println("verde");
-       color = 0x00FF00;
-      break;
-    case 4:   
-      Serial.println("azul"); // bleu
-       color = 0x0000FF;
-      break;
-    case 5:   
-      Serial.println("morado"); // mauve
-       color = 0xFF00FF;
-      break;
-    case 6:   
-      Serial.println("luz"); // lumière
-      color = 0xCCCCCC;
-      break;
-    case 7:  
-      Serial.println("arcoiris");
-      // insert desbinario routine aqui
-      color = 7;
-      break;
-} // fin du break
-      
+      colorId = inputIntColor;
+
       nouveauArray(motMem); // construit le tableau
-      arrayOffset = 0;
+      
    
     }
 }
@@ -117,18 +84,5 @@ void ecrireFichier(String unMot){
     f.print(inputIntColor);
     f.close();
 
-    // open file for reading
-    f = SPIFFS.open("/1.txt", "r");
-      if (!f) {
-        Serial.println("file open failed");
-      }  
-      Serial.println("====== Reading from SPIFFS file =======");
-      // read palabra
-      String s=f.readStringUntil('\n');  
       
-      Serial.print("mot en mémoire : ");
-      Serial.println(s);
-      mot = s; // change la valeur de mot et passe-le à la fonction nouveauArray, ensuite démarre le tout.
-      nouveauArray(mot); // construit le tableau
-      arrayOffset = 0;
 }

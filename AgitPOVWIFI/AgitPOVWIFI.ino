@@ -1,4 +1,32 @@
-////////////// AgitPOV /////////////
+/*
+   AgitPOV Wifi: 24-RGB LED dual sided POV with Wifi (ESP8266)
+
+   (c) 2011-2017
+   Contributors over the years
+
+        Thomas Ouellet Fredericks - Debuging, Accelerometer and LED engine and animation code
+        Alexandre Castonguay
+        Alan Kwok
+        Andre Girard andre@andre-girard.com
+        Sofian Audry
+        Mariangela Aponte Nuñez
+        Jean-Pascal Bellemare
+        Daniel Felipe Valencia dfvalen0223@gmail.com
+        Alex Keeling
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "AgitPage.h"
 #include <ESP8266WiFi.h> // Server // Thank you Ivan Grokhotkov 
@@ -13,18 +41,13 @@ extern "C" { // Infos sur les clients connectés
 ////////// ACCEL ////////////
 #include <Chrono.h>
 #include <Math.h>
+#include "FrameAccelerator.h"
+FameAccelerator frameAccelerator;
 ///////// FIN ACCEL /////////
 
-////////// FastLED //////////
-#include <FastLED.h>
-#define NUMPIXELS 24 // Number of LEDs in strip
-#define DATAPIN    D6
-#define CLOCKPIN   D5
-CRGB leds[NUMPIXELS];
-///////// FIN FastLED ///////
+
 
 const byte DNS_PORT = 53;
-byte nbrC; // nombre de clients connectés
 IPAddress apIP(192, 168, 4, 1);
 DNSServer dnsServer;
 ESP8266WebServer server(80);
@@ -33,75 +56,77 @@ ESP8266WebServer server(80);
 uint8_t MAC_array[6];
 char MAC_char[18];
 
-uint32_t color = 0x221100; // couleur pour l'affichage d'un mot // naranja
 
-// Pour un mot en entrée
-int povArray[100];
-int arrayOffset = 0; 
-int iByte = 0;
-int indexArr;
 
-// int povArray[] = { 0 , 0 , 2040 , 2176 , 2176 , 2176 , 2040 , 0 , 2032 , 2056 , 2056 , 2120 , 1136 , 0 , 3064 , 0 , 2048 , 2048 , 4088 , 2048 , 2048 , 0 , 0 , 4088 , 2176 , 2176 , 2176 , 3968 , 0 , 2032 , 2056 , 2056 , 2056 , 2032 , 0 , 4064 , 16 , 8 , 16 , 4064 , 0 , 0 };
+
+////////// Leds //////////
+#include "Leds.h"
+Leds leds;
+
+int colorId = 7; // see matching colors in Leds.h, 7 is RAINBOW
+
+
+
+
+
+#define POV_ARRAY_MAX_SIZE 105
+
+
+int povArray[POV_ARRAY_MAX_SIZE];
+int povArrayLength = 0;
 bool nouveauMot;
-// bool povDoIt;
 bool inicio = true;
+
+
 //////// Pour la conversion du mot en entrée à son code pour les DELs
 
-//////// accel //////////////////////
-#include <Wire.h> // Must include Wire library for I2C
-#include "SparkFun_MMA8452Q_ESP8266.h"
 
-// Begin using the library by creating an instance of the MMA8452Q
-//  class. We'll call it "accel". That's what we'll reference from
-//  here on out.
-MMA8452Q accel;
 
 // int AgitAngle = 0;
 
-float cy;
-float cyLop;
-float cyLopSlow;
+/*
+  float thresholdUp = 0.5;
+  float thresholdDown = 0;
 
-float cyPrevious;
-float cyLopPrevious;
-
-//float cyV;
-//float cyVLop;
-
-float cyCentered;
-
-float thresholdUp = 0.5;
-float thresholdDown = 0;
-
-bool triggered = false;
+  bool triggered = false;
+*/
 /////////// FIN accel //////////////
 
 //////// Test interval entre les colonnes ////////
 
-unsigned long povIntervalColumns = 3300;
-int povColumnWidth = 4;
-volatile unsigned long povInterval = 1100;
-volatile unsigned long povTimeStamp;
-
+/*
+  unsigned long povIntervalColumns = 3300;
+  int povColumnWidth = 4;
+  volatile unsigned long povInterval = 1100;
+  volatile unsigned long povTimeStamp;
+*/
 /////////////////////////////////////////////////
 
 int inputIntColor = 0;
 
-int ouvertureServeur = 45000; // ouvrir le serveur pendant une minute
+bool waitingForNewWord = false;
 
-void setup(void){
+
+void setup(void) {
 
   Serial.begin(115200);
-// MAC ADDRESS ////////
-    WiFi.macAddress(MAC_array);
-    for (int i = 0; i < sizeof(MAC_array); ++i){
-      sprintf(MAC_char,"%s%02x:",MAC_char,MAC_array[i]);
-    }
-    Serial.println(MAC_char);
- 
+
+  leds.setup();
+
+  leds.blank();
+
+  
+
+  // MAC ADDRESS ////////
+  WiFi.macAddress(MAC_array);
+  for (int i = 0; i < sizeof(MAC_array); ++i) {
+    sprintf(MAC_char, "%s%02x:", MAC_char, MAC_array[i]);
+  }
+  Serial.println(MAC_char);
+
   WiFi.mode(WIFI_AP);
   WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
-  
+
   ///// MAC ID ACCESS POINT ////
 
   Serial.print("MAC address, last pair : ");
@@ -109,13 +134,13 @@ void setup(void){
   String AP_NameString = "AgitPOV" + String(MAC_array[5]) ;
   Serial.print("AP_NameString : ");
   Serial.println(AP_NameString);
-  
+
   char AP_NameChar[AP_NameString.length() + 1];
   memset(AP_NameChar, 0, AP_NameString.length() + 1);
 
-for (int i=0; i<AP_NameString.length(); i++){
-  AP_NameChar[i] = AP_NameString.charAt(i);
-  
+  for (int i = 0; i < AP_NameString.length(); i++) {
+    AP_NameChar[i] = AP_NameString.charAt(i);
+
   }
 
   WiFi.softAP(AP_NameChar);  //WiFi.softAP("AgitPOV")
@@ -124,87 +149,77 @@ for (int i=0; i<AP_NameString.length(); i++){
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("Connect to http://192.168.4.1");
-  
+
   SPIFFS.begin(); // initialise les opérations sur le système de fichiers
   // Serial.println("Please wait 30 secs for SPIFFS to be formatted");
   // SPIFFS.format(); // Besoin une seule fois pour formatter le système de fichiers // Wait 30 secs
   // Serial.println("Spiffs formatted");
 
- 
- 
- // eraseFiles(); 
- // ecrireFichier("AgitPOV1"); // pour programmer un mot
-lireFichier(); 
+  // eraseFiles();
+  // ecrireFichier("AgitPOV1"); // pour programmer un mot
 
-Serial.println("Début init LEDs");
-Serial.println("////////// ¡Cuidado, es necesario de desconectar y reconectar el cable despues de programmar el POV! ///////////////");
-Serial.println("/////// Attention, il faut débrancher et rebrancher le câble pour réinitialiser apres la programmation du POV! /////////");
-////////// CAT accel FastLEDs ///////////
-  accel.init(SCALE_8G, ODR_800);
 
-  FastLED.addLeds<APA102, DATAPIN, CLOCKPIN, BGR>(leds, NUMPIXELS);
-  // FastLED.addLeds<WS2801,DATAPIN, CLOCKPIN, RGB>(leds, NUMPIXELS);
-/*
- for (int i = 0; i <24; i++){
-  leds[i] = CRGB::Blue; 
- }
- */
-  leds[0] = CRGB::Blue; 
-  FastLED.show();
+  // WAIT FOR CONNEXION
+  unsigned long keepServerOpenInterval = 45000; // ouvrir le serveur pendant 45 secondes
+  unsigned long timeServerStarted = millis();
 
-  Serial.println("fin init LEDs");
-/////////// FIN CAT accel FastLEDs //////
+  int numberOfClients = 0;
+
+  // WAIT FOR CLIENTS
+  while ( numberOfClients <= 0 && (millis() - timeServerStarted < keepServerOpenInterval) ) {
+    numberOfClients = getNumberOfClients();
+    leds.nonBlockingOsXAnimation();
+    yield();
+  }
+
+
+  
+
+
+  // GOT A CONNEXION : WAIT TILL ITS CONCLUSION
+  // QUIT IF THE CONNEXION IS LOST
+  if ( numberOfClients > 0  ) waitingForNewWord = true ;
+  
+  while ( numberOfClients > 0 && waitingForNewWord ) {
+
+    leds.nonBlockingRainbowAnimation();
+
+    dnsServer.processNextRequest(); /// a-t-on une requête de connexion ?
+    server.handleClient();
+
+    yield();
+
+    numberOfClients = getNumberOfClients();
+
+  }
+
+  turnItOff(); // fermeture du serveur
+
+  lireFichier();
+
+  leds.fill(colorId);
+
+  Serial.println("Setuping frameAccelerator");
+  frameAccelerator.setup();
+
+  Serial.println("Fading");
+  leds.blockingFadeOut(colorId,2500);
+
+  Serial.println("Good to go");
 
 } ///// fin du setup
 
-void loop(){
-  // Serial.println("world?");
-   if(inicio == true){ // abrir el servidor al inicio //
+void loop() {
 
+  //   bool wave(int frameCount, float threshold)
+  if ( frameAccelerator.wave(povArrayLength, 2) ) {
+    int frame = frameAccelerator.getFrame();
 
-  //    Serial.println("hello");
-      
-   if(nbrC<=0){
-    dotInit(); // séquence de départ, arrête lorsque qu'un client se connecte
-    }
-   
-   client_status(); // Si nous avons un client, arrêter la séquence doInit()
-   
-   dnsServer.processNextRequest(); /// a-t-on une requête de connexion ? 
-   server.handleClient();
+    // display         side a,          side b,                               with this colorId
+    leds.displayFrame( povArray[povArrayLength - frame - 1], povArray[frame] , colorId);
 
-    if(millis() > ouvertureServeur){ // temps d'ouverture du serveur pour recevoir les mots '5000' pour tester 
-      inicio = false; 
-      turnItOff(); // fermeture du serveur
-   }
-  } /// fin de la condition initiale
-
- else if (inicio != true) {
-
-  // détection pour savoir si on est en mode 'manuel' et non 'vélo'
-  // peut-être en utilisant cx et cy au début?
-  // nécessite de comparer les résultats entre la roue de vélo et la main
-
-//////////// CAT LOOP /////////////
-  updateAccelerometer();
-  
-  // Serial.print("cyCentered : ");
-  // Serial.println(cyCentered);
-  if ( cyCentered >= thresholdUp  ) {
-      dotPovInterval();
-    // Serial.println("errr?");
-    if ( triggered == false ) {
-      triggered = true;
-      dotDoIt();
-      // compter l'intervalle entre les tours
-    }
-  } else if ( cyCentered <= thresholdDown) {
-    triggered = false;
-    // TioDtod(); // on écrit à l'envers, un test
+  } else {
+    leds.blank();
   }
-  
-////////// FIN CAT LOOP ///////////
-  
-}
 
 } // fin du loop
