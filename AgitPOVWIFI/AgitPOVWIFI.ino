@@ -69,22 +69,14 @@ int colorId = 7; // see matching colors in Leds.h, 7 is RAINBOW
 
 
 
-
-//#define SKIP_WIFI
-
 #define POV_ARRAY_MAX_SIZE 105
 
-#ifdef SKIP_WIFI
 
-int povArray[] = { 0 , 0 , 2040 , 2176 , 2176 , 2176 , 2040 , 0 , 2032 , 2056 , 2056 , 2120 , 1136 , 0 , 3064 , 0 , 2048 , 2048 , 4088 , 2048 , 2048 , 0 , 0 , 4088 , 2176 , 2176 , 2176 , 3968 , 0 , 2032 , 2056 , 2056 , 2056 , 2032 , 0 , 4064 , 16 , 8 , 16 , 4064 , 0 , 0 };
-int povArrayLength = 42;
-bool inicio = false;
-#else
 int povArray[POV_ARRAY_MAX_SIZE];
 int povArrayLength = 0;
 bool nouveauMot;
 bool inicio = true;
-#endif
+
 
 //////// Pour la conversion du mot en entrée à son code pour les DELs
 
@@ -112,6 +104,8 @@ bool inicio = true;
 
 int inputIntColor = 0;
 
+bool waitingForNewWord = false;
+
 
 void setup(void) {
 
@@ -121,11 +115,7 @@ void setup(void) {
 
   leds.blank();
 
-  Serial.println("////////// ¡Cuidado, es necesario de desconectar y reconectar el cable despues de programmar el POV! ///////////////");
-  Serial.println("/////// Attention, il faut débrancher et rebrancher le câble pour réinitialiser apres la programmation du POV! /////////");
-
-
-#ifndef SKIP_WIFI
+  
 
   // MAC ADDRESS ////////
   WiFi.macAddress(MAC_array);
@@ -167,7 +157,7 @@ void setup(void) {
 
   // eraseFiles();
   // ecrireFichier("AgitPOV1"); // pour programmer un mot
-  lireFichier();
+
 
   // WAIT FOR CONNEXION
   unsigned long keepServerOpenInterval = 45000; // ouvrir le serveur pendant 45 secondes
@@ -182,12 +172,15 @@ void setup(void) {
     yield();
   }
 
-  // BLANK IF NO CLIENTS || FILL OTHERWISE
-  if ( numberOfClients == 0  ) leds.blank();
+
+  
+
 
   // GOT A CONNEXION : WAIT TILL ITS CONCLUSION
   // QUIT IF THE CONNEXION IS LOST
-  while ( numberOfClients > 0 ) {
+  if ( numberOfClients > 0  ) waitingForNewWord = true ;
+  
+  while ( numberOfClients > 0 && waitingForNewWord ) {
 
     leds.nonBlockingRainbowAnimation();
 
@@ -198,22 +191,27 @@ void setup(void) {
 
     numberOfClients = getNumberOfClients();
 
-    
-
   }
 
   turnItOff(); // fermeture du serveur
 
-#endif
+  lireFichier();
 
-   Serial.println("Setuping frameAccelerator");
+  leds.fill(colorId);
+
+  Serial.println("Setuping frameAccelerator");
   frameAccelerator.setup();
+
+  Serial.println("Fading");
+  leds.blockingFadeOut(colorId,2500);
+
+  Serial.println("Good to go");
 
 } ///// fin du setup
 
 void loop() {
 
-
+  //   bool wave(int frameCount, float threshold)
   if ( frameAccelerator.wave(povArrayLength, 2) ) {
     int frame = frameAccelerator.getFrame();
 
@@ -223,7 +221,5 @@ void loop() {
   } else {
     leds.blank();
   }
-
-
 
 } // fin du loop

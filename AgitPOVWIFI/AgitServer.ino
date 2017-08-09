@@ -52,46 +52,10 @@ void handleSubmit() // ajouter l'enregistrement de la couleur
 
   colorId = inputIntColor;
 
-/*
-  //// switch //// à intégrer en fonction parce qu'elle est ré-écrite deux fois
-  switch (inputIntColor) {
-    case 0:
-      Serial.println("rojo");
-      color = 0xFF0000; // rojo
-      break;
-    case 1:
-      Serial.println("naranja");
-      color = 0xCC3300; // naranja
-      break;
-    case 2:
-      Serial.println("amarillo"); // jaune
-      color = 0xFFFF00;
-      break;
-    case 3:
-      Serial.println("verde");
-      color = 0x00FF00;
-      break;
-    case 4:
-      Serial.println("azul"); // bleu
-      color = 0x0000FF;
-      break;
-    case 5:
-      Serial.println("morado"); // mauve
-      color = 0xFF00FF;
-      break;
-    case 6:
-      Serial.println("luz"); // lumière
-      color = 0xFFFFFF;
-      break;
-    case 7:
-      Serial.println("arcoiris");
-      // insert desbinario routine aqui
-      break;
-  } // fin du break
-  */
-  ecrireFichier(mot); //
-  turnItOff(); // ferme le serveur pour conserver de l'énergie
-  inicio = false; // si on a un nouveau mot alors affiche tout de suite
+  ecrireFichier(mot);
+
+  waitingForNewWord = false;
+  
 } // fin de handleSubmit
 
 void returnOK()

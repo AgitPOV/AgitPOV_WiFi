@@ -24,6 +24,7 @@ class Leds {
     void blank() { // éteint toutes les lumières
       FastLED.clear();
       FastLED.show();
+      
     }
 
     CRGB colorIdToColor(int colorId, int rainbowOffset) {
@@ -49,8 +50,9 @@ class Leds {
 
     void nonBlockingOsXAnimation() {
 
-      byte grey = floor(sin(millis() * 0.005 - PI * 0.5) * 127 + 128);
-    
+      //byte grey = floor(sin(millis() * 0.005 - PI * 0.5) * 127 + 128); // full intensity
+      byte grey = floor(sin(millis() * 0.005 - PI * 0.5) * 64 + 64); // half intensity
+
       for (int i = 0; i < 24; i++) {
         leds[i] = grey | ( grey << 8 ) | ( grey << 16 ) ;
       }
@@ -58,12 +60,32 @@ class Leds {
 
     }
 
+    void blockingFadeOut(int colorId, unsigned long duration) {
+
+      for (int i = 0; i < 24; i++) {
+        leds[i] = colorIdToColor(colorId, i) ;
+      }
+      FastLED.show();
+
+      unsigned long startTime = millis();
+      unsigned long stepInterval = duration / 256;
+
+      while ( millis() - startTime < duration ) {
+        for (int i = 0; i < 24; i++) {
+          leds[i]--;
+        }
+
+        FastLED.show();
+        unsigned long yieldStarted = millis(); while ( millis() - yieldStarted <= stepInterval ) yield(); // stepInterval ms yield delay
+      }
+    }
+
     // Does an initilizing sequence timed with millis(). Returns immediatly.
     void nonBlockingRainbowAnimation() {
 
 
       for (int  i = 0; i <= 24 ; i++) { /// COLOR!!
-        leds[i] = colorIdToColor(7, i + (millis()/100));
+        leds[i] = colorIdToColor(7, i + (millis() / 100));
       }
 
       FastLED.show();
@@ -72,7 +94,7 @@ class Leds {
 
     /*
        // Does an initilizing sequence timed with millis(). Returns immediatly.
-    void nonBlockingRainbowAnimation(int colorId) {
+      void nonBlockingRainbowAnimation(int colorId) {
 
       int last = (millis() / 50) % 24;
 
@@ -87,8 +109,8 @@ class Leds {
 
       FastLED.show();
 
-    }
-     */
+      }
+    */
 
     void fill(int colorId) {
 

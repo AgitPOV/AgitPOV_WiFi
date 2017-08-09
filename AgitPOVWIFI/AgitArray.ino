@@ -189,10 +189,6 @@ void nouveauArray(String leMot) {
   Serial.print("nouveau mot  : ");
   Serial.println(leMot);
 
-  Serial.print("inputIntColor ");
-  Serial.println(inputIntColor);
-
-  leds.fill(colorId);
 
   // If we have a bad string, get out!
   if (leMot.length() <= 1 )  {
