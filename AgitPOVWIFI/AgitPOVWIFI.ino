@@ -4,7 +4,7 @@
    (c) 2011-2017
    Contributors over the years
 
-        Thomas Ouellet Fredericks - Debuging, Accelerometer and LED engine and animation code
+        Thomas Ouellet Fredericks - Debuging, Accelerometer, LED engine and animation code
         Alexandre Castonguay
         Alan Kwok
         Andre Girard andre@andre-girard.com
@@ -28,6 +28,12 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+#define UDP_DEBUG
+
+
+
+
 #include "AgitPage.h"
 #include <ESP8266WiFi.h> // Server // Thank you Ivan Grokhotkov 
 #include <ESP8266WebServer.h>
@@ -38,8 +44,19 @@ extern "C" { // Infos sur les clients connectés
 #include<user_interface.h>
 }
 
+
+#ifdef UDP_DEBUG
+#include <WiFiUdp.h>
+WiFiUDP Udp;
+IPAddress ipBroadCast(192, 168, 4, 100);
+#include <AsciiMassagePacker.h>
+#include <AsciiMassageParser.h>
+AsciiMassagePacker outgoing;
+AsciiMassageParser inbound;
+#endif
+
 ////////// ACCEL ////////////
-#include <Chrono.h>
+
 #include <Math.h>
 #include "FrameAccelerator.h"
 FrameAccelerator frameAccelerator;
@@ -52,9 +69,7 @@ IPAddress apIP(192, 168, 4, 1);
 DNSServer dnsServer;
 ESP8266WebServer server(80);
 
-// MAC ADDRESS /////////////////////////
-uint8_t MAC_array[6];
-char MAC_char[18];
+
 
 
 
@@ -65,47 +80,17 @@ Leds leds;
 
 int colorId = 7; // see matching colors in Leds.h, 7 is RAINBOW
 
-
-
-
-
-#define POV_ARRAY_MAX_SIZE 105
-
+#define POV_ARRAY_MAX_SIZE 180
 
 int povArray[POV_ARRAY_MAX_SIZE];
 int povArrayLength = 0;
-bool nouveauMot;
-bool inicio = true;
-
-
-//////// Pour la conversion du mot en entrée à son code pour les DELs
-
-
-
-// int AgitAngle = 0;
-
-/*
-  float thresholdUp = 0.5;
-  float thresholdDown = 0;
-
-  bool triggered = false;
-*/
-/////////// FIN accel //////////////
-
-//////// Test interval entre les colonnes ////////
-
-/*
-  unsigned long povIntervalColumns = 3300;
-  int povColumnWidth = 4;
-  volatile unsigned long povInterval = 1100;
-  volatile unsigned long povTimeStamp;
-*/
-/////////////////////////////////////////////////
 
 int inputIntColor = 0;
 
 bool waitingForNewWord = false;
 
+int previousFrameDisplayed = -1;
+bool blanked;
 
 void setup(void) {
 
@@ -118,38 +103,55 @@ void setup(void) {
   Serial.println("Setuping frameAccelerator");
   frameAccelerator.setup();
 
-  
 
-  // MAC ADDRESS ////////
-  WiFi.macAddress(MAC_array);
-  for (int i = 0; i < sizeof(MAC_array); ++i) {
+  // MAC ADDRESS /////////////////////////
+  /*
+    uint8_t MAC_array[6];
+    char MAC_char[18];
+    WiFi.macAddress(MAC_array);
+    for (int i = 0; i < sizeof(MAC_array); ++i) {
     sprintf(MAC_char, "%s%02x:", MAC_char, MAC_array[i]);
-  }
-  Serial.println(MAC_char);
+    }
+    Serial.println(MAC_char);
 
+    Serial.print("MAC address, last pair : ");
+    Serial.println(String(MAC_array[5]));
+    String AP_NameString = "AgitPOV" + String(MAC_array[5]) ;
+    Serial.print("AP_NameString : ");
+    Serial.println(AP_NameString);
+
+    char AP_NameChar[AP_NameString.length() + 1];
+    memset(AP_NameChar, 0, AP_NameString.length() + 1);
+
+    for (int i = 0; i < AP_NameString.length(); i++) {
+    AP_NameChar[i] = AP_NameString.charAt(i);
+    }
+  */
+  // Do a little work to get a unique-ish name. Append the
+  // last three bytes of the MAC (HEX'd) :
+  uint8_t mac[WL_MAC_ADDR_LENGTH];
+  WiFi.softAPmacAddress(mac);
+  String threeLastHexBytes = String(mac[WL_MAC_ADDR_LENGTH - 3], HEX) +
+                 String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) +
+                 String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
+  threeLastHexBytes.toLowerCase();
+  String apNameString = "agitpov" + threeLastHexBytes;
+
+  char apName[apNameString.length() + 1];
+  memset(apName, 0, apNameString.length() + 1);
+
+  for (int i = 0; i < apNameString.length(); i++)
+    apName[i] = apNameString.charAt(i);
+
+  // SETUP WIFI
   WiFi.mode(WIFI_AP);
   WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
-
-  ///// MAC ID ACCESS POINT ////
-
-  Serial.print("MAC address, last pair : ");
-  Serial.println(String(MAC_array[5]));
-  String AP_NameString = "AgitPOV" + String(MAC_array[5]) ;
-  Serial.print("AP_NameString : ");
-  Serial.println(AP_NameString);
-
-  char AP_NameChar[AP_NameString.length() + 1];
-  memset(AP_NameChar, 0, AP_NameString.length() + 1);
-
-  for (int i = 0; i < AP_NameString.length(); i++) {
-    AP_NameChar[i] = AP_NameString.charAt(i);
-
-  }
-
-  WiFi.softAP(AP_NameChar);  //WiFi.softAP("AgitPOV")
+  WiFi.softAP(apName,apName);  //WiFi.softAP("AgitPOVXXXXXX")
+  dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer.start(DNS_PORT, "*", apIP);   // if DNSServer is started with "*" for domain name, it will reply with  // provided IP to all DNS request
   server.on("/", handleRoot);
-  server.onNotFound(handleNotFound);
+  server.onNotFound(handleRoot);
+  
   server.begin();
   Serial.println("Connect to http://192.168.4.1");
 
@@ -161,12 +163,12 @@ void setup(void) {
   // eraseFiles();
   // ecrireFichier("AgitPOV1"); // pour programmer un mot
 
- 
+
   // WAIT FOR CLIENTS
   int numberOfClients = 0;
   unsigned long keepServerOpenInterval = 45000; // ouvrir le serveur pendant 45 secondes
   unsigned long timeServerStarted = millis();
-  
+
   while ( numberOfClients <= 0 && (millis() - timeServerStarted < keepServerOpenInterval) ) {
     frameAccelerator.update();
     if ( frameAccelerator.shaken(6) ) break;
@@ -175,14 +177,10 @@ void setup(void) {
     yield();
   }
 
-
-  
-
-
   // GOT A CONNEXION : WAIT TILL ITS CONCLUSION
   // QUIT IF THE CONNEXION IS LOST
   if ( numberOfClients > 0  ) waitingForNewWord = true ;
-  
+
   while ( numberOfClients > 0 && waitingForNewWord ) {
 
     leds.nonBlockingRainbowAnimation();
@@ -196,33 +194,80 @@ void setup(void) {
 
   }
 
+#ifndef UDP_DEBUG
   turnItOff(); // fermeture du serveur
+#else
+  Udp.begin(9999);
+#endif
 
   lireFichier();
 
   leds.fill(colorId);
 
   Serial.println("Fading");
-  leds.blockingFadeOut(colorId,2500);
+  leds.blockingFadeOut(colorId, 2500);
 
   Serial.println("Good to go");
 
 } ///// fin du setup
+
+
 
 void loop() {
 
   // Update accelerator values
   frameAccelerator.update();
 
-  //   bool wave(int frameCount, float threshold) return true of it is triggered
-  if ( frameAccelerator.wave(povArrayLength, 2) ) {
-    int frame = frameAccelerator.getFrame();
+  // FORCE WHEEL MODE
+  if ( frameAccelerator.wheel(povArrayLength, POV_ARRAY_MAX_SIZE) ) {
+    display();
+  }
 
+
+  /*
+    // MODE SELECTOR
+    if ( frameAccelerator.cx > 2 && frameAccelerator.x_min > 0 ) {
+
+      // WHEEL MODE
+      if ( frameAccelerator.wheel(povArrayLength,POV_ARRAY_MAX_SIZE) ) {
+        display();
+      } else {
+        blank();
+      }
+
+    } else {
+
+      // WAVE MODE
+
+      //   bool wave(int frameCount, float threshold) return true of it is triggered
+      if ( frameAccelerator.wave(povArrayLength, 2) ) {
+        display();
+      } else {
+        blank();
+      }
+    }
+  */
+
+} // fin du loop
+
+void display() {
+
+  int frame = frameAccelerator.getFrame();
+  if ( frame != previousFrameDisplayed) {
+    previousFrameDisplayed = frame;
     // display         side a,          side b,                               with this colorId
     leds.displayFrame( povArray[povArrayLength - frame - 1], povArray[frame] , colorId);
 
-  } else {
+  }
+  blanked = false;
+
+}
+
+void blank() {
+
+  if ( !blanked ) {
+    blanked = true;
     leds.blank();
   }
+}
 
-} // fin du loop
