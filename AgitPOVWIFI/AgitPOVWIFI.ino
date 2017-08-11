@@ -31,9 +31,6 @@
 
 #define UDP_DEBUG
 
-
-
-
 #include "AgitPage.h"
 #include <ESP8266WiFi.h> // Server // Thank you Ivan Grokhotkov 
 #include <ESP8266WebServer.h>
@@ -43,7 +40,6 @@
 extern "C" { // Infos sur les clients connectés
 #include<user_interface.h>
 }
-
 
 #ifdef UDP_DEBUG
 #include <WiFiUdp.h>
@@ -62,17 +58,10 @@ AsciiMassageParser inbound;
 FrameAccelerator frameAccelerator;
 ///////// FIN ACCEL /////////
 
-
-
 const byte DNS_PORT = 53;
 IPAddress apIP(192, 168, 4, 1);
 DNSServer dnsServer;
 ESP8266WebServer server(80);
-
-
-
-
-
 
 ////////// Leds //////////
 #include "Leds.h"
@@ -105,28 +94,7 @@ void setup(void) {
 
 
   // MAC ADDRESS /////////////////////////
-  /*
-    uint8_t MAC_array[6];
-    char MAC_char[18];
-    WiFi.macAddress(MAC_array);
-    for (int i = 0; i < sizeof(MAC_array); ++i) {
-    sprintf(MAC_char, "%s%02x:", MAC_char, MAC_array[i]);
-    }
-    Serial.println(MAC_char);
-
-    Serial.print("MAC address, last pair : ");
-    Serial.println(String(MAC_array[5]));
-    String AP_NameString = "AgitPOV" + String(MAC_array[5]) ;
-    Serial.print("AP_NameString : ");
-    Serial.println(AP_NameString);
-
-    char AP_NameChar[AP_NameString.length() + 1];
-    memset(AP_NameChar, 0, AP_NameString.length() + 1);
-
-    for (int i = 0; i < AP_NameString.length(); i++) {
-    AP_NameChar[i] = AP_NameString.charAt(i);
-    }
-  */
+  
   // Do a little work to get a unique-ish name. Append the
   // last three bytes of the MAC (HEX'd) :
   uint8_t mac[WL_MAC_ADDR_LENGTH];
