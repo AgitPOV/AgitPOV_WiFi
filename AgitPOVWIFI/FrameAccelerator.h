@@ -7,6 +7,7 @@ class FrameAccelerator {
 
     struct Axis {
       float value = 0;
+      float valueLop = 0;
       float max = 0;
       float min = 0;
       float maxLop = 0;
@@ -30,6 +31,8 @@ class FrameAccelerator {
 
     float speed;
     float rotation;
+
+    bool canRetrigger = true;
 
   public:
 
@@ -63,13 +66,14 @@ class FrameAccelerator {
         axis->tempMin = axis->value;
       }
 
+      axis->valueLop = lop(axis->value, axis->valueLop , 0.1);
 
-      axis->maxLop = lop(-8, axis->maxLop, 0.0001);
+      axis->maxLop = lop(-8, axis->maxLop, 0.0002); //0.0001
       if (axis->value > axis->maxLop ) {
         axis->maxLop = axis->value;
       }
 
-      axis->minLop = lop(8, axis->minLop, 0.0001);
+      axis->minLop = lop(8, axis->minLop, 0.0002); //0.0001
       if (axis->value < axis->minLop ) {
         axis->minLop = axis->value;
       }
@@ -89,16 +93,20 @@ class FrameAccelerator {
     }
 
   public:
+
+////////////
+// SETUP //
+////////////
     void setup() {
 
       mma8452q.init(SCALE_8G, ODR_800);
     }
 
 
-
+////////////
+// UPDATE //
+////////////
     void update() {
-
-
 
       if (mma8452q.available()) {
         // First, use accel.read() to read the new variables:
@@ -106,12 +114,11 @@ class FrameAccelerator {
 
         x.value = mma8452q.cx;
         y.value = mma8452q.cy;
-        z.value = mma8452q.cz;
+        //z.value = mma8452q.cz;
 
         updateAxis(&x);
         updateAxis(&y);
-        updateAxis(&z);
-
+        //updateAxis(&z);
 
 
         if (millis() - last_min_max_time_check >= 1000) //check if an interval has passed - get new the new range
@@ -120,8 +127,7 @@ class FrameAccelerator {
 
           updateMinMax(&x);
           updateMinMax(&y);
-          updateMinMax(&z);
-
+          //updateMinMax(&z);
 
 #ifndef UDP_DEBUG
           Serial.print("x ");
@@ -150,14 +156,12 @@ class FrameAccelerator {
           Udp.endPacket();
 
 #endif
-
-
         }
 
       }
 
 #ifdef UDP_DEBUG
-      if ( millis() - lastTimeSentUdp >= 10 ) {
+      if ( millis() - lastTimeSentUdp >= 50 ) {
         lastTimeSentUdp = millis();
         outgoing.beginPacket("xyz");
         outgoing.addFloat(x.value);
@@ -177,10 +181,16 @@ class FrameAccelerator {
 #endif
     }
 
+//////////
+// SHAKE //
+//////////
     bool shaken(float threshold) {
       return (abs(x.range) > threshold) || (abs(y.range) > threshold) || (abs(z.range) > threshold);
     }
 
+//////////
+// WAVE //
+//////////
     bool wave(int frameCount, float threshold) {
 
 
@@ -210,55 +220,49 @@ class FrameAccelerator {
     unsigned long lastTimeSentAngle = 0;
 #endif
 
+///////////
+// WHEEL //
+///////////
     bool wheel(int frameCount, int wheelSize) {
 
-      if ( y.range == 0 ) {
+      if ( y.rangeLop == 0 || x.rangeLop == 0 ) {
         frame = 0;
-        return false;
+        triggered = false;
+        return triggered;
       }
-      
-      float newRotation = (atan2(y.value , x.value - x.minLop - 1) + PI ) / (TWO_PI) ;
+
+      float xOscillation = (x.valueLop - x.minLop) * (2) / (x.rangeLop) - 1;
+      float yOscillation = (y.valueLop - y.minLop) * (2) / (y.rangeLop) - 1;
+
+      float newRotation = (atan2(yOscillation , xOscillation) + PI ) / (TWO_PI) ;
       float newSpeed = newRotation - rotation;
+      rotation = newRotation;
 
       if ( newSpeed > 0.5) newSpeed = 1 - newSpeed;
       if ( newSpeed < -0.5 ) newSpeed = 1 + newSpeed;
 
-      speed = lop(newSpeed, speed, 0.001);
-
-      rotation = newRotation;
+      speed = lop(newSpeed, speed, 0.005);
 
 
-      
-      float newFrame =  ( rotation) * (wheelSize);
-
-      if ( speed > 0 ) {
-        if ( newFrame > frame || newFrame - frame < frameCount * -0.5  ) frame = newFrame;
-      } else {
-        if ( newFrame < frame || newFrame - frame > frameCount * 0.5  ) frame = newFrame;
+      if ( yOscillation <= 0 ) {
+        if ( canRetrigger == true ) {
+          triggered = true;
+          canRetrigger = false;
+          frame = frameCount - 1;
+        }
+      } else if ( yOscillation >= 0.5 ) {
+        canRetrigger = true;
       }
+      if ( triggered) frame = frame + speed * (wheelSize);
 
-
-      triggered = true;
       if ( frame < 0 ) {
         frame = 0;
+        triggered = false;
       }
-      if ( newFrame >= frameCount ) {
+      if ( frame >= frameCount ) {
         frame = frameCount - 1;
+        triggered = false;
       }
-
-
-
-#ifdef UDP_DEBUG
-      if ( millis() - lastTimeSentAngle >= 10 ) {
-        outgoing.beginPacket("rotation");
-        outgoing.addFloat(rotation);
-        outgoing.addFloat(speed * 10000);
-        outgoing.endPacket();
-        Udp.beginPacket(ipBroadCast, 9999);
-        Udp.write(outgoing.buffer(), outgoing.size());
-        Udp.endPacket();
-      }
-#endif
 
 
 
@@ -276,6 +280,57 @@ class FrameAccelerator {
 
 };
 
+
+/*
+   OLD ABSOLUTE CODE FOR REFERENCE
+
+      float xRotation = (x.value - x.minLop) * (2) / (x.rangeLop) - 1;
+      float yRotation = (y.value - y.minLop) * (2) / (y.rangeLop) - 1;
+
+      float newRotation = (atan2(yRotation , xRotation) + PI ) / (TWO_PI) ;
+      float newSpeed = newRotation - rotation;
+
+      if ( newSpeed > 0.5) newSpeed = 1 - newSpeed;
+      if ( newSpeed < -0.5 ) newSpeed = 1 + newSpeed;
+
+      speed = lop(newSpeed, speed, 0.001);
+
+      rotation = newRotation;
+
+
+
+      float newFrame =  ( rotation) * (wheelSize);
+
+      if ( speed > 0 ) {
+        if ( newFrame > frame || newFrame - frame < frameCount * -0.5  ) frame = newFrame;
+      } else {
+        if ( newFrame < frame || newFrame - frame > frameCount * 0.5  ) frame = newFrame;
+      }
+
+      triggered = true;
+
+      if ( frame < 0 ) {
+        frame = 0;
+      }
+      if ( frame >= frameCount ) {
+        frame = frameCount - 1;
+      }
+
+  #ifdef UDP_DEBUG
+
+            if ( millis() - lastTimeSentAngle >= 10 ) {
+              outgoing.beginPacket("rotation");
+              outgoing.addFloat(rotation);
+              outgoing.addFloat(speed * 10000);
+              outgoing.endPacket();
+              Udp.beginPacket(ipBroadCast, 9999);
+              Udp.write(outgoing.buffer(), outgoing.size());
+              Udp.endPacket();
+            }
+
+  #endif
+
+*/
 
 
 

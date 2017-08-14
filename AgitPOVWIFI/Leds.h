@@ -143,6 +143,29 @@ class Leds {
       FastLED.show();
     }
 
+     void displayInversedFrame(int sideAFrame, int sideBFrame, int colorId) {
+
+      for (int i = 11; i >= 0; i--) { // pour chaque DEL d'un côté
+        if ( sideAFrame & 0x01 ) {
+          leds[i] = colorIdToColor(colorId, i);
+        } else {
+          leds[i] = CRGB::Black;
+        }
+        sideAFrame = sideAFrame >> 1;
+      }
+
+      for (int i = 12; i < 24; i++) { // pour chaque DEL de l'autre côté dans le sens inverse vertical
+        if ( sideBFrame & 0x01 ) {
+          leds[i] = colorIdToColor(colorId, 23 - i);
+        } else {
+          leds[i] = CRGB::Black;
+        }
+        sideBFrame = sideBFrame >> 1;
+      }
+
+      FastLED.show();
+    }
+
 
 };
 

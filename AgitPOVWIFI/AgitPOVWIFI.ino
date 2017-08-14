@@ -81,6 +81,9 @@ bool waitingForNewWord = false;
 int previousFrameDisplayed = -1;
 bool blanked;
 
+//bool wheelModeWasTriggered = false;
+//unsigned long wheelModeWasTriggeredTime = 0;
+
 void setup(void) {
 
   Serial.begin(115200);
@@ -94,14 +97,14 @@ void setup(void) {
 
 
   // MAC ADDRESS /////////////////////////
-  
+
   // Do a little work to get a unique-ish name. Append the
   // last three bytes of the MAC (HEX'd) :
   uint8_t mac[WL_MAC_ADDR_LENGTH];
   WiFi.softAPmacAddress(mac);
   String threeLastHexBytes = String(mac[WL_MAC_ADDR_LENGTH - 3], HEX) +
-                 String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) +
-                 String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
+                             String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) +
+                             String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
   threeLastHexBytes.toLowerCase();
   String apNameString = "agitpov" + threeLastHexBytes;
 
@@ -114,12 +117,12 @@ void setup(void) {
   // SETUP WIFI
   WiFi.mode(WIFI_AP);
   WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
-  WiFi.softAP(apName,apName);  //WiFi.softAP("AgitPOVXXXXXX")
+  WiFi.softAP(apName, apName); //WiFi.softAP("AgitPOVXXXXXX")
   dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer.start(DNS_PORT, "*", apIP);   // if DNSServer is started with "*" for domain name, it will reply with  // provided IP to all DNS request
   server.on("/", handleRoot);
   server.onNotFound(handleRoot);
-  
+
   server.begin();
   Serial.println("Connect to http://192.168.4.1");
 
@@ -173,7 +176,7 @@ void setup(void) {
   leds.fill(colorId);
 
   Serial.println("Fading");
-  leds.blockingFadeOut(colorId, 2500);
+  leds.blockingFadeOut(colorId, 1000);
 
   Serial.println("Good to go");
 
@@ -186,50 +189,50 @@ void loop() {
   // Update accelerator values
   frameAccelerator.update();
 
-  // FORCE WHEEL MODE
-  if ( frameAccelerator.wheel(povArrayLength, POV_ARRAY_MAX_SIZE) ) {
-    display();
+
+  // MODE SELECTOR
+  if (  frameAccelerator.y.rangeLop < 6  ) {
+
+    // WHEEL MODE
+    if ( frameAccelerator.wheel(povArrayLength, POV_ARRAY_MAX_SIZE) ) {
+
+      int frame = frameAccelerator.getFrame();
+      if ( frame != previousFrameDisplayed) {
+        previousFrameDisplayed = frame;
+        // display         side a,          side b,                               with this colorId
+        leds.displayFrame( povArray[povArrayLength - frame - 1], povArray[frame] , colorId);
+      }
+      blanked = false;
+    } else {
+      blank();
+    }
+
+  } else  {
+
+    // WAVE MODE
+
+    //   bool wave(int frameCount, float threshold) return true of it is triggered
+    if ( frameAccelerator.wave(povArrayLength, 2) ) {
+      int frame = frameAccelerator.getFrame();
+      if ( frame != previousFrameDisplayed) {
+        previousFrameDisplayed = frame;
+        // display         side a,          side b,                               with this colorId
+        leds.displayInversedFrame( povArray[frame], povArray[povArrayLength - frame - 1]  , colorId);
+      }
+      blanked = false;
+    } else {
+      blank();
+    }
   }
 
 
-  /*
-    // MODE SELECTOR
-    if ( frameAccelerator.cx > 2 && frameAccelerator.x_min > 0 ) {
-
-      // WHEEL MODE
-      if ( frameAccelerator.wheel(povArrayLength,POV_ARRAY_MAX_SIZE) ) {
-        display();
-      } else {
-        blank();
-      }
-
-    } else {
-
-      // WAVE MODE
-
-      //   bool wave(int frameCount, float threshold) return true of it is triggered
-      if ( frameAccelerator.wave(povArrayLength, 2) ) {
-        display();
-      } else {
-        blank();
-      }
-    }
-  */
+#ifdef UDP_DEBUG
+  dnsServer.processNextRequest(); /// a-t-on une requête de connexion ?
+  server.handleClient();
+#endif
 
 } // fin du loop
 
-void display() {
-
-  int frame = frameAccelerator.getFrame();
-  if ( frame != previousFrameDisplayed) {
-    previousFrameDisplayed = frame;
-    // display         side a,          side b,                               with this colorId
-    leds.displayFrame( povArray[povArrayLength - frame - 1], povArray[frame] , colorId);
-
-  }
-  blanked = false;
-
-}
 
 void blank() {
 
