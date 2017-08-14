@@ -28,7 +28,6 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #define UDP_DEBUG
 
 #include "AgitPage.h"
@@ -40,7 +39,6 @@
 extern "C" { // Infos sur les clients connectés
 #include<user_interface.h>
 }
-
 #ifdef UDP_DEBUG
 #include <WiFiUdp.h>
 WiFiUDP Udp;
@@ -50,6 +48,7 @@ IPAddress ipBroadCast(192, 168, 4, 100);
 AsciiMassagePacker outgoing;
 AsciiMassageParser inbound;
 #endif
+
 
 ////////// ACCEL ////////////
 
@@ -182,6 +181,14 @@ void setup(void) {
 
 } ///// fin du setup
 
+void blank() {
+
+  if ( !blanked ) {
+    blanked = true;
+    leds.blank();
+  }
+}
+
 
 
 void loop() {
@@ -234,11 +241,5 @@ void loop() {
 } // fin du loop
 
 
-void blank() {
 
-  if ( !blanked ) {
-    blanked = true;
-    leds.blank();
-  }
-}
 
