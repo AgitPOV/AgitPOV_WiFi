@@ -28,7 +28,7 @@ const char INDEX_HTML[] =
 "<input type=\"radio\" name=\"color\" value=\"6\"> lumiere<BR>"
 "<input type=\"radio\" name=\"color\" value=\"7\"> arc-en-ciel<BR>"
 
-"<INPUT type=\"submit\" value=\"Envoyez\" style=\"font-size:26px ; background-color:#D92e1c ; border: none;\">"
+"<INPUT type=\"submit\" value=\"Envoyez\" style=\"font-size:26px ; background-color:#DD622D ; border: none;\">"
 "</div>"
 "</P>"
 "</FORM>"
