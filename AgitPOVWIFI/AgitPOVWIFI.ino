@@ -222,10 +222,6 @@ void loop() {
   }
 
 
-#ifdef UDP_DEBUG
-  dnsServer.processNextRequest(); /// a-t-on une requête de connexion ?
-  server.handleClient();
-#endif
 
 } // fin du loop
 

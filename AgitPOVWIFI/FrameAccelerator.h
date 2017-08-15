@@ -217,14 +217,14 @@ class FrameAccelerator {
       float yOscillation = (y.value - y.min) * (2) / (y.range) - 1;
       speed = -0.002;// THIS SHOULD BE SLOWED DOWN WHEN THE WHEEL IS SLOW
 
-      if ( yOscillation <= 0 ) {
+      if ( yOscillation <= 0 ) { // ANGLE DETECTION. Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of wheel
         if ( canRetrigger == true ) {
           triggered = true;
           canRetrigger = false;
           frame = frameCount - 1;
         }
-      } else if ( yOscillation >= 0.5 ) {
-        canRetrigger = true;
+      } else if ( yOscillation >= 0.5 ) { // ANGLE POSSIBLE RETRIGGER DETECTION Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of wheel
+          canRetrigger = true;
       }
       if ( triggered) frame = frame + speed * (wheelSize);
 
