@@ -217,3 +217,7 @@ pip-log.txt
 .mr.developer.cfg
 
 eagleUp/AgitPOV_WiFi.eup
+
+AgitPOVWIFI/AgitPOVWIFI.ino
+
+AgitPOVWIFI/FrameAccelerator.h
