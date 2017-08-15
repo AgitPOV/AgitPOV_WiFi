@@ -187,7 +187,7 @@ void loop() {
 
 
   // MODE SELECTOR
-  if (  frameAccelerator.y.rangeLop < 6  ) {
+  if (  frameAccelerator.y.range < 6   ) {
 
     // WHEEL MODE
     if ( frameAccelerator.wheel(povArrayLength, POV_ARRAY_MAX_SIZE) ) {

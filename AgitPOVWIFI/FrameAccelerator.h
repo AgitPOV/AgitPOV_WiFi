@@ -7,15 +7,15 @@ class FrameAccelerator {
 
     struct Axis {
       float value = 0;
-      float valueLop = 0;
+      //float valueLop = 0;
       float max = 0;
       float min = 0;
-      float maxLop = 0;
-      float minLop = 0;
+      //float maxLop = 0;
+     // float minLop = 0;
       float tempMax = 0;
       float tempMin = 0;
       float range = 0;
-      float rangeLop = 0;
+     //float rangeLop = 0;
     };
 
 
@@ -65,21 +65,21 @@ class FrameAccelerator {
       if (axis->value < axis->tempMin)  {//see if we've hit a minimum for this interval
         axis->tempMin = axis->value;
       }
-
+/*
       axis->valueLop = lop(axis->value, axis->valueLop , 0.1);
 
-      axis->maxLop = lop(-8, axis->maxLop, 0.0002); //0.0001
+      axis->maxLop = lop(-8, axis->maxLop, 0.0005); // 0.0002);//0.0001
       if (axis->value > axis->maxLop ) {
         axis->maxLop = axis->value;
       }
 
-      axis->minLop = lop(8, axis->minLop, 0.0002); //0.0001
+      axis->minLop = lop(8, axis->minLop, 0.0005); // 0.0002);//0.0001
       if (axis->value < axis->minLop ) {
         axis->minLop = axis->value;
       }
 
       axis->rangeLop = axis->maxLop - axis->minLop;
-
+*/
 
     }
 
@@ -94,18 +94,18 @@ class FrameAccelerator {
 
   public:
 
-////////////
-// SETUP //
-////////////
+    ////////////
+    // SETUP //
+    ////////////
     void setup() {
 
       mma8452q.init(SCALE_8G, ODR_800);
     }
 
 
-////////////
-// UPDATE //
-////////////
+    ////////////
+    // UPDATE //
+    ////////////
     void update() {
 
       if (mma8452q.available()) {
@@ -128,20 +128,20 @@ class FrameAccelerator {
           updateMinMax(&x);
           updateMinMax(&y);
           //updateMinMax(&z);
-/*
-          Serial.print("x ");
-          Serial.print(x.min);
-          Serial.print(" ");
-          Serial.println(x.max);
-          Serial.print("y ");
-          Serial.print(y.min);
-          Serial.print(" ");
-          Serial.println(y.max);
-          Serial.print("z ");
-          Serial.print(z.min);
-          Serial.print(" ");
-          Serial.println(z.max);
-*/
+          /*
+                    Serial.print("x ");
+                    Serial.print(x.min);
+                    Serial.print(" ");
+                    Serial.println(x.max);
+                    Serial.print("y ");
+                    Serial.print(y.min);
+                    Serial.print(" ");
+                    Serial.println(y.max);
+                    Serial.print("z ");
+                    Serial.print(z.min);
+                    Serial.print(" ");
+                    Serial.println(z.max);
+          */
         }
 
       }
@@ -149,16 +149,16 @@ class FrameAccelerator {
 
     }
 
-//////////
-// SHAKE //
-//////////
+    //////////
+    // SHAKE //
+    //////////
     bool shaken(float threshold) {
       return (abs(x.range) > threshold) || (abs(y.range) > threshold) || (abs(z.range) > threshold);
     }
 
-//////////
-// WAVE //
-//////////
+    //////////
+    // WAVE //
+    //////////
     bool wave(int frameCount, float threshold) {
 
 
@@ -186,29 +186,36 @@ class FrameAccelerator {
     }
 
 
-///////////
-// WHEEL //
-///////////
+    ///////////
+    // WHEEL //
+    ///////////
     bool wheel(int frameCount, int wheelSize) {
+      /*
+            if ( y.rangeLop == 0 || x.rangeLop == 0 ) {
+              frame = 0;
+              triggered = false;
+              return triggered;
+            }
 
-      if ( y.rangeLop == 0 || x.rangeLop == 0 ) {
+            float xOscillation = (x.valueLop - x.minLop) * (2) / (x.rangeLop) - 1;
+            float yOscillation = (y.valueLop - y.minLop) * (2) / (y.rangeLop) - 1;
+
+            float newRotation = (atan2(yOscillation , xOscillation) + PI ) / (TWO_PI) ;
+            float newSpeed = newRotation - rotation;
+            rotation = newRotation;
+
+            if ( newSpeed > 0.5) newSpeed = 1 - newSpeed;
+            if ( newSpeed < -0.5 ) newSpeed = 1 + newSpeed;
+
+            speed = lop(newSpeed, speed, 0.005);
+      */
+      if ( y.range == 0  ) {
         frame = 0;
         triggered = false;
         return triggered;
       }
-
-      float xOscillation = (x.valueLop - x.minLop) * (2) / (x.rangeLop) - 1;
-      float yOscillation = (y.valueLop - y.minLop) * (2) / (y.rangeLop) - 1;
-
-      float newRotation = (atan2(yOscillation , xOscillation) + PI ) / (TWO_PI) ;
-      float newSpeed = newRotation - rotation;
-      rotation = newRotation;
-
-      if ( newSpeed > 0.5) newSpeed = 1 - newSpeed;
-      if ( newSpeed < -0.5 ) newSpeed = 1 + newSpeed;
-
-      speed = lop(newSpeed, speed, 0.005);
-
+      float yOscillation = (y.value - y.min) * (2) / (y.range) - 1;
+      speed = -0.002;// THIS SHOULD BE SLOWED DOWN WHEN THE WHEEL IS SLOW
 
       if ( yOscillation <= 0 ) {
         if ( canRetrigger == true ) {
