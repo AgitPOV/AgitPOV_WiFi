@@ -128,8 +128,7 @@ class FrameAccelerator {
           updateMinMax(&x);
           updateMinMax(&y);
           //updateMinMax(&z);
-
-#ifndef UDP_DEBUG
+/*
           Serial.print("x ");
           Serial.print(x.min);
           Serial.print(" ");
@@ -142,43 +141,12 @@ class FrameAccelerator {
           Serial.print(z.min);
           Serial.print(" ");
           Serial.println(z.max);
-#else
-          outgoing.beginPacket("mm");
-          outgoing.addFloat(x.min);
-          outgoing.addFloat(x.max);
-          outgoing.addFloat(y.min);
-          outgoing.addFloat(y.max);
-          outgoing.addFloat(z.min);
-          outgoing.addFloat(z.max);
-          outgoing.endPacket();
-          Udp.beginPacket(ipBroadCast, 9999);
-          Udp.write(outgoing.buffer(), outgoing.size());
-          Udp.endPacket();
-
-#endif
+*/
         }
 
       }
 
-#ifdef UDP_DEBUG
-      if ( millis() - lastTimeSentUdp >= 50 ) {
-        lastTimeSentUdp = millis();
-        outgoing.beginPacket("xyz");
-        outgoing.addFloat(x.value);
-        outgoing.addFloat(y.value);
-        outgoing.addFloat(z.value);
-        outgoing.addFloat(x.minLop);
-        outgoing.addFloat(x.maxLop);
-        outgoing.addFloat(y.minLop);
-        outgoing.addFloat(y.maxLop);
-        outgoing.addFloat(z.minLop);
-        outgoing.addFloat(z.maxLop);
-        outgoing.endPacket();
-        Udp.beginPacket(ipBroadCast, 9999);
-        Udp.write(outgoing.buffer(), outgoing.size());
-        Udp.endPacket();
-      }
-#endif
+
     }
 
 //////////
@@ -216,9 +184,7 @@ class FrameAccelerator {
       return triggered;
 
     }
-#ifdef UDP_DEBUG
-    unsigned long lastTimeSentAngle = 0;
-#endif
+
 
 ///////////
 // WHEEL //

@@ -28,7 +28,6 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define UDP_DEBUG
 
 #include "AgitPage.h"
 #include <ESP8266WiFi.h> // Server // Thank you Ivan Grokhotkov 
@@ -39,15 +38,8 @@
 extern "C" { // Infos sur les clients connectés
 #include<user_interface.h>
 }
-#ifdef UDP_DEBUG
-#include <WiFiUdp.h>
-WiFiUDP Udp;
-IPAddress ipBroadCast(192, 168, 4, 100);
-#include <AsciiMassagePacker.h>
-#include <AsciiMassageParser.h>
-AsciiMassagePacker outgoing;
-AsciiMassageParser inbound;
-#endif
+
+
 
 
 ////////// ACCEL ////////////
@@ -164,11 +156,8 @@ void setup(void) {
 
   }
 
-#ifndef UDP_DEBUG
   turnItOff(); // fermeture du serveur
-#else
-  Udp.begin(9999);
-#endif
+
 
   lireFichier();
 
