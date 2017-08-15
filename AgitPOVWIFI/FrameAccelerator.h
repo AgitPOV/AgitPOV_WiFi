@@ -49,9 +49,11 @@ class FrameAccelerator {
     void updateAxis(Axis* axis) {
       if (axis->value > axis->tempMax) { //see if we've hit a maximum for this interval
         axis->tempMax = axis->value;
+       // axis->max = axis->value;
       }
       if (axis->value < axis->tempMin)  {//see if we've hit a minimum for this interval
         axis->tempMin = axis->value;
+       // axis->min = axis->value;
       }
 
     }
@@ -156,16 +158,17 @@ class FrameAccelerator {
         triggered = false;
         return triggered;
       }
+      //  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
       float yOscillation = (y.value - y.min) * (2) / (y.range) - 1;
-      speed = -0.002;// THIS SHOULD BE SLOWED DOWN WHEN THE WHEEL IS SLOW
-
-      if ( yOscillation <= 0 ) { // ANGLE DETECTION. Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of wheel
+      speed = -0.00025 * abs(x.min);// SPEED INCREASES AS THE WHEEL GOES FASTER
+      
+      if ( yOscillation <= -0.05 ) { // ANGLE DETECTION. Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of wheel
         if ( canRetrigger == true ) {
           triggered = true;
           canRetrigger = false;
           frame = frameCount - 1;
         }
-      } else if ( yOscillation >= 0.5 ) { // ANGLE POSSIBLE RETRIGGER DETECTION Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of wheel
+      } else if ( yOscillation >= 0.75 ) { // ANGLE POSSIBLE RETRIGGER DETECTION Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of wheel
           canRetrigger = true;
       }
       if ( triggered) frame = frame + speed * (wheelSize);
