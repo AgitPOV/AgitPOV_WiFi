@@ -7,18 +7,13 @@ class FrameAccelerator {
 
     struct Axis {
       float value = 0;
-      //float valueLop = 0;
       float max = 0;
       float min = 0;
-      //float maxLop = 0;
-     // float minLop = 0;
       float tempMax = 0;
       float tempMin = 0;
       float range = 0;
-     //float rangeLop = 0;
+     
     };
-
-
 
     MMA8452Q mma8452q;
 
@@ -41,13 +36,6 @@ class FrameAccelerator {
   private:
 
 
-
-#ifdef UDP_DEBUG
-    unsigned long lastTimeSentUdp;
-#endif
-
-
-
     //////// LOP FILTER //////////
     float lop(float target, float current , float amount) {
       return (target - current) * amount + current;
@@ -65,21 +53,6 @@ class FrameAccelerator {
       if (axis->value < axis->tempMin)  {//see if we've hit a minimum for this interval
         axis->tempMin = axis->value;
       }
-/*
-      axis->valueLop = lop(axis->value, axis->valueLop , 0.1);
-
-      axis->maxLop = lop(-8, axis->maxLop, 0.0005); // 0.0002);//0.0001
-      if (axis->value > axis->maxLop ) {
-        axis->maxLop = axis->value;
-      }
-
-      axis->minLop = lop(8, axis->minLop, 0.0005); // 0.0002);//0.0001
-      if (axis->value < axis->minLop ) {
-        axis->minLop = axis->value;
-      }
-
-      axis->rangeLop = axis->maxLop - axis->minLop;
-*/
 
     }
 
@@ -128,20 +101,7 @@ class FrameAccelerator {
           updateMinMax(&x);
           updateMinMax(&y);
           //updateMinMax(&z);
-          /*
-                    Serial.print("x ");
-                    Serial.print(x.min);
-                    Serial.print(" ");
-                    Serial.println(x.max);
-                    Serial.print("y ");
-                    Serial.print(y.min);
-                    Serial.print(" ");
-                    Serial.println(y.max);
-                    Serial.print("z ");
-                    Serial.print(z.min);
-                    Serial.print(" ");
-                    Serial.println(z.max);
-          */
+          
         }
 
       }
@@ -190,25 +150,7 @@ class FrameAccelerator {
     // WHEEL //
     ///////////
     bool wheel(int frameCount, int wheelSize) {
-      /*
-            if ( y.rangeLop == 0 || x.rangeLop == 0 ) {
-              frame = 0;
-              triggered = false;
-              return triggered;
-            }
-
-            float xOscillation = (x.valueLop - x.minLop) * (2) / (x.rangeLop) - 1;
-            float yOscillation = (y.valueLop - y.minLop) * (2) / (y.rangeLop) - 1;
-
-            float newRotation = (atan2(yOscillation , xOscillation) + PI ) / (TWO_PI) ;
-            float newSpeed = newRotation - rotation;
-            rotation = newRotation;
-
-            if ( newSpeed > 0.5) newSpeed = 1 - newSpeed;
-            if ( newSpeed < -0.5 ) newSpeed = 1 + newSpeed;
-
-            speed = lop(newSpeed, speed, 0.005);
-      */
+      
       if ( y.range == 0  ) {
         frame = 0;
         triggered = false;
@@ -236,74 +178,16 @@ class FrameAccelerator {
         frame = frameCount - 1;
         triggered = false;
       }
-
-
-
-
+      
       return triggered;
 
     }
-
-
-
     int getFrame() {
       return floor(frame) ;
 
     }
 
 };
-
-
-/*
-   OLD ABSOLUTE CODE FOR REFERENCE
-
-      float xRotation = (x.value - x.minLop) * (2) / (x.rangeLop) - 1;
-      float yRotation = (y.value - y.minLop) * (2) / (y.rangeLop) - 1;
-
-      float newRotation = (atan2(yRotation , xRotation) + PI ) / (TWO_PI) ;
-      float newSpeed = newRotation - rotation;
-
-      if ( newSpeed > 0.5) newSpeed = 1 - newSpeed;
-      if ( newSpeed < -0.5 ) newSpeed = 1 + newSpeed;
-
-      speed = lop(newSpeed, speed, 0.001);
-
-      rotation = newRotation;
-
-
-
-      float newFrame =  ( rotation) * (wheelSize);
-
-      if ( speed > 0 ) {
-        if ( newFrame > frame || newFrame - frame < frameCount * -0.5  ) frame = newFrame;
-      } else {
-        if ( newFrame < frame || newFrame - frame > frameCount * 0.5  ) frame = newFrame;
-      }
-
-      triggered = true;
-
-      if ( frame < 0 ) {
-        frame = 0;
-      }
-      if ( frame >= frameCount ) {
-        frame = frameCount - 1;
-      }
-
-  #ifdef UDP_DEBUG
-
-            if ( millis() - lastTimeSentAngle >= 10 ) {
-              outgoing.beginPacket("rotation");
-              outgoing.addFloat(rotation);
-              outgoing.addFloat(speed * 10000);
-              outgoing.endPacket();
-              Udp.beginPacket(ipBroadCast, 9999);
-              Udp.write(outgoing.buffer(), outgoing.size());
-              Udp.endPacket();
-            }
-
-  #endif
-
-*/
 
 
 
