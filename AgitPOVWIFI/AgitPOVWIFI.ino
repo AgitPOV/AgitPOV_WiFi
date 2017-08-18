@@ -1,6 +1,7 @@
 // Version 2017-08-16
 
 // COMMENT THE FOLLOWING LINE TO DEACTIVATE UDP DEBUGGING
+// #include "udpDebug.h"
 
 /*
    AgitPOV Wifi: 24-RGB LED dual sided POV with Wifi (ESP8266)
@@ -160,6 +161,8 @@ void setup(void) {
 
   }
 
+#ifdef UDP_DEBUGING
+  udp.begin(9999);
 #else
   turnItOff(); // fermeture du serveur
 #endif

@@ -1,7 +1,7 @@
-//#include "Responsive.h"
+
 #include <Wire.h> // Must include Wire library for I2C
 #include "SparkFun_MMA8452Q_ESP8266.h"
-
+//#include "Responsive.h"
 
 class FrameAccelerator {
 
@@ -122,6 +122,7 @@ class FrameAccelerator {
           updateMinMax(&y);
           //updateMinMax(&z);
 
+#ifdef UDP_DEBUGING
           udp.beginPacket(destinationIp, 9999);
           udp.print("x ");
           udp.print(x.min);
