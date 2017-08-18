@@ -18,7 +18,7 @@ const char INDEX_HTML[] =
 "<FORM action=\"/\" accept-charset=\"UTF-8\" method=\"post\">"
 "<P>"
 "<br>"
-"<INPUT type=\"text\" name=\"AgitPOV\" value=\"\" placeholder=\"VOTRE MOT\" maxlength=\"26\" style=\"font-size:30px ; background-color:#D92e1c ; border: none;\"> <BR>"
+"<INPUT type=\"text\" name=\"AgitPOV\" value=\"\" placeholder=\"VOTRE MOT\" maxlength=\"26\" style=\"font-size:30px ; background-color:#D92e1c ; border: none; text-transform:uppercase;\"> <BR>"
 "<input type=\"radio\" name=\"color\" value=\"0\"> rouge <BR>"
 "<input type=\"radio\" name=\"color\" value=\"1\"> orange <BR>"
 "<input type=\"radio\" name=\"color\" value=\"2\"> jaune<BR>"
