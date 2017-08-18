@@ -1,4 +1,7 @@
-// Version 2017-08-14
+// Version 2017-08-16
+
+// COMMENT THE FOLLOWING LINE TO DEACTIVATE UDP DEBUGGING
+
 /*
    AgitPOV Wifi: 24-RGB LED dual sided POV with Wifi (ESP8266)
 
@@ -157,14 +160,16 @@ void setup(void) {
 
   }
 
+#else
   turnItOff(); // fermeture du serveur
+#endif
 
 
   lireFichier();
 
   leds.fill(colorId);
 
-  Serial.println("Fading");
+  Serial.println( "Fading");
   leds.blockingFadeOut(colorId, 1000);
 
   Serial.println("Good to go");
@@ -188,7 +193,7 @@ void loop() {
 
 
   // MODE SELECTOR
-  if (  frameAccelerator.y.range < 6   ) {
+  if (  frameAccelerator.y.range < 10 ) {
 
     // WHEEL MODE
     if ( frameAccelerator.wheel(povArrayLength, POV_ARRAY_MAX_SIZE) ) {
