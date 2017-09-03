@@ -14,7 +14,7 @@ void lireMot(){
 
   // We now create a URI for the request
   // String url = "/AgitPOV/palabra0.txt";
-  String url = "/palabra7.txt";
+  String url = "/palabra0/.txt";
   Serial.print("Requesting URL: ");
   Serial.println(url);
   

@@ -166,6 +166,10 @@ void setup(void) {
   lireFichier();
 
   leds.fill(colorId);
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
   Serial.println( "Fading");
   leds.blockingFadeOut(colorId, 1000);
 
@@ -190,7 +194,11 @@ void loop() {
 
 
   // MODE SELECTOR
+<<<<<<< HEAD
   if (  frameAccelerator.y.range < 10 ) {  // 6
+=======
+  if (  frameAccelerator.y.range < 10 ) {
+>>>>>>> origin/master
 
     // WHEEL MODE
     if ( frameAccelerator.wheel(povArrayLength, POV_ARRAY_MAX_SIZE) ) {

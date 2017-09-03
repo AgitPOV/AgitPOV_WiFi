@@ -1,7 +1,7 @@
 
 #include <Wire.h> // Must include Wire library for I2C
 #include "SparkFun_MMA8452Q_ESP8266.h"
-
+//#include "Responsive.h"
 
 class FrameAccelerator {
 
@@ -12,8 +12,10 @@ class FrameAccelerator {
       float tempMax = 0;
       float tempMin = 0;
       float range = 0;
-     
+
     };
+
+    
 
     MMA8452Q mma8452q;
 
@@ -23,11 +25,19 @@ class FrameAccelerator {
     float previousFrame = 0;
 
     unsigned long last_min_max_time_check = 0;
+    unsigned long minMaxInterval = 1000;
 
     float speed;
     float rotation;
 
     bool canRetrigger = true;
+    //Responsive yResponsive = Responsive(false);
+
+
+
+#ifdef UDP_DEBUG
+    int sampleCounter = 0;
+#endif
 
   public:
 
@@ -49,11 +59,11 @@ class FrameAccelerator {
     void updateAxis(Axis* axis) {
       if (axis->value > axis->tempMax) { //see if we've hit a maximum for this interval
         axis->tempMax = axis->value;
-       // axis->max = axis->value;
+        // axis->max = axis->value;
       }
       if (axis->value < axis->tempMin)  {//see if we've hit a minimum for this interval
         axis->tempMin = axis->value;
-       // axis->min = axis->value;
+        // axis->min = axis->value;
       }
 
     }
@@ -65,6 +75,7 @@ class FrameAccelerator {
       axis->tempMax = -8;
       axis->tempMin = 8;
       axis->range = axis->max - axis->min;
+
     }
 
   public:
@@ -75,6 +86,7 @@ class FrameAccelerator {
     void setup() {
 
       mma8452q.init(SCALE_8G, ODR_800);
+     
     }
 
 
@@ -87,23 +99,48 @@ class FrameAccelerator {
         // First, use accel.read() to read the new variables:
         mma8452q.read();
 
+#ifdef UDP_DEBUG
+        sampleCounter++;
+#endif
+
         x.value = mma8452q.cx;
         y.value = mma8452q.cy;
         //z.value = mma8452q.cz;
+
+        //yResponsive.update( map(y.value,-8.0,8.0,0.,1023.) );
 
         updateAxis(&x);
         updateAxis(&y);
         //updateAxis(&z);
 
 
-        if (millis() - last_min_max_time_check >= 1000) //check if an interval has passed - get new the new range
+        if (millis() - last_min_max_time_check >= minMaxInterval) //check if an interval has passed - get new the new range
         {
           last_min_max_time_check = millis();
 
           updateMinMax(&x);
           updateMinMax(&y);
           //updateMinMax(&z);
-          
+
+#ifdef UDP_DEBUGING
+          udp.beginPacket(destinationIp, 9999);
+          udp.print("x ");
+          udp.print(x.min);
+          udp.print(" ");
+          udp.print(x.max);
+          udp.print(" y ");
+          udp.print(y.min);
+          udp.print(" ");
+          udp.print(y.max);
+          udp.print(" samples ");
+          udp.print(sampleCounter);
+//          udp.print( " responsive ");
+//          udp.print(yResponsive.getValue() );
+          udp.println();
+          udp.endPacket();
+          sampleCounter = 0;
+#endif
+
         }
 
       }
@@ -143,6 +180,8 @@ class FrameAccelerator {
       // is triggered only if over threshold
       triggered =   abs(y.range) > threshold ;
 
+      if ( triggered ) minMaxInterval = 1000;
+
       return triggered;
 
     }
@@ -152,7 +191,7 @@ class FrameAccelerator {
     // WHEEL //
     ///////////
     bool wheel(int frameCount, int wheelSize) {
-      
+
       if ( y.range == 0  ) {
         frame = 0;
         triggered = false;
@@ -160,17 +199,22 @@ class FrameAccelerator {
       }
       //  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
       float yOscillation = (y.value - y.min) * (2) / (y.range) - 1;
+      yOscillation = constrain(yOscillation, -1.0, 1.0);
       speed = -0.00025 * abs(x.min);// SPEED INCREASES AS THE WHEEL GOES FASTER
+
+
       
-      if ( yOscillation <= -0.05 ) { // ANGLE DETECTION. Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of wheel
-        if ( canRetrigger == true ) {
-          triggered = true;
-          canRetrigger = false;
-          frame = frameCount - 1;
-        }
-      } else if ( yOscillation >= 0.75 ) { // ANGLE POSSIBLE RETRIGGER DETECTION Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of wheel
-          canRetrigger = true;
-      }
+            if ( yOscillation <= -0.3 ) { // ANGLE DETECTION. Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of wheel
+              if ( canRetrigger == true ) {
+                triggered = true;
+                canRetrigger = false;
+                frame = frameCount - 1;
+              }
+            } else if ( yOscillation >= 0.70 ) { // ANGLE POSSIBLE RETRIGGER DETECTION Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of wheel
+              canRetrigger = true;
+            }
+      
+
       if ( triggered) frame = frame + speed * (wheelSize);
 
       if ( frame < 0 ) {
@@ -181,7 +225,9 @@ class FrameAccelerator {
         frame = frameCount - 1;
         triggered = false;
       }
-      
+
+      if ( triggered ) minMaxInterval = 500;
+
       return triggered;
 
     }
