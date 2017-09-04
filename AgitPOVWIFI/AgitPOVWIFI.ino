@@ -1,7 +1,7 @@
-// Version 2017-08-16
+// Version 2017-09-04
 
 // COMMENT THE FOLLOWING LINE TO DEACTIVATE UDP DEBUGGING
-// #include "udpDebug.h"
+#include "udpDebug.h"
 
 /*
    AgitPOV Wifi: 24-RGB LED dual sided POV with Wifi (ESP8266)
@@ -9,6 +9,7 @@
    Contributors over the years
         Thomas Ouellet Fredericks - Debuging, Accelerometer, LED engine and animation code
         Alexandre Castonguay
+        Mathieu Bouchard
         Alan Kwok
         Andre Girard andre@andre-girard.com
         Sofian Audry
@@ -90,11 +91,10 @@ void setup(void) {
   // last three bytes of the MAC (HEX'd) :
   uint8_t mac[WL_MAC_ADDR_LENGTH];
   WiFi.softAPmacAddress(mac);
-  String threeLastHexBytes = String(mac[WL_MAC_ADDR_LENGTH - 3], HEX) +
-                             String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) +
-                             String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
-  threeLastHexBytes.toLowerCase();
-  String apNameString = "agitpov" + threeLastHexBytes;
+  String twoLastHexBytes = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) +
+                           String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
+  twoLastHexBytes.toLowerCase();
+  String apNameString = "agitpov" + twoLastHexBytes;
 
   char apName[apNameString.length() + 1];
   memset(apName, 0, apNameString.length() + 1);
@@ -188,16 +188,18 @@ void loop() {
 
   // MODE SELECTOR
 
-  if (  frameAccelerator.y.range < 10 ) {  // 6
+    // 15 ou 16 // 16 ==  pas de 'bruit' mais on perd le mode 'shake'
+  if (  frameAccelerator.y.range < 8 || frameAccelerator.x.average < -2) {
 
-    // WHEEL MODE
+    // WHEEL MODEframeAccelerator.y.range
     if ( frameAccelerator.wheel(povArrayLength, POV_ARRAY_MAX_SIZE) ) {
 
       int frame = frameAccelerator.getFrame();
       if ( frame != previousFrameDisplayed) {
         previousFrameDisplayed = frame;
         // display         side a,          side b,                               with this colorId
-        leds.displayFrame( povArray[povArrayLength - frame - 1], povArray[frame] , colorId);
+        //leds.displayFrame( povArray[povArrayLength - frame - 1], povArray[frame] , colorId);
+        leds.displayInversedFrame( povArray[frame], povArray[povArrayLength - frame - 1]  , colorId);
       }
       blanked = false;
     } else {
@@ -214,7 +216,8 @@ void loop() {
       if ( frame != previousFrameDisplayed) {
         previousFrameDisplayed = frame;
         // display         side a,          side b,                               with this colorId
-        leds.displayInversedFrame( povArray[frame], povArray[povArrayLength - frame - 1]  , colorId);
+        //leds.displayInversedFrame( povArray[frame], povArray[povArrayLength - frame - 1]  , colorId);
+        leds.displayFrame( povArray[povArrayLength - frame - 1], povArray[frame] , colorId);
       }
       blanked = false;
     } else {

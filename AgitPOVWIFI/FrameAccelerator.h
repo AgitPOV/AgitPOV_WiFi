@@ -12,7 +12,8 @@ class FrameAccelerator {
       float tempMax = 0;
       float tempMin = 0;
       float range = 0;
-
+      float tempSum = 0;
+      float average = 0;
     };
 
     
@@ -35,7 +36,7 @@ class FrameAccelerator {
 
 
 
-#ifdef UDP_DEBUG
+#ifdef UDP_DEBUGING
     int sampleCounter = 0;
 #endif
 
@@ -55,27 +56,26 @@ class FrameAccelerator {
     unsigned long wheelInterval = 500;
     unsigned long lasTimeDetectedWheelInterval = 0;
 
-
     void updateAxis(Axis* axis) {
       if (axis->value > axis->tempMax) { //see if we've hit a maximum for this interval
         axis->tempMax = axis->value;
-        // axis->max = axis->value;
+        // axis->max = axis->value; // était en commentaire
       }
       if (axis->value < axis->tempMin)  {//see if we've hit a minimum for this interval
         axis->tempMin = axis->value;
-        // axis->min = axis->value;
+        // axis->min = axis->value; // était en commentaire
       }
-
+      axis->tempSum+=axis->value;
     }
 
     void updateMinMax(Axis* axis) {
-
       axis->max = axis->tempMax;
       axis->min = axis->tempMin;
       axis->tempMax = -8;
       axis->tempMin = 8;
       axis->range = axis->max - axis->min;
-
+      axis->average = axis->tempSum/sampleCounter;
+      axis->tempSum=0;
     }
 
   public:
@@ -85,7 +85,7 @@ class FrameAccelerator {
     ////////////
     void setup() {
 
-      mma8452q.init(SCALE_8G, ODR_800);
+      mma8452q.init(SCALE_8G, ODR_800); // +-8G, 800 Hz 
      
     }
 
@@ -99,7 +99,7 @@ class FrameAccelerator {
         // First, use accel.read() to read the new variables:
         mma8452q.read();
 
-#ifdef UDP_DEBUG
+#ifdef UDP_DEBUGING
         sampleCounter++;
 #endif
 
@@ -113,7 +113,16 @@ class FrameAccelerator {
         updateAxis(&y);
         //updateAxis(&z);
 
-
+        static int w=0;
+        w+=1;
+        if (w==4) { 
+          udp.beginPacket(destinationIp, 9999);
+          udp.print("sample ");
+          udp.print(x.value); udp.print(" ");
+          udp.print(y.value); udp.println();
+          udp.endPacket();
+          w=0;
+        }
         if (millis() - last_min_max_time_check >= minMaxInterval) //check if an interval has passed - get new the new range
         {
           last_min_max_time_check = millis();
@@ -128,14 +137,20 @@ class FrameAccelerator {
           udp.print(x.min);
           udp.print(" ");
           udp.print(x.max);
+          udp.print(" ");
+          udp.print(x.average);
           udp.print(" y ");
           udp.print(y.min);
           udp.print(" ");
           udp.print(y.max);
+          udp.print(" ");
+          udp.print(y.average);
           udp.print(" samples ");
           udp.print(sampleCounter);
 //          udp.print( " responsive ");
 //          udp.print(yResponsive.getValue() );
+          udp.print(" mode "); udp.print(triggered);
+          udp.print(" "); udp.print(canRetrigger);
           udp.println();
           udp.endPacket();
           sampleCounter = 0;
@@ -159,15 +174,11 @@ class FrameAccelerator {
     // WAVE //
     //////////
     bool wave(int frameCount, float threshold) {
-
-
       if ( (y.range) != 0 ) {
         frame = (y.value - y.min) / (y.range); // 0-1
-
         // GET RID OF THE CURVE
         if ( frame < 0.5 ) frame = sin(frame * PI - (PI * 0.5)) * 0.5 + 0.5;
         else frame = sin((frame - 0.5) * PI) * 0.5 + 0.5;
-
         frame *= frameCount;
       } else {
         frame = 0;
@@ -181,17 +192,14 @@ class FrameAccelerator {
       triggered =   abs(y.range) > threshold ;
 
       if ( triggered ) minMaxInterval = 1000;
-
       return triggered;
-
     }
 
 
     ///////////
     // WHEEL //
     ///////////
-    bool wheel(int frameCount, int wheelSize) {
-
+    bool wheel(int frameCount, int wheelSize) { // true s'il reste à afficher, false si fini
       if ( y.range == 0  ) {
         frame = 0;
         triggered = false;
@@ -201,22 +209,21 @@ class FrameAccelerator {
       float yOscillation = (y.value - y.min) * (2) / (y.range) - 1;
       yOscillation = constrain(yOscillation, -1.0, 1.0);
       speed = -0.00025 * abs(x.min);// SPEED INCREASES AS THE WHEEL GOES FASTER
-
-
       
-            if ( yOscillation <= -0.3 ) { // ANGLE DETECTION. Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of wheel
-              if ( canRetrigger == true ) {
-                triggered = true;
-                canRetrigger = false;
-                frame = frameCount - 1;
-              }
-            } else if ( yOscillation >= 0.70 ) { // ANGLE POSSIBLE RETRIGGER DETECTION Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of wheel
-              canRetrigger = true;
-            }
+      const float yThresh= 0.25; // -0.1; // -0.05 (original) // -0.3
+      const float yThresh2= 0.80; // 0.65 // 0.70 (orig.) // 0.75
       
-
+      // ANGLE DETECTION. Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of whee
+      if ( yOscillation <= yThresh ) {
+        if ( canRetrigger == true ) {
+          triggered = true;
+          canRetrigger = false;
+          frame = frameCount - 1;
+        }
+      } else if ( yOscillation >= yThresh2 ) { // ANGLE POSSIBLE RETRIGGER DETECTION Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of wheel
+        canRetrigger = true;
+      }
       if ( triggered) frame = frame + speed * (wheelSize);
-
       if ( frame < 0 ) {
         frame = 0;
         triggered = false;
@@ -226,7 +233,8 @@ class FrameAccelerator {
         triggered = false;
       }
 
-      if ( triggered ) minMaxInterval = 500;
+      // if ( triggered ) minMaxInterval = 500;
+      if ( triggered ) minMaxInterval = 350; //350 était 'ok'
 
       return triggered;
 
