@@ -3,6 +3,9 @@
 #include "SparkFun_MMA8452Q_ESP8266.h"
 //#include "Responsive.h"
 
+extern int povArrayLength; // désolé
+extern int sampleCounter;
+
 class FrameAccelerator {
 
     struct Axis {
@@ -13,11 +16,11 @@ class FrameAccelerator {
       float tempMin = 0;
       float range = 0;
       float tempSum = 0;
+      float tempSum2 = 0;
       float average = 0;
+      float stdev = 0;
     };
-
     
-
     MMA8452Q mma8452q;
 
     bool triggered = false;
@@ -30,15 +33,11 @@ class FrameAccelerator {
 
     float speed;
     float rotation;
-
-    bool canRetrigger = true;
+    bool hitHi = false;
+    bool hitLo = false;
     //Responsive yResponsive = Responsive(false);
 
-
-
-#ifdef UDP_DEBUGING
     int sampleCounter = 0;
-#endif
 
   public:
 
@@ -66,16 +65,19 @@ class FrameAccelerator {
         // axis->min = axis->value; // était en commentaire
       }
       axis->tempSum+=axis->value;
+      axis->tempSum2+=axis->value*axis->value;
     }
 
     void updateMinMax(Axis* axis) {
       axis->max = axis->tempMax;
       axis->min = axis->tempMin;
-      axis->tempMax = -8;
-      axis->tempMin = 8;
       axis->range = axis->max - axis->min;
       axis->average = axis->tempSum/sampleCounter;
+      axis->stdev = sqrt(axis->tempSum2/sampleCounter - axis->average*axis->average);
+      axis->tempMax = -8;
+      axis->tempMin = 8;
       axis->tempSum=0;
+      axis->tempSum2=0;
     }
 
   public:
@@ -89,7 +91,6 @@ class FrameAccelerator {
      
     }
 
-
     ////////////
     // UPDATE //
     ////////////
@@ -99,12 +100,10 @@ class FrameAccelerator {
         // First, use accel.read() to read the new variables:
         mma8452q.read();
 
-#ifdef UDP_DEBUGING
         sampleCounter++;
-#endif
 
-        x.value = mma8452q.cx;
-        y.value = mma8452q.cy;
+        x.value = lop(mma8452q.cx,x.value,0.2);
+        y.value = lop(mma8452q.cy,y.value,0.2);
         //z.value = mma8452q.cz;
 
         //yResponsive.update( map(y.value,-8.0,8.0,0.,1023.) );
@@ -113,16 +112,21 @@ class FrameAccelerator {
         updateAxis(&y);
         //updateAxis(&z);
 
+#ifdef UDP_DEBUGING
         static int w=0;
         w+=1;
         if (w==4) { 
           udp.beginPacket(destinationIp, 9999);
           udp.print("sample ");
           udp.print(x.value); udp.print(" ");
-          udp.print(y.value); udp.println();
+          udp.print(y.value); udp.print(" ");
+          udp.print(frame/(float)povArrayLength); udp.print(" ");
+          udp.print((y.value - y.average) / (y.stdev * sqrt(2))); // yOscillation de 2017.09.04
+          udp.println();
           udp.endPacket();
           w=0;
         }
+#endif
         if (millis() - last_min_max_time_check >= minMaxInterval) //check if an interval has passed - get new the new range
         {
           last_min_max_time_check = millis();
@@ -133,34 +137,27 @@ class FrameAccelerator {
 
 #ifdef UDP_DEBUGING
           udp.beginPacket(destinationIp, 9999);
-          udp.print("x ");
-          udp.print(x.min);
-          udp.print(" ");
-          udp.print(x.max);
-          udp.print(" ");
-          udp.print(x.average);
-          udp.print(" y ");
-          udp.print(y.min);
-          udp.print(" ");
-          udp.print(y.max);
-          udp.print(" ");
-          udp.print(y.average);
+          udp.print("x ");  udp.print(x.min);
+          udp.print(" ");   udp.print(x.max);
+          udp.print(" ");   udp.print(x.average);
+          udp.print(" ");   udp.print(x.stdev);
+          udp.print(" y "); udp.print(y.min);
+          udp.print(" ");   udp.print(y.max);
+          udp.print(" ");   udp.print(y.average);
+          udp.print(" ");   udp.print(y.stdev);
           udp.print(" samples ");
           udp.print(sampleCounter);
 //          udp.print( " responsive ");
 //          udp.print(yResponsive.getValue() );
           udp.print(" mode "); udp.print(triggered);
-          udp.print(" "); udp.print(canRetrigger);
+          udp.print(" "); udp.print(hitHi);
+          udp.print(" "); udp.print(hitLo);
           udp.println();
           udp.endPacket();
           sampleCounter = 0;
 #endif
-
         }
-
       }
-
-
     }
 
     //////////
@@ -195,46 +192,45 @@ class FrameAccelerator {
       return triggered;
     }
 
-
     ///////////
     // WHEEL //
     ///////////
     bool wheel(int frameCount, int wheelSize) { // true s'il reste à afficher, false si fini
-      if ( y.range == 0  ) {
+      if (y.range == 0) {
         frame = 0;
         triggered = false;
         return triggered;
       }
       //  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-      float yOscillation = (y.value - y.min) * (2) / (y.range) - 1;
+      //float yOscillation = (y.value - y.min)*2/y.range - 1;
+      float yOscillation = (y.value - y.average) / (y.stdev * sqrt(2)); 
       yOscillation = constrain(yOscillation, -1.0, 1.0);
       speed = -0.00025 * abs(x.min);// SPEED INCREASES AS THE WHEEL GOES FASTER
-      
-      const float yThresh= 0.25; // -0.1; // -0.05 (original) // -0.3
-      const float yThresh2= 0.80; // 0.65 // 0.70 (orig.) // 0.75
-      
+      const float threshStart= 0.25; // -0.1; // -0.05 (original) // -0.3
+      const float threshHi   = 0.75; // 0.65 // 0.70 (orig.) // 0.75
+      const float threshLo   =-0.75;
       // ANGLE DETECTION. Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of whee
-      if ( yOscillation <= yThresh ) {
-        if ( canRetrigger == true ) {
+      if (yOscillation <= threshStart && hitLo && hitHi && !triggered) {
           triggered = true;
-          canRetrigger = false;
+          hitLo=hitHi=false;
           frame = frameCount - 1;
-        }
-      } else if ( yOscillation >= yThresh2 ) { // ANGLE POSSIBLE RETRIGGER DETECTION Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of wheel
-        canRetrigger = true;
+      } else if (yOscillation>=threshHi) { // ANGLE POSSIBLE RETRIGGER DETECTION Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of wheel
+        hitHi=true;
+      } else if (yOscillation<=threshLo) {
+        hitLo=true;
       }
-      if ( triggered) frame = frame + speed * (wheelSize);
-      if ( frame < 0 ) {
+      if (triggered) frame += speed*wheelSize;
+      if (frame < 0) {
         frame = 0;
         triggered = false;
       }
-      if ( frame >= frameCount ) {
-        frame = frameCount - 1;
+      if (frame >= frameCount) {
+        frame = frameCount-1;
         triggered = false;
       }
 
-      // if ( triggered ) minMaxInterval = 500;
-      if ( triggered ) minMaxInterval = 350; //350 était 'ok'
+      if ( triggered ) minMaxInterval = 500;
+      //if ( triggered ) minMaxInterval = 350; //350 était 'ok'
 
       return triggered;
 
