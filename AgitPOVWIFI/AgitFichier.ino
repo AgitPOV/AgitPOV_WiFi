@@ -20,39 +20,35 @@
 // 1. lire les fichiers dans le dossier
 // 1.txt, 2.txt, 3.txt ... 11.txt
 
+void printBytes(String &s) {
+  byte *b = (byte *)s.c_str();
+  while (*b!=0) Serial.printf("%02x ",*b++);
+}
+
 void lireFichier(){
-
   Serial.println("====== Reading palabra from SPIFFS file =========");
-
   Serial.println("le fichier : ");
   Dir dir = SPIFFS.openDir("/");
   while (dir.next()) {
     Serial.println(dir.fileName());
     File f = dir.openFile("r");
-     Serial.print("taille du fichier : ");
+    Serial.print("taille du fichier : ");
     Serial.println(f.size());
-
-   String s=f.readStringUntil('\n');
-      Serial.print("Texte : ");
-      Serial.println(s);
-      String motMem = s.substring(0, s.length()-1); // change la valeur de mot et passe-le à la fonction nouveauArray, ensuite démarre le tout.
-
-      Serial.print("Texte : ");
-      Serial.println(motMem); 
-      
-      String inputColor = s.substring(s.length()-1); // tente d'isoler le dernier charactère du texte en mémoire.
-      inputIntColor = inputColor.toInt();
-
+    String s=f.readStringUntil('\n');
+    Serial.print("Texte s : ");
+    Serial.println(s); printBytes(s); Serial.println("");
+    String motMem = s.substring(0, s.length()-1); // change la valeur de mot et passe-le à la fonction nouveauArray, ensuite démarre le tout.
+    Serial.print("Texte motMem : ");
+    Serial.println(motMem); printBytes(motMem); Serial.println("");
     
-      Serial.print("inputIntColor : ");
-      Serial.println(inputIntColor); 
+    String inputColor = s.substring(s.length()-1); // tente d'isoler le dernier charactère du texte en mémoire.
+    inputIntColor = inputColor.toInt();
 
-      colorId = inputIntColor;
-
-      nouveauArray(motMem); // construit le tableau
-      
-   
-    }
+    Serial.print("inputIntColor : ");
+    Serial.println(inputIntColor); 
+    colorId = inputIntColor;
+    nouveauArray(motMem); // construit le tableau
+  }
 }
 
 void eraseFiles(){

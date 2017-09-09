@@ -154,8 +154,9 @@ class FrameAccelerator {
           udp.print(" "); udp.print(hitLo);
           udp.println();
           udp.endPacket();
+#endif          
           sampleCounter = 0;
-#endif
+
         }
       }
     }
@@ -206,9 +207,9 @@ class FrameAccelerator {
       float yOscillation = (y.value - y.average) / (y.stdev * sqrt(2)); 
       yOscillation = constrain(yOscillation, -1.0, 1.0);
       speed = -0.00025 * abs(x.min);// SPEED INCREASES AS THE WHEEL GOES FASTER
-      const float threshStart= 0.25; // -0.1; // -0.05 (original) // -0.3
-      const float threshHi   = 0.75; // 0.65 // 0.70 (orig.) // 0.75
-      const float threshLo   =-0.75;
+      const float threshStart= -0.3; // -0.1; // -0.05 (original) // -0.3 // 0.25
+      const float threshHi   = 0.70; // 0.65 // 0.70 (orig.) // 0.75
+      const float threshLo   =-0.70;
       // ANGLE DETECTION. Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of whee
       if (yOscillation <= threshStart && hitLo && hitHi && !triggered) {
           triggered = true;
@@ -229,8 +230,7 @@ class FrameAccelerator {
         triggered = false;
       }
 
-      if ( triggered ) minMaxInterval = 500;
-      //if ( triggered ) minMaxInterval = 350; //350 était 'ok'
+      if ( triggered ) minMaxInterval = 350; //500 est ok
 
       return triggered;
 

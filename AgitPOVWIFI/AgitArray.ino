@@ -1,6 +1,8 @@
 // STARTS WITH ASCII SPACE 32
 // SUBSTRACT 32 FROM INPUT CHAR
+#define MANQUANT {-1,-1,-1,-1,-1,-1,-1}
 int charToPovArray[][7] = { /// merci // gracias // thank you Alex Keeling!!
+//0+32=32
   {0, 0, 0, 0, 0, 0, 0}, //space U+0020 // 0
   {0, 0, 831, 895, 0, 0, 0}, //!
   {0, 0, 3, 0, 3, 0, 0}, //"
@@ -17,6 +19,7 @@ int charToPovArray[][7] = { /// merci // gracias // thank you Alex Keeling!!
   {0, 32, 32, 32, 32, 32, 0}, //-
   {0, 0, 768, 768, 0, 0, 0}, //.
   {256, 128, 64, 32, 16, 8, 4}, ///   //15
+//16+32=48
   {252, 510, 771, 771, 771, 510, 252}, //0 U+0030
   {512, 516, 518, 1023, 1023, 512, 512}, //1
   {774, 899, 705, 609, 561, 543, 526}, //2
@@ -33,6 +36,7 @@ int charToPovArray[][7] = { /// merci // gracias // thank you Alex Keeling!!
   {0, 80, 80, 80, 80, 80, 0}, //=
   {1025, 1539, 774, 396, 216, 112, 32}, //>  //30
   {2, 3, 1, 865, 881, 27, 14}, //?
+//32+32=64
   {224, 272, 584, 680, 744, 648, 112}, //@
   {1008, 1020, 34, 33, 38, 1020, 1016}, //A U+0041
   {1023, 1023, 529, 529, 537, 1023, 494}, //B
@@ -42,13 +46,14 @@ int charToPovArray[][7] = { /// merci // gracias // thank you Alex Keeling!!
   {1023, 1023, 17, 17, 17, 17, 1}, //F
   {510, 1023, 513, 545, 545, 999, 998}, //G
   {1023, 1023, 32, 32, 32, 1023, 1023}, //H  //40
-  {513, 513, 1023, 1023, 513, 513, 0}, //I
+  {0, 0, 1019, 1019, 0, 0, 0}, //I
   {0, 259, 769, 513, 513, 1023, 511}, //J
   {1023, 1023, 48, 200, 396, 774, 515}, //K
   {1023, 1023, 512, 512, 512, 512, 768}, //L
   {1023, 1023, 14, 56, 14, 1023, 1023}, //M  //45
   {1023, 1023, 4, 56, 64, 511, 1023}, //N
   {508, 1022, 769, 513, 515, 511, 254}, //O
+//48+32=80
   {1023, 1023, 33, 33, 33, 63, 30}, //P
   {508, 1022, 769, 1537, 1539, 1535, 1278}, //Q
   {1023, 1023, 33, 225, 417, 831, 542}, //R  //50
@@ -65,6 +70,7 @@ int charToPovArray[][7] = { /// merci // gracias // thank you Alex Keeling!!
   {1025, 1025, 1025, 2047, 2047, 0, 0}, //]
   {4, 6, 2, 1, 2, 6, 4}, //^
   {512, 512, 512, 512, 512, 512, 512}, //_
+//64+32=96
   {0, 1, 1, 2, 2, 4, 0}, //`
   {448, 1000, 548, 548, 804, 508, 1016}, //a U+0061  //65
   {510, 1023, 528, 520, 520, 1016, 496}, //b
@@ -81,6 +87,7 @@ int charToPovArray[][7] = { /// merci // gracias // thank you Alex Keeling!!
   {1020, 1016, 4, 1016, 4, 1020, 1016}, //m   // 77
   {1020, 1016, 4, 4, 4, 1020, 1016}, //n
   {496, 1016, 772, 516, 524, 508, 248}, //o
+//80+32=112
   {4092, 4088, 260, 260, 260, 508, 248}, //p  //80
   {248, 508, 260, 260, 132, 4092, 4092}, //q
   {1020, 1016, 4, 4, 4, 12, 8}, //r
@@ -96,6 +103,9 @@ int charToPovArray[][7] = { /// merci // gracias // thank you Alex Keeling!!
   {0, 0, 0, 4095, 0, 0, 0}, //|
   {1025, 1025, 1539, 990, 508, 32, 32}, //}
   {96, 56, 24, 112, 192, 224, 48}, //~ U+007E
+//95+32=127
+//95+65=160 (A0)
+  {0,0,0,0,0,0,0}, //nbsp
   {0, 0, 4076, 4044, 0, 0, 0}, //¡ U+00A1  //95
   {224, 272, 272, 1016, 272, 272, 0}, //¢
   {528, 510, 767, 529, 529, 529, 258}, //£
@@ -105,11 +115,29 @@ int charToPovArray[][7] = { /// merci // gracias // thank you Alex Keeling!!
   {512, 1124, 1178, 1170, 1426, 610, 4}, //§
   {0, 0, 2, 0, 0, 2, 0}, //¨
   {496, 520, 756, 660, 660, 260, 248}, //© U+00A9
+  MANQUANT,
   {32, 80, 136, 292, 80, 136, 260}, //« U+00AB
+  MANQUANT,
+  MANQUANT,
+  MANQUANT,
+  MANQUANT,
+  MANQUANT, // U+00B0
+  MANQUANT,
+  MANQUANT,
+  MANQUANT,
   {0, 4, 2, 2, 1, 1, 0}, //´ U+00B4  //105
+  MANQUANT,
+  MANQUANT,
+  MANQUANT,
+  MANQUANT,
+  MANQUANT,
+  MANQUANT,
   {260, 136, 80, 292, 136, 80, 32}, //» U+00BB
+  MANQUANT,
+  MANQUANT,
+  MANQUANT,
   {1792, 3456, 2284, 2156, 2048, 3072, 1024}, //¿ U+00BF
-
+//127+65=192 (C0)
   {992, 1009, 73, 74, 74, 1012, 992}, //À // 195 128
   {992, 1012, 74, 74, 73, 1009, 992}, //Á // 195 129 //110
   {992, 1012, 74, 73, 74, 1012, 992}, //Â
@@ -140,6 +168,9 @@ int charToPovArray[][7] = { /// merci // gracias // thank you Alex Keeling!!
   {504, 1020, 514, 513, 514, 1020, 504}, //Û  //135
   {504, 1016, 514, 512, 512, 1018, 504}, //Ü
   {56, 124, 962, 962, 121, 57, 0}, //Ý U+00DD
+  MANQUANT,
+  MANQUANT,
+//159+65=224 (E0)
   {384, 961, 593, 594, 850, 500, 992}, //à
   {384, 964, 594, 594, 849, 497, 992}, //á
   {384, 964, 594, 593, 850, 500, 992}, //â  //140
@@ -156,6 +187,7 @@ int charToPovArray[][7] = { /// merci // gracias // thank you Alex Keeling!!
   {0, 8, 4, 1012, 1010, 2, 0}, //í
   {0, 8, 4, 1010, 1012, 8, 0}, //î
   {0, 0, 4, 1008, 1008, 4, 0}, //ï U+00EF
+  MANQUANT,
   {1016, 1010, 9, 9, 10, 1010, 1009}, //ñ U+00F1
   {480, 1009, 777, 522, 538, 508, 240}, //ò  //155
   {480, 1012, 778, 522, 537, 505, 240}, //ó
@@ -169,97 +201,92 @@ int charToPovArray[][7] = { /// merci // gracias // thank you Alex Keeling!!
   {496, 1012, 514, 513, 514, 500, 1008}, //û
   {496, 1008, 516, 512, 512, 500, 1008}, //ü  //165
   {2104, 3192, 1732, 898, 386, 249, 121}, //ý U+00FD // 166
+  MANQUANT,
   {2104, 3192, 1730, 896, 384, 250, 120}, // U+00FF // 167
-
+/*
   {40, 510, 1023, 553, 553, 553, 258}, //€ U+20AC euro
   {768, 400, 144, 256, 528, 784, 384}, //⍨ U+2368 confused
   {1668, 2396, 2087, 2055, 2087, 2396, 1668}, //☃ U+2603 snowman    //170
-  {3168, 3174, 671, 287, 671, 3174, 3168}, //☠ U+2620 scull & cross bones
+  {3168, 3174, 671, 287, 671, 3174, 3168}, //☠ U+2620 skull & cross bones
   {504, 644, 1106, 1090, 1106, 644, 504}, //☹ U+2639 frown
   {248, 324, 658, 642, 658, 324, 248}, //☺ U+263A smiley
   {248, 444, 878, 894, 878, 444, 248}, //☻ U+263B inverted smiley
   {28, 98, 390, 520, 390, 98, 28}, //♡ U+2661 heart           //175
   {28, 126, 510, 1016, 510, 126, 28}, //♥ U+2665 filled heart
   {362, 618, 522, 634, 522, 618, 362}, //〠 U+3020 Japanese postal mark
+*/
 };
 
-
 void nouveauArray(String leMot) {
-
   Serial.print("nouveau mot  : ");
   Serial.println(leMot);
 
-
   // If we have a bad string, get out!
-  if (leMot.length() <= 1 )  {
-    return;
-  }
+  if (leMot.length() <= 1 ) return;
 
-  // GET THE characterCount
-  int characterCount = leMot.length();
-
+  int n = leMot.length(); // byte count
+  
   // MAKE SURE WE STAY IN THE LIMITS WITH EXTRA SPACE AT THE END AND THE START
   // WE ALSO ADD TWO COLUMNS OF BLANK SPACE AFTER EVERY CHARACTER (7 for the char, 2 for the blanks)
-  if ( ( characterCount + 2) * 9   > POV_ARRAY_MAX_SIZE ) {
-    characterCount = (povArrayLength / 9) - 2;
-    Serial.println("Input characters too long");
-  }
+  int maxChars = POV_ARRAY_MAX_SIZE/9;
 
-  Serial.print("characterCount ");
-  Serial.println(characterCount);
-
-  int validCharacterCount = 0;
-
-
-
+  Serial.print("characterCount "); Serial.println(n);
+  int k=0; // valid character count
   Serial.println("Starting to parse...");
 
-    // ADD A SPACE
-  dumpCharacterToPovArray(' ',validCharacterCount);
-  validCharacterCount++;
-
-  for ( int i = 0; i < characterCount ; i++ ) {
-    byte character = byte(leMot.charAt(i)); // GET A CHARACTER
-
-    // IS IT A VALID CHARACTER?
-    if (character >= 32 && character <= 122) { // Condition exécutée si on a du ASCII 'normal', par exemple 'm' = 109 en valeur ASCII
-
-      // CONVERT TO CAPITALS 
-      if (character >= 97 && character <= 122) {
-        character -= 32;
-      }
-      
-      dumpCharacterToPovArray(character,validCharacterCount);
-      validCharacterCount++;
-
+  for ( int i = 0; i < n ; i++ ) {
+    byte b = byte(leMot.charAt(i));
+    int c;
+    if (b<0x80) {
+      //Serial.printf("ascii byte %x\n",b);
+      c=b; // ASCII
+    } else if (b<0xC0) {
+      Serial.printf("invalid byte %x\n",b);
+      continue; // saute (invalide, pas de codepoint)
+    } else if (b<0xE0) {
+      //Serial.printf("utf-8 2 bytes %x %x\n",b,leMot.charAt(i+1));
+      c=((b&0x1F)<<6) + byte(leMot.charAt(i+1) & 0x3F); //5+6=11 bits: inclut 15 fois plus de caractères que Latin-1 
+      i++;
+    } else {
+      //Serial.printf("utf-8 more than 2 bytes %x %x ...\n",b,leMot.charAt(i+1));
+      c=((b&0x0F)<<6) + byte(leMot.charAt(i+1) & 0x3F); //4+6+6=16 bits
+      c=(c<<6) + byte(leMot.charAt(i+2) & 0x3F);
+      if (b>=0xF0) {c=(c<<6) + byte(leMot.charAt(i+3) & 0x3F); i+=3;} //4+6+6+6=22 bits
+      else i+=2;
+    }
+    // CONVERT TO CAPITALS
+    if (c>=  97 && c <= 122) c -= 32; // ASCII
+    if (c>= 224 && c <= 255) c -= 32; // Latin-1
+    //if (c>=... && c<=...) c-=...; (il y a d'autres minuscules au delà de Latin-1)
+    dumpCharacterToPovArray(c,k); k++;
+    if (k>=maxChars) {
+      Serial.println("Input characters too long");
+      break;
     }
   }
-
-  // ADD A SPACE
-  dumpCharacterToPovArray(' ',validCharacterCount);
-  validCharacterCount++;
-
-  povArrayLength = validCharacterCount * 9; // add 2 empty columns after each word
-
-  Serial.print("validCharacterCount ");
-  Serial.println(validCharacterCount);
-
+  povArrayLength = 9*k; // for each character, 9 = 7 used columns + 2 empty columns
+  Serial.print("validCharacterCount "); Serial.println(k);
+  for (int y=0; y<12; y++) {
+    for (int x=0; x<povArrayLength; x++) {
+      Serial.print((povArray[x]>>y)&1 ? "#" : ".");
+    }
+    Serial.println("");
+  }
 }
 
-void dumpCharacterToPovArray( byte character , int index) {
-
-  Serial.print("Dumping ");
-  Serial.write(character);
-  Serial.println();
-  
-  character = character - 32; // Convertir pour avoir l'index du tableau charToPovArray
+void dumpCharacterToPovArray( int character , int index) {
+  Serial.printf("Dumping 0x%x\n",character);
+  // Convertir pour avoir l'index du tableau charToPovArray
+  if (character<32) return; // invalide : codes contrôle ASCII
+  else if (character<127) character-=32; // si on a du ASCII, on commence au début de la table (0)
+  else if (character<160) return; // invalide : codes contrôle ISO_Latin
+  else if (character <= 256) character-=65; // si on a du Latin-1, on commence à 95 pour le code 0xA0 (160=95+65)
+  else return; // autre Unicode au delà des codes Latin-1
 
   for ( int j = 0 ; j < 7 ; j++ ) {
     povArray[index * 9 + j] = charToPovArray[character][j]; // we add two blanks so * 9
   }
   povArray[index * 9 + 7] = 0x00;
   povArray[index * 9 + 8] = 0x00;
-  
 }
-
 
