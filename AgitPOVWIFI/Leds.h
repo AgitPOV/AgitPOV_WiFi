@@ -8,8 +8,8 @@ class Leds {
 
 #define COLOR_COUNT 7
 
-    //               rojo,    naranja, amarillo,   verde,    azul,     morado,   luz
-    CRGB colors[COLOR_COUNT] = { 0xFF0000, 0xCC3300, 0xFFFF00, 0x00FF00, 0x0000FF, 0xFF00FF, 0xFFFFFF };
+    //                           rojo,    naranja, amarillo,   verde,    azul,     morado,   luz
+    CRGB colors[COLOR_COUNT] = { 0xFF0000, 0xCC3300, 0xFFFF00, 0x00FF00, 0x0000FF, 0xFF00FF, 0xEEEEEE };
 
 
 
@@ -29,7 +29,19 @@ class Leds {
 
     CRGB colorIdToColor(int colorId, int rainbowOffset) {
       if ( colorId == 7 ) return colors[(rainbowOffset / 2) % COLOR_COUNT];
-      else return colors[colorId];
+
+      else if ( colorId == 0 ) {
+        // Serial.println("on a du rouge!");
+        // return colors[0]; // n'arrivas pas à envoyer du rouge, peut-être du au '0' de l'argument?
+        return 0xFF0000;
+      }
+     
+      else {
+       // Serial.print( "couleur unie : ");
+       // Serial.println(colors[colorId]);
+        return colors[colorId];
+      }
+      
     }
 
     /*
@@ -51,7 +63,7 @@ class Leds {
     void nonBlockingOsXAnimation() {
 
       //byte grey = floor(sin(millis() * 0.005 - PI * 0.5) * 127 + 128); // full intensity
-      byte grey = floor(sin(millis() * 0.005 - PI * 0.5) * 64 + 64); // half intensity
+      byte grey = floor(sin(millis() * 0.005 - PI * 0.5) * 32 + 32); // half intensity
 
       for (int i = 0; i < 24; i++) {
         leds[i] = grey | ( grey << 8 ) | ( grey << 16 ) ;
@@ -61,7 +73,8 @@ class Leds {
     }
 
     void blockingFadeOut(int colorId, unsigned long duration) {
-
+      Serial.print("couleur de fadeOut : ");
+      Serial.println(colorId);
       for (int i = 0; i < 24; i++) {
         leds[i] = colorIdToColor(colorId, i) ;
       }
@@ -169,167 +182,4 @@ class Leds {
 
 };
 
-
-
-/*
-  void dotPovInterval(){
-
-  povInterval = _max((millis() - povTimeStamp),2)-1; // doit utiliser _max à cause d'un conflit de définition de fonction
-  povTimeStamp = millis();
-  povIntervalColumns = povInterval * povColumnWidth;
-  if (povIntervalColumns > 10000){
-
-    povIntervalColumns = 10000;
-  }
-
-  //Serial.print("IntervalColumns : ");
-  //Serial.println(povIntervalColumns);
-
-  }
-
-
-  void dotDoIt() {
-  // Serial.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-  int arraySize = sizeof(povArray) / sizeof(int);
-  for (int k = 0; k < arraySize; k++) { // la longueur du tableau qui contient le mot
-
-    for (int i = 0; i <= 23; i++) { // pour chaque DEL // pour la premiére série :
-
-      if ( i <= 11 ) {
-        if ( bitRead(povArray[k], i % 12) ) {
-
-          if (color == 7) {
-            // Serial.print("on a vraiment du arcoiris Side A :");
-            // Serial.println(i);
-
-            switch (i) {
-              case 0:
-                leds[i] = 0xFF0000; // rojo
-                break;
-              case 1:
-                leds[i] = 0xFF0000; // rojo
-                break;
-              case 2:
-                leds[i] = 0xCC3300; // naranja
-                break;
-              case 3:
-                leds[i] = 0xCC3300; // naranja
-                break;
-              case 4:
-                leds[i] = 0xFFFF00; // amarillo
-                break;
-              case 5:
-                leds[i] = 0xFFFF00; // amarillo
-                break;
-              case 6:
-                leds[i] = 0x00FF00; // verde
-                break;
-              case 7:
-                leds[i] = 0x00FF00; // verde
-                break;
-              case 8:
-                leds[i] = 0x0000FF; // azul
-                break;
-              case 9:
-                leds[i] = 0x0000FF; // azul
-                break;
-              case 10:
-                leds[i] = 0xFF00FF; // morado
-                break;
-              case 11:
-                leds[i] = 0xFF00FF; // morado
-                break;
-            } // fin du switch
-          }
-
-          else {
-            leds[i] = color;
-          }
-
-
-        } else {
-          leds[i] = CRGB::Black;
-        }
-
-      }
-
-      else {
-
-        if ( bitRead(povArray[arraySize - k], i % 12) ) { // bizarro world pour les DELs 23 à 12
-
-          /////
-
-          if (color == 7) {
-            // Serial.print("on a vraiment du arcoiris B side :");
-            // Serial.println(i);
-
-            switch (i) {
-              case 12:
-                leds[35 - i] = 0xFF0000; // rojo
-                break;
-              case 13:
-                leds[35 - i] = 0xFF0000; // rojo
-                break;
-              case 14:
-                leds[35 - i] = 0xCC3300; // naranja
-                break;
-              case 15:
-                leds[35 - i] = 0xCC3300; // naranja
-                break;
-              case 16:
-                leds[35 - i] = 0xFFFF00; // amarillo
-                break;
-              case 17:
-                leds[35 - i] = 0xFFFF00; // amarillo
-                break;
-              case 18:
-                leds[35 - i] = 0x00FF00; // verde
-                break;
-              case 19:
-                leds[35 - i] = 0x00FF00; // verde
-                break;
-              case 20:
-                leds[35 - i] = 0x0000FF; // azul
-                break;
-              case 21:
-                leds[35 - i] = 0x0000FF; // azul
-                break;
-              case 22:
-                leds[35 - i] = 0xFF00FF; // morado
-                break;
-              case 23:
-                leds[35 - i] = 0xFF00FF; // morado
-                break;
-            } // fin du switch
-          }
-
-          else {
-            leds[35 - i] = color; // countdown 23 -> 12
-          }
-
-
-          /////
-
-          // leds[35-i] = color; // countdown 23 -> 12
-
-        } else {
-          leds[35 - i] = CRGB::Black;
-        }
-
-      }
-
-
-    }
-
-    FastLED.show();
-    delay(0);// Refresh strip //delayMicroseconds(1300); // Microseconds ne semble pas fonctionner avec le ESP8266
-    delayMicroseconds(povIntervalColumns); // testing!!
-    //updateAccelerometer();
-
-  }
-
-  dotBlank();
-  }
-
-*/
 

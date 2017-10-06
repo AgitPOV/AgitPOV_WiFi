@@ -99,16 +99,16 @@ void setup(void) {
   char apName[apNameString.length() + 1];
   memset(apName, 0, apNameString.length() + 1);
 
-  for (int i = 0; i < apNameString.length(); i++)
+  for (int i = 0; i < apNameString.length()-1; i++)
     apName[i] = apNameString.charAt(i);
 
   // SETUP WIFI
   WiFi.mode(WIFI_AP);
   WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
-  WiFi.softAP(apName, apName); //WiFi.softAP("AgitPOVXXXXXX")
+  WiFi.softAP(apName, apName); //WiFi.softAP("AgitPOVXXX")
   dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer.start(DNS_PORT, "*", apIP);   // if DNSServer is started with "*" for domain name, it will reply with  // provided IP to all DNS request
-  server.on("/", handleRoot);
+    server.on("/", handleRoot);
   server.onNotFound(handleRoot);
 
   server.begin();

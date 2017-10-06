@@ -46,7 +46,7 @@ int charToPovArray[][7] = { /// merci // gracias // thank you Alex Keeling!!
   {1023, 1023, 17, 17, 17, 17, 1}, //F
   {510, 1023, 513, 545, 545, 999, 998}, //G
   {1023, 1023, 32, 32, 32, 1023, 1023}, //H  //40
-  {0, 0, 1019, 1019, 0, 0, 0}, //I
+  {0, 1019, 1019, 0, -1, -1, -1}, //I
   {0, 259, 769, 513, 513, 1023, 511}, //J
   {1023, 1023, 48, 200, 396, 774, 515}, //K
   {1023, 1023, 512, 512, 512, 512, 768}, //L
@@ -80,7 +80,7 @@ int charToPovArray[][7] = { /// merci // gracias // thank you Alex Keeling!!
   {8, 8, 1022, 1023, 9, 9, 0}, //f  //70
   {1464, 2556, 2372, 2372, 2372, 3964, 1596}, //g
   {1022, 1023, 16, 8, 8, 1016, 1008}, //h
-  {0, 0, 0, 996, 1012, 0, 0}, //i
+  {0, 0, 996, 1012, 0, 0, 0}, //i
   {1024, 2048, 2048, 4068, 2036, 0, 0}, //j
   {1022, 1023, 96, 240, 408, 780, 516}, //k  //75
   {0, 0, 0, 1022, 1023, 0, 0}, //l
@@ -226,14 +226,11 @@ void nouveauArray(String leMot) {
 
   int n = leMot.length(); // byte count
   
-  // MAKE SURE WE STAY IN THE LIMITS WITH EXTRA SPACE AT THE END AND THE START
-  // WE ALSO ADD TWO COLUMNS OF BLANK SPACE AFTER EVERY CHARACTER (7 for the char, 2 for the blanks)
-  int maxChars = POV_ARRAY_MAX_SIZE/9;
-
   Serial.print("characterCount "); Serial.println(n);
-  int k=0; // valid character count
   Serial.println("Starting to parse...");
 
+  povArrayLength=0;
+  int k=0; // valid character count
   for ( int i = 0; i < n ; i++ ) {
     byte b = byte(leMot.charAt(i));
     int c;
@@ -258,13 +255,11 @@ void nouveauArray(String leMot) {
     if (c>=  97 && c <= 122) c -= 32; // ASCII
     if (c>= 224 && c <= 255) c -= 32; // Latin-1
     //if (c>=... && c<=...) c-=...; (il y a d'autres minuscules au delà de Latin-1)
-    dumpCharacterToPovArray(c,k); k++;
-    if (k>=maxChars) {
+    if (!dumpCharacterToPovArray(c)) {
       Serial.println("Input characters too long");
       break;
-    }
+    } else k++;
   }
-  povArrayLength = 9*k; // for each character, 9 = 7 used columns + 2 empty columns
   Serial.print("validCharacterCount "); Serial.println(k);
   for (int y=0; y<12; y++) {
     for (int x=0; x<povArrayLength; x++) {
@@ -274,19 +269,23 @@ void nouveauArray(String leMot) {
   }
 }
 
-void dumpCharacterToPovArray( int character , int index) {
+bool dumpCharacterToPovArray( int character) { // retourne false s'il n'y a plus de place
   Serial.printf("Dumping 0x%x\n",character);
   // Convertir pour avoir l'index du tableau charToPovArray
-  if (character<32) return; // invalide : codes contrôle ASCII
+  if (character<32) return true; // invalide : codes contrôle ASCII
   else if (character<127) character-=32; // si on a du ASCII, on commence au début de la table (0)
-  else if (character<160) return; // invalide : codes contrôle ISO_Latin
+  else if (character<160) return true; // invalide : codes contrôle ISO_Latin
   else if (character <= 256) character-=65; // si on a du Latin-1, on commence à 95 pour le code 0xA0 (160=95+65)
-  else return; // autre Unicode au delà des codes Latin-1
-
+  else return true; // autre Unicode au delà des codes Latin-1
+  int ncols=0;
+  for ( int j = 0 ; j < 7 ; j++ ) if (charToPovArray[character][j]!=-1) ncols++;
+  if (povArrayLength+ncols+2>=POV_ARRAY_MAX_SIZE) return false;
   for ( int j = 0 ; j < 7 ; j++ ) {
-    povArray[index * 9 + j] = charToPovArray[character][j]; // we add two blanks so * 9
+    int col = charToPovArray[character][j];
+    if (col!=-1) povArray[povArrayLength++] = col;
   }
-  povArray[index * 9 + 7] = 0x00;
-  povArray[index * 9 + 8] = 0x00;
+  povArray[povArrayLength++] = 0x00;
+  povArray[povArrayLength++] = 0x00;
+  return true;
 }
 
