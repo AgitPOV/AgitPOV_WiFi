@@ -3,10 +3,11 @@
 
 
 ///// page that will be sent over to the client
-const char INDEX_HTML[] =
+char INDEX_HTML[] =
 "<!DOCTYPE HTML>"
 "<html>"
 "<head>"
+"<meta charset=\"UTF-8\">"
 "<meta name = \"viewport\" content = \"width = device-width, initial-scale = 1.0, maximum-scale = 1.0, user-scalable=0\">"
 "<title>AgitPOV</title>"
 "<style>"
@@ -18,7 +19,9 @@ const char INDEX_HTML[] =
 "<FORM action=\"/\" accept-charset=\"UTF-8\" method=\"post\">"
 "<P>"
 "<br>"
-"<INPUT type=\"text\" name=\"AgitPOV\" value=\"\" placeholder=\"VOTRE MOT\" maxlength=\"26\" style=\"font-size:30px ; background-color:#D92e1c ; border: none; text-transform:uppercase;\"> <BR>"
+"<INPUT type=\"text\" name=\"AgitPOV\" value=\"";
+char INDEX_HTML2[]=
+"\" placeholder=\"VOTRE MOT\" maxlength=\"26\" style=\"font-size:30px ; background-color:#D92e1c ; border: none; text-transform:uppercase;\"> <BR>"
 "<input type=\"radio\" name=\"color\" value=\"0\"> rouge <BR>"
 "<input type=\"radio\" name=\"color\" value=\"1\"> orange <BR>"
 "<input type=\"radio\" name=\"color\" value=\"2\"> jaune<BR>"
@@ -28,7 +31,14 @@ const char INDEX_HTML[] =
 "<input type=\"radio\" name=\"color\" value=\"6\"> blanc<BR>"
 "<input type=\"radio\" name=\"color\" value=\"7\"> arc-en-ciel<BR>"
 
-"<INPUT type=\"submit\" value=\"GO\" style=\"font-size:26px ; background-color:#DD622D ; border: none;\">"
+"<INPUT type=\"submit\" name=\"cmd\" value=\"GO\" style=\"font-size:26px ; background-color:#DD622D ; border: none;\">"
+
+#ifdef SPIFFS_DEBUGGING
+"<INPUT type=\"submit\" name=\"cmd\" value=\"LS\">"
+"<INPUT type=\"submit\" name=\"cmd\" value=\"AFFICHE\">"
+"<INPUT type=\"submit\" name=\"cmd\" value=\"EFFACE\">"
+#endif
+
 "</div>"
 "</P>"
 "</FORM>"

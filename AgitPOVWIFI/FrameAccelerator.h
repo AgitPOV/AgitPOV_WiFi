@@ -102,8 +102,9 @@ class FrameAccelerator {
 
         sampleCounter++;
 
-        x.value = lop(mma8452q.cx,x.value,0.2);
-        y.value = lop(mma8452q.cy,y.value,0.2);
+        // l'intensité du lop (amount) était de 0.2 depuis 2017.09
+        x.value = lop(mma8452q.cx,x.value,0.1);
+        y.value = lop(mma8452q.cy,y.value,0.1);
         //z.value = mma8452q.cz;
 
         //yResponsive.update( map(y.value,-8.0,8.0,0.,1023.) );
@@ -117,15 +118,19 @@ class FrameAccelerator {
         w+=1;
         if (w==4) { 
           udp.beginPacket(destinationIp, 9999);
-          udp.print("sample ");
-          udp.print(x.value); udp.print(" ");
-          udp.print(y.value); udp.print(" ");
-          udp.print(frame/(float)povArrayLength); udp.print(" ");
-          udp.print((y.value - y.average) / (y.stdev * sqrt(2))); // yOscillation de 2017.09.04
-          udp.println();
+          float fracpos = frame/(float)povArrayLength; // position dans l'affichage du message (incl fraction de caractères), 0 à 1
+          float ynormal = (y.value - y.average) / (y.stdev * sqrt(2)); // yOscillation de 2017.09.04 (mais sans constraint 0..1)
+          udp.printf("%.3f %.3f %.3f %.3f %.3f %.3f %d\n",mma8452q.cx,mma8452q.cy,x.value,y.value, fracpos, ynormal, millis());
           udp.endPacket();
           w=0;
         }
+#endif
+#ifdef SPIFFS_DEBUGGING
+        extern File record_f;
+        record_f.printf("%.3f %.3f %.3f %.3f %d\n",mma8452q.cx,mma8452q.cy,x.value,y.value, millis());
+        //record_f.printf("%.4f %.4f %.4f %.4f\n",mma8452q.cx,mma8452q.cy,x.value,y.value);
+        //record_f.printf("%.3f %.3f\n",mma8452q.cx,mma8452q.cy);
+        //record_f.flush();
 #endif
         if (millis() - last_min_max_time_check >= minMaxInterval) //check if an interval has passed - get new the new range
         {
@@ -135,8 +140,8 @@ class FrameAccelerator {
           updateMinMax(&y);
           //updateMinMax(&z);
 
-#ifdef UDP_DEBUGING
-          udp.beginPacket(destinationIp, 9999);
+#ifdef UDP_DEBUGING // statistiques par fenêtre (d'actuellement 500 ms * 800 Hz = 400 samples)
+          /*udp.beginPacket(destinationIp, 9999);
           udp.print("x ");  udp.print(x.min);
           udp.print(" ");   udp.print(x.max);
           udp.print(" ");   udp.print(x.average);
@@ -153,8 +158,8 @@ class FrameAccelerator {
           udp.print(" "); udp.print(hitHi);
           udp.print(" "); udp.print(hitLo);
           udp.println();
-          udp.endPacket();
-#endif          
+          udp.endPacket();*/
+#endif   
           sampleCounter = 0;
 
         }
@@ -206,7 +211,11 @@ class FrameAccelerator {
       //float yOscillation = (y.value - y.min)*2/y.range - 1;
       float yOscillation = (y.value - y.average) / (y.stdev * sqrt(2)); 
       yOscillation = constrain(yOscillation, -1.0, 1.0);
-      speed = -0.00025 * abs(x.min);// SPEED INCREASES AS THE WHEEL GOES FASTER
+      // il faut que speed (d'affichage) soit proportionnel à la vitesse du vélo, qui est proportionnelle à la force centrifuge SANS la gravité
+      // et en faisant une moyenne entre min et max on arrive à ((-centrifuge-gravité)+(-centrifuge+gravité))/2 = -centrifuge ;
+      // speed doit être négatif parce que l'affichage doit se faire de droite à gauche pour aller avec la direction de la roue.
+      //speed = -0.00025 * abs(x.min); // SPEED INCREASES AS THE WHEEL GOES FASTER // jusqu'au 2019.07.19.18h02
+      speed = 0.00030 * (x.min+x.max)/2; // SPEED INCREASES AS THE WHEEL GOES FASTER // nouvelle formule, qui annule la gravité au lieu de la compter comme faisant partie de la force centrifuge
       const float threshStart= -0.1; // -0.1; // -0.05 (original) // -0.3 // -0.2
       const float threshHi   = 0.7; // 0.65 // 0.70 (orig.) // 0.75 //0.65
       const float threshLo   =-0.7;
@@ -241,7 +250,3 @@ class FrameAccelerator {
     }
 
 };
-
-
-
-

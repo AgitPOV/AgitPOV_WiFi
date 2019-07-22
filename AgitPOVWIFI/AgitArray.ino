@@ -1,7 +1,7 @@
 // STARTS WITH ASCII SPACE 32
 // SUBSTRACT 32 FROM INPUT CHAR
 #define MANQUANT {-1,-1,-1,-1,-1,-1,-1}
-int charToPovArray[][7] = { /// merci // gracias // thank you Alex Keeling!!
+short charToPovArray[][7] = { /// merci // gracias // thank you Alex Keeling!!
 //0+32=32
   {0, 0, 0, 0, 0, 0, 0}, //space U+0020 // 0
   {0, 0, 831, 895, 0, 0, 0}, //!
@@ -284,8 +284,7 @@ bool dumpCharacterToPovArray( int character) { // retourne false s'il n'y a plus
     int col = charToPovArray[character][j];
     if (col!=-1) povArray[povArrayLength++] = col;
   }
-  povArray[povArrayLength++] = 0x00;
-  povArray[povArrayLength++] = 0x00;
+  povArray[povArrayLength++] = 0x00; // 1er espace séparateur de caractères
+  //povArray[povArrayLength++] = 0x00; // 2e espace...
   return true;
 }
-

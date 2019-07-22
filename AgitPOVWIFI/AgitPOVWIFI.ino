@@ -1,13 +1,13 @@
 // Version 2017-09-04
 
 // COMMENT THE FOLLOWING LINE TO DEACTIVATE UDP DEBUGGING
-// #include "udpDebug.h"
+#include "udpDebug.h"
 
 /*
    AgitPOV Wifi: 24-RGB LED dual sided POV with Wifi (ESP8266)
    (c) 2011-2017
    Contributors over the years
-        Thomas Ouellet Fredericks - Debuging, Accelerometer, LED engine and animation code
+        Thonnmas Ouellet Fredericks - Debuging, Accelerometer, LED engine and animation code
         Alexandre Castonguay
         Mathieu Bouchard
         Alan Kwok
@@ -39,6 +39,8 @@
 extern "C" { // Infos sur les clients connectés
 #include<user_interface.h>
 }
+
+File record_f;
 
 ////////// ACCEL ////////////
 
@@ -88,7 +90,7 @@ void setup(void) {
   // MAC ADDRESS /////////////////////////
 
   // Do a little work to get a unique-ish name. Append the
-  // last three bytes of the MAC (HEX'd) :
+  // last two bytes of the MAC (HEX'd) :
   uint8_t mac[WL_MAC_ADDR_LENGTH];
   WiFi.softAPmacAddress(mac);
   String twoLastHexBytes = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) +
@@ -140,27 +142,37 @@ void setup(void) {
   // QUIT IF THE CONNEXION IS LOST
   if ( numberOfClients > 0  ) waitingForNewWord = true ;
 
+  //Serial.print("numberOfClients="); Serial.print(numberOfClients); Serial.print(" waitingForNewWord="); Serial.println(waitingForNewWord);
   while ( numberOfClients > 0 && waitingForNewWord ) {
 
     leds.nonBlockingRainbowAnimation();
 
     dnsServer.processNextRequest(); /// a-t-on une requête de connexion ?
+    //Serial.println("setup() appelle handleclient()");
     server.handleClient();
 
     yield();
 
     numberOfClients = getNumberOfClients();
-
+    //Serial.print("numberOfClients="); Serial.print(numberOfClients); Serial.print(" waitingForNewWord="); Serial.println(waitingForNewWord);
   }
 
 #ifdef UDP_DEBUGING
   udp.begin(9999);
 #else
+  Serial.println("setup appelle turnItOff");
   turnItOff(); // fermeture du serveur
+  Serial.println("setup a appelé turnItOff");
+#endif
+#ifdef SPIFFS_DEBUGGING
+  int i=1; char filename[32]; 
+  do {
+    sprintf(filename,"/record%03d.txt",i++);
+  } while (SPIFFS.exists(filename));
+  record_f = SPIFFS.open(filename,"w");
 #endif
 
-
-  lireFichier();
+  Serial.println("setup lireFichier"); lireFichier();
 
   leds.fill(colorId);
 
@@ -228,6 +240,3 @@ void loop() {
 
 
 } // fin du loop
-
-
-

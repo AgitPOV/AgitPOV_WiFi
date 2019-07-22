@@ -25,7 +25,9 @@ void handleRoot() {
     handleSubmit();
   }
   else {
-    server.send(200, "text/html", INDEX_HTML);
+    String mot = lireFichier();
+    String doc = String(INDEX_HTML) + mot + String(INDEX_HTML2);
+    server.send(200, "text/html", doc);
   }
 }
 
@@ -50,12 +52,57 @@ void handleSubmit() // ajouter l'enregistrement de la couleur
   Serial.print("Couleur envoyée : ");
   Serial.println(inputIntColor);
 
-  colorId = inputIntColor;
-
-  ecrireFichier(mot);
-
-  waitingForNewWord = false;
-  
+  String cmd = server.arg("cmd");
+  if (cmd=="GO") {
+    colorId = inputIntColor;
+    ecrireFichier(mot);
+    waitingForNewWord = false;
+  } else if (cmd=="LS") {
+    String answer = "";
+    Dir dir = SPIFFS.openDir("/");
+    while (dir.next()) {
+      File f = dir.openFile("r");
+      answer += dir.fileName() + " " + f.size() + "\n";
+    }
+    server.send(200, "text/plain", answer);
+  } else if (cmd=="AFFICHE") {
+    if (SPIFFS.exists(mot)) {
+      File f = SPIFFS.open(mot,"r");
+      Serial.println("va afficher le fichier "+mot);
+      int t=0;
+      while (f.position()<f.size()) {
+        //Serial.println(f.readString());
+        Serial.print(f.readStringUntil('\n'));
+        Serial.print(" ");
+        Serial.println(t);
+        t++;
+        if ((t%100)==0) {yield();}
+      }
+      Serial.println("fin de "+mot);
+      /*
+      String answer = "";
+      char *buf = new char[f.size()];
+      f.readBytes(buf,f.size());
+      //while (f.position() < f.size()) answer.concat(f.readString());
+      answer = new String();
+      server.send(200, "text/plain", answer);
+      */
+      //server.streamFile(f,"text/plain");
+    } else {
+      server.send(404, "text/plain", mot + "not found");      
+    }
+  } else if (cmd=="EFFACE") {
+    String answer = "";
+    Dir dir = SPIFFS.openDir("/");
+    while (dir.next()) {
+      String leFichier = dir.fileName();
+      if (leFichier.startsWith("/record")) {
+        SPIFFS.remove(leFichier);
+        answer += "efface " + leFichier + "<br>\n";
+      }
+    }
+    server.send(200, "text/plain", answer);    
+  }
 } // fin de handleSubmit
 
 void returnOK()
@@ -87,4 +134,3 @@ void turnItOff() {
   WiFi.forceSleepBegin();
   Serial.println("le serveur est fermé");
 }
-

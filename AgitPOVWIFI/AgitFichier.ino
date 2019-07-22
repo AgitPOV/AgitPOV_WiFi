@@ -25,12 +25,13 @@ void printBytes(String &s) {
   while (*b!=0) Serial.printf("%02x ",*b++);
 }
 
-void lireFichier(){
+String lireFichier(){
   Serial.println("====== Reading palabra from SPIFFS file =========");
   Serial.println("le fichier : ");
   Dir dir = SPIFFS.openDir("/");
   while (dir.next()) {
     Serial.println(dir.fileName());
+    if (String("/1.txt")!=dir.fileName()) continue;
     File f = dir.openFile("r");
     Serial.print("taille du fichier : ");
     Serial.println(f.size());
@@ -48,6 +49,7 @@ void lireFichier(){
     Serial.println(inputIntColor); 
     colorId = inputIntColor;
     nouveauArray(motMem); // construit le tableau
+    return motMem;
   }
 }
 
@@ -72,6 +74,7 @@ void ecrireFichier(String unMot){
     String mot = unMot;
     File f = SPIFFS.open("/1.txt", "w");     // open file for writing
     if (!f) {
+      ///// ok on a un problème ici avec fs !
       Serial.println("file open failed");
     }
     Serial.println("====== Writing palabra to SPIFFS file =========");
