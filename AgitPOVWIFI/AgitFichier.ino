@@ -35,16 +35,11 @@ String lireFichier(){
     File f = dir.openFile("r");
     Serial.print("taille du fichier : ");
     Serial.println(f.size());
-    String s=f.readStringUntil('\n');
-    Serial.print("Texte s : ");
-    Serial.println(s); printBytes(s); Serial.println("");
-    String motMem = s.substring(0, s.length()-1); // change la valeur de mot et passe-le à la fonction nouveauArray, ensuite démarre le tout.
+    String motMem=f.readStringUntil('\n');
     Serial.print("Texte motMem : ");
     Serial.println(motMem); printBytes(motMem); Serial.println("");
-    
-    String inputColor = s.substring(s.length()-1); // tente d'isoler le dernier charactère du texte en mémoire.
+    String inputColor = f.readStringUntil('\n');
     inputIntColor = inputColor.toInt();
-
     Serial.print("inputIntColor : ");
     Serial.println(inputIntColor); 
     colorId = inputIntColor;
@@ -79,9 +74,7 @@ void ecrireFichier(String unMot){
     }
     Serial.println("====== Writing palabra to SPIFFS file =========");
     // write palabra to file
-    f.print(mot);
-    f.print(inputIntColor);
+    f.println(mot);
+    f.println(inputIntColor);
     f.close();
-
-      
 }

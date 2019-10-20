@@ -216,9 +216,9 @@ class FrameAccelerator {
       // speed doit être négatif parce que l'affichage doit se faire de droite à gauche pour aller avec la direction de la roue.
       //speed = -0.00025 * abs(x.min); // SPEED INCREASES AS THE WHEEL GOES FASTER // jusqu'au 2019.07.19.18h02
       speed = 0.00030 * (x.min+x.max)/2; // SPEED INCREASES AS THE WHEEL GOES FASTER // nouvelle formule, qui annule la gravité au lieu de la compter comme faisant partie de la force centrifuge
-      const float threshStart= -0.1; // -0.1; // -0.05 (original) // -0.3 // -0.2
-      const float threshHi   = 0.7; // 0.65 // 0.70 (orig.) // 0.75 //0.65
-      const float threshLo   =-0.7;
+      const float threshStart= -0.05; // -0.1; // -0.05 (original) // -0.3 // -0.2
+      const float threshHi   = 0.75; // 0.65 // 0.70 (orig.) // 0.75 
+      const float threshLo   =-0.7; // 0.70 (orig.)
       // ANGLE DETECTION. Y = 0 when at top of wheel. Y = -1 when at far edge of wheel. Y = 1 when at close edge of wheel. Y = 0 at bottom of whee
       if (yOscillation <= threshStart && hitLo && hitHi && !triggered) {
           triggered = true;

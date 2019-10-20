@@ -22,16 +22,16 @@ char INDEX_HTML[] =
 "<INPUT type=\"text\" name=\"AgitPOV\" value=\"";
 char INDEX_HTML2[]=
 "\" placeholder=\"VOTRE MOT\" maxlength=\"26\" style=\"font-size:30px ; background-color:#D92e1c ; border: none; text-transform:uppercase;\"> <BR>"
-"<input type=\"radio\" name=\"color\" value=\"0\"> rouge <BR>"
-"<input type=\"radio\" name=\"color\" value=\"1\"> orange <BR>"
-"<input type=\"radio\" name=\"color\" value=\"2\"> jaune<BR>"
-"<input type=\"radio\" name=\"color\" value=\"3\"> vert<BR>"
-"<input type=\"radio\" name=\"color\" value=\"4\"> bleu<BR>"
-"<input type=\"radio\" name=\"color\" value=\"5\"> mauve<BR>"
-"<input type=\"radio\" name=\"color\" value=\"6\"> blanc<BR>"
-"<input type=\"radio\" name=\"color\" value=\"7\"> arc-en-ciel<BR>"
-
-"<INPUT type=\"submit\" name=\"cmd\" value=\"GO\" style=\"font-size:26px ; background-color:#DD622D ; border: none;\">"
+ "&nbsp;<input type=\"radio\" name=\"color\" value=\"0\"> rouge <BR>"
+ "&nbsp;<input type=\"radio\" name=\"color\" value=\"1\"> orange <BR>"
+ "&nbsp;<input type=\"radio\" name=\"color\" value=\"2\"> jaune<BR>"
+ "&nbsp;<input type=\"radio\" name=\"color\" value=\"3\"> vert<BR>"
+ "&nbsp;<input type=\"radio\" name=\"color\" value=\"4\"> bleu<BR>"
+ "&nbsp;<input type=\"radio\" name=\"color\" value=\"5\"> mauve<BR>"
+ "&nbsp;<input type=\"radio\" name=\"color\" value=\"6\"> blanc<BR>"
+ "&nbsp;<input type=\"radio\" name=\"color\" value=\"42\"> arc-en-ciel<BR>"
+ "&nbsp;<input type=\"checkbox\" name=\"dark\" value=\"1\"> mode sombre<BR>"
+ "&nbsp;<INPUT type=\"submit\" name=\"cmd\" value=\"GO\" style=\"font-size:26px ; background-color:#DD622D ; border: none;\">"
 
 #ifdef SPIFFS_DEBUGGING
 "<INPUT type=\"submit\" name=\"cmd\" value=\"LS\">"

@@ -10,23 +10,18 @@ int getNumberOfClients() {
 
 
 void handleRoot() {
-  Serial.print("nombre arguments : ");
-  Serial.println(server.args()); // un tableau contenant le nombre d'arguments
-  Serial.print("arg name 0 : ");
-  Serial.println(server.argName(0));
-  Serial.print("arg name 1 : ");
-  Serial.println(server.argName(1));
-  Serial.print("arg 0 : ");
-  Serial.println(server.arg(0));
-  Serial.print("arg 1 : ");
-  Serial.println(server.arg(1));
-
-  if (server.hasArg("AgitPOV")) {
+  
+  if (lecture == true) {
+    lecture = false;
+    Serial.println("on a demandé lireFichier()");
+    String mot = lireFichier();
+    doc = String(INDEX_HTML) + mot + String(INDEX_HTML2);
+    }
+  else if (server.hasArg("AgitPOV")) {
+    Serial.println("on avait server.hasArg = AgitPOV");
     handleSubmit();
   }
   else {
-    String mot = lireFichier();
-    String doc = String(INDEX_HTML) + mot + String(INDEX_HTML2);
     server.send(200, "text/html", doc);
   }
 }
@@ -38,14 +33,12 @@ void returnFail(String msg)
   server.send(500, "text/plain", msg + "\r\n");
 }
 
-void handleSubmit() // ajouter l'enregistrement de la couleur
+void handleSubmit() 
 {
-  String mot;
 
-  String inputColor = server.arg(1);
-  inputIntColor = inputColor.toInt();
+  inputIntColor = server.arg("color").toInt() + (server.arg("dark").toInt()*7); // génère les couleurs de 0 à 13
   if (!server.hasArg("AgitPOV")) return returnFail("BAD ARGS");
-  mot = server.arg("AgitPOV");
+  String mot = server.arg("AgitPOV");
   Serial.print("mot envoyé : ");
   Serial.println(mot);
 

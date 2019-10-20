@@ -1,4 +1,4 @@
-#define UDP_DEBUGING
+//#define UDP_DEBUGING
 //#define SPIFFS_DEBUGGING
 
 #include <WiFiUdp.h>

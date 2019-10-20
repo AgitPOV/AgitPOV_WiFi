@@ -1,13 +1,13 @@
-// Version 2017-09-04
+// Version 2019-10-16
 
 // COMMENT THE FOLLOWING LINE TO DEACTIVATE UDP DEBUGGING
-#include "udpDebug.h"
+// #include "udpDebug.h"
 
 /*
    AgitPOV Wifi: 24-RGB LED dual sided POV with Wifi (ESP8266)
-   (c) 2011-2017
+   (c) 2011-2019
    Contributors over the years
-        Thonnmas Ouellet Fredericks - Debuging, Accelerometer, LED engine and animation code
+        Thomas Ouellet Fredericks - Debuging, Accelerometer, LED engine and animation code
         Alexandre Castonguay
         Mathieu Bouchard
         Alan Kwok
@@ -41,6 +41,10 @@ extern "C" { // Infos sur les clients connectés
 }
 
 File record_f;
+
+////////// Page web /////////
+bool lecture = true;
+String doc;
 
 ////////// ACCEL ////////////
 

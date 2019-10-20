@@ -6,11 +6,10 @@
 class Leds {
     CRGB leds[24];
 
-#define COLOR_COUNT 7
+#define COLOR_COUNT 14
 
-    //                           rojo,    naranja, amarillo,   verde,    azul,     morado,   luz
-    CRGB colors[COLOR_COUNT] = { 0xFF0000, 0xCC3300, 0xFFFF00, 0x00FF00, 0x0000FF, 0xFF00FF, 0xEEEEEE };
-
+    //                           rojo,    naranja, amarillo,   verde,    azul,     morado,   luz, dark rojo, dark naranja, dark amarillo, dark verde, dark azul, muy dark morado, darkluz
+    CRGB colors[COLOR_COUNT] = { 0xFF0000, 0xCC3300, 0xFFFF00, 0x00FF00, 0x0000FF, 0xFF00FF, 0xEEEEEE, 0x110000, 0x221100, 0x111100, 0x112200, 0x000011, 0x110011, 0x080808 };
 
 
   public:
@@ -27,9 +26,13 @@ class Leds {
       
     }
 
-    CRGB colorIdToColor(int colorId, int rainbowOffset) {
-      if ( colorId == 7 ) return colors[(rainbowOffset / 2) % COLOR_COUNT];
 
+
+CRGB colorIdToColor(int colorId, int rainbowOffset) {
+      if ( colorId == 42 ) return colors[(rainbowOffset / 2) % COLOR_COUNT];
+
+      else if ( colorId > 42) return colors[( ( rainbowOffset / 2 ) + 7) % COLOR_COUNT];
+      
       else if ( colorId == 0 ) {
         // Serial.println("on a du rouge!");
         // return colors[0]; // n'arrivas pas à envoyer du rouge, peut-être du au '0' de l'argument?
@@ -44,6 +47,7 @@ class Leds {
       
     }
 
+///////////////////////////////////////////////////////
     /*
         void blockingAnimation(int colorId, unsigned long duration) {
           unsigned long timeStarted = millis();
@@ -97,8 +101,8 @@ class Leds {
     void nonBlockingRainbowAnimation() {
 
 
-      for (int  i = 0; i <= 24 ; i++) { /// COLOR!!
-        leds[i] = colorIdToColor(7, i + (millis() / 100));
+      for (int i = 0; i < 24 ; i++) { /// COLOR!!
+        leds[i] = colorIdToColor(42, i + (millis() / 100));
       }
 
       FastLED.show();
@@ -181,5 +185,3 @@ class Leds {
 
 
 };
-
-
