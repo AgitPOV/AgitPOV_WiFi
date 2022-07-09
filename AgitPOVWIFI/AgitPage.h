@@ -30,6 +30,7 @@ char INDEX_HTML2[]=
  "&nbsp;<input type=\"radio\" name=\"color\" value=\"5\"> mauve<BR>"
  "&nbsp;<input type=\"radio\" name=\"color\" value=\"6\"> blanc<BR>"
  "&nbsp;<input type=\"radio\" name=\"color\" value=\"42\"> arc-en-ciel<BR>"
+ "&nbsp;<input type=\"radio\" name=\"color\" value=\"8\"> Ukraina<BR>"
  "&nbsp;<input type=\"checkbox\" name=\"dark\" value=\"1\"> mode sombre<BR>"
  "&nbsp;<INPUT type=\"submit\" name=\"cmd\" value=\"GO\" style=\"font-size:26px ; background-color:#DD622D ; border: none;\">"
 

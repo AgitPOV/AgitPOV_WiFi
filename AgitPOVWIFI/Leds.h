@@ -29,7 +29,17 @@ class Leds {
 
 
 CRGB colorIdToColor(int colorId, int rainbowOffset) {
-      if ( colorId == 42 ) return colors[(rainbowOffset / 2) % COLOR_COUNT];
+      if ( colorId == 8 && rainbowOffset < 6 ) return colors[2]; // Slava Ukraina // amarillo = [2], azul [4] //
+
+      else if ( colorId == 8 && rainbowOffset >= 6 && rainbowOffset < 13 ) return colors[4];
+
+      else if ( colorId == 8 && rainbowOffset >= 13 && rainbowOffset < 18 ) return colors[2];
+
+      else if ( colorId == 8 && rainbowOffset >= 18  ) return colors[4];
+      
+      else if ( colorId == 7 ) return colors[(rainbowOffset / 2) % COLOR_COUNT];
+
+      else if ( colorId == 42 ) return colors[(rainbowOffset / 2) % COLOR_COUNT];
 
       else if ( colorId > 42) return colors[( ( rainbowOffset / 2 ) + 7) % COLOR_COUNT];
       
